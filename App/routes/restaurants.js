@@ -14,16 +14,38 @@ FROM restaurant
 WHERE account_name = $1
 `;
 
+const RESTAURANT_INFO_QUERY = `
+SELECT id, account_name, restaurant_name
+FROM restaurant
+WHERE id = $1
+`;
+
+const EDIT_RESTAURANT_QUERY = `
+UPDATE restaurant
+SET account_name = $2, restaurant_name = $3
+WHERE id = $1
+`;
+
 const renderLogin = (req, res, next) => {
-  res.render('restaurants', { title: 'Restaurants' });
+  res.render('restaurants', {});
 };
 
 const renderDashboard = (req, res, next) => {
-  res.render('restaurants-dashboard', { title: 'Restauranteur Dashboard' });
+  pool.query(RESTAURANT_INFO_QUERY, [req.cookies.restaurants], (err, dbRes) => {
+    if (err || dbRes.rows.length !== 1) {
+      res.send("error!");
+    } else {
+      const { account_name, restaurant_name } = dbRes.rows[0];
+      res.render('restaurants-dashboard', {
+        account_name,
+        restaurant_name
+      });
+    }
+  });
 };
 
 /* GET restaurant home page. */
-router.get('/', function(req, res, next) {
+router.get('/', (req, res, next) => {
   if (req.cookies.restaurants) {
     renderDashboard(req, res, next);
   } else {
@@ -31,37 +53,63 @@ router.get('/', function(req, res, next) {
   }
 });
 
-router.get('/logout', function(req, res, next) {
+router.get('/logout', (req, res, next) => {
   res.clearCookie('restaurants');
   res.redirect('/restaurants');
 });
 
-router.post('/', function(req, res, next) {
+router.post('/', (req, res, next) => {
   const { account_name, restaurant_name, login_type } = req.body;
   if (login_type === "new") {
     pool.query(NEW_RESTAURANT_QUERY, [account_name, restaurant_name], (err, dbRes) => {
-      if (dbRes) {
-        res.cookie('restaurants', dbRes.rows[0].id);
-        res.redirect('/restaurants')
-      } else {
+      if (err || dbRes.rows.length !== 1) {
+        console.log(err);
         res.send("error!");
+      } else {
+        res.cookie('restaurants', dbRes.rows[0].id);
+        res.redirect('/restaurants');
       }
-    })
+    });
   } else if (login_type === "existing") {
     console.log(account_name);
     pool.query(EXISTING_RESTAURANT_QUERY, [account_name], (err, dbRes) => {
-      console.log(dbRes);
-      if (dbRes && dbRes.rows.length === 1) {
+      if (err || dbRes.rows.length !== 1) {
+        res.send("error!");
+      } else {
         res.cookie('restaurants', dbRes.rows[0].id);
         res.redirect('/restaurants')
-      } else {
-        res.send("error!");
       }
-    })
+    });
   } else {
     res.status(404);
     res.send({ error: "Invalid data" });
   }
 });
+
+router.get('/edit', (req, res, next) => {
+  pool.query(RESTAURANT_INFO_QUERY, [req.cookies.restaurants], (err, dbRes) => {
+    if (err || dbRes.rows.length !== 1) {
+      res.send("error!");
+    } else {
+      const { account_name, restaurant_name } = dbRes.rows[0];
+      res.render('restaurants-edit', {
+        account_name,
+        restaurant_name
+      });
+    }
+  });
+});
+
+router.post('/edit', (req, res, next) => {
+  const { account_name, restaurant_name } = req.body;
+  const id = req.cookies.restaurants;
+  pool.query(EDIT_RESTAURANT_QUERY, [id, account_name, restaurant_name], (err, dbRes) => {
+    if (err) {
+      res.send("error!");
+    } else {
+      res.redirect('/restaurants');
+    }
+  });
+})
 
 module.exports = router;

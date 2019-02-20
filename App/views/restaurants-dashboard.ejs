@@ -1,12 +1,20 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= title %></title>
+    <title><%= restaurant_name %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
-    <script src="/scripts/restaurants.js" defer></script>
   </head>
   <body>
     <p>Dashboard</p>
+    <h1>Welcome, <%= account_name %></h1>
+    <h2>Branches of <%= restaurant_name %></h2>
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Location</th>
+      </tr>
+    </table>
+    <p><a href="/restaurants/edit">Account settings</a></p>
     <p><a href="/restaurants/logout">Logout</a></p>
   </body>
 </html>
