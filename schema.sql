@@ -3,7 +3,8 @@ CREATE EXTENSION "btree_gist";
 
 CREATE TABLE restaurant (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  name varchar(100) NOT NULL
+  account_name varchar(100) NOT NULL UNIQUE,
+  restaurant_name varchar(100) NOT NULL
 );
 
 -- rationale for separate cuisine table;
