@@ -33,26 +33,15 @@ CREATE TABLE menu_item (
 CREATE TABLE branch (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   restaurant_id uuid REFERENCES restaurant NOT NULL,
+  name varchar(100) NOT NULL,
+  address text NOT NULL,
+  plus_code varchar(10),
   -- Question: how do we properly capture capacity constraint
   --   that may be due to walk-in or bookings outside the
   --   the system?
   capacity integer NOT NULL,
   -- see https://plus.codes/
   -- location not strictly necessary for now
-  plus_code varchar(10),
-  address text NOT NULL,
-  monday_start time NOT NULL,
-  monday_end time NOT NULL,
-  tuesday_start time NOT NULL,
-  tuesday_end time NOT NULL,
-  wednesday_start time NOT NULL,
-  wednesday_end time NOT NULL,
-  thursday_start time NOT NULL,
-  thursday_end time NOT NULL,
-  friday_start time NOT NULL,
-  friday_end time NOT NULL,
-  saturday_start time NOT NULL,
-  saturday_end time NOT NULL,
   UNIQUE (restaurant_id, address)
 );
 

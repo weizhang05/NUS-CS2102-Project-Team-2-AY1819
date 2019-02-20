@@ -11,19 +11,35 @@ RETURNING id;
 const EXISTING_RESTAURANT_QUERY = `
 SELECT id
 FROM restaurant
-WHERE account_name = $1
+WHERE account_name = $1;
 `;
 
 const RESTAURANT_INFO_QUERY = `
 SELECT id, account_name, restaurant_name
 FROM restaurant
-WHERE id = $1
+WHERE id = $1;
 `;
+
+const BRANCHES_QUERY = `
+SELECT id, name, address, plus_code, capacity
+FROM branch
+WHERE restaurant_id = $1;
+`
 
 const EDIT_RESTAURANT_QUERY = `
 UPDATE restaurant
 SET account_name = $2, restaurant_name = $3
-WHERE id = $1
+WHERE id = $1;
+`;
+
+const NEW_BRANCH_WITHOUT_PLUS_CODE = `
+INSERT INTO branch (restaurant_id, name, address, capacity)
+VALUES ($1, $2, $3, $4);
+`;
+
+const NEW_BRANCH_WITH_PLUS_CODE = `
+INSERT INTO branch (restaurant_id, name, address, plus_code, capacity)
+VALUES ($1, $2, $3, $4, $5);
 `;
 
 const renderLogin = (req, res, next) => {
@@ -31,15 +47,24 @@ const renderLogin = (req, res, next) => {
 };
 
 const renderDashboard = (req, res, next) => {
-  pool.query(RESTAURANT_INFO_QUERY, [req.cookies.restaurants], (err, dbRes) => {
+  const restaurant_id = req.cookies.restaurants
+  pool.query(RESTAURANT_INFO_QUERY, [restaurant_id], (err, dbRes) => {
     if (err || dbRes.rows.length !== 1) {
       res.send("error!");
     } else {
       const { account_name, restaurant_name } = dbRes.rows[0];
-      res.render('restaurants-dashboard', {
-        account_name,
-        restaurant_name
-      });
+      pool.query(BRANCHES_QUERY, [restaurant_id], (err, dbBranchesRes) => {
+        if (err) {
+          res.send("error!");
+        } else {
+          const branches = dbBranchesRes.rows;
+          res.render('restaurants-dashboard', {
+            account_name,
+            restaurant_name,
+            branches,
+          });
+        }
+      })
     }
   });
 };
@@ -110,6 +135,32 @@ router.post('/edit', (req, res, next) => {
       res.redirect('/restaurants');
     }
   });
-})
+});
+
+router.get('/new-branch', (req, res, next) => {
+  res.render('restaurants-new-branch');
+});
+
+router.post('/new-branch', (req, res, next) => {
+  const restaurant_id = req.cookies.restaurants;
+  const { name, address, plus_code, capacity } = req.body;
+  if (plus_code) {
+    pool.query(NEW_BRANCH_WITH_PLUS_CODE, [restaurant_id, name, address, plus_code, capacity], (err, dbRes) => {
+      if (err) {
+        res.send("error!");
+      } else {
+        res.redirect("/restaurants");
+      }
+    });
+  } else {
+    pool.query(NEW_BRANCH_WITHOUT_PLUS_CODE, [restaurant_id, name, address, capacity], (err, dbRes) => {
+      if (err) {
+        res.send("error!");
+      } else {
+        res.redirect("/restaurants");
+      }
+    });
+  }
+});
 
 module.exports = router;

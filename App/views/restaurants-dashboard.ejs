@@ -9,11 +9,34 @@
     <h1>Welcome, <%= account_name %></h1>
     <h2>Branches of <%= restaurant_name %></h2>
     <table>
-      <tr>
-        <th>Name</th>
-        <th>Location</th>
-      </tr>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Address</th>
+          <th>Max. Capacity</th>
+          <th>Map</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (const { name, address, plus_code, capacity } of branches) { %>
+          <tr>
+            <td><%= name %></td>
+            <td><%= address %></td>
+            <td><%= capacity %></td>
+            <td><% if (plus_code) {%>
+              <iframe
+                width="160"
+                height="160"
+                frameborder="0" style="border:0"
+                src="https://www.google.com/maps/embed/v1/place?key=AIzaSyC7XV830fTBzmprQW1s0Bv4NH1l9E1tH_4&q=<%= encodeURIComponent(plus_code) %>" allowfullscreen>
+              </iframe>
+            <% } %>
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
     </table>
+    <p><a href="/restaurants/new-branch">Register new branch</a></p>
     <p><a href="/restaurants/edit">Account settings</a></p>
     <p><a href="/restaurants/logout">Logout</a></p>
   </body>
