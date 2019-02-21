@@ -32,9 +32,6 @@ CREATE TABLE menu_item (
 CREATE TABLE branch (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   restaurant_id uuid REFERENCES restaurant NOT NULL,
-  -- Question: how do we properly capture capacity constraint
-  --   that may be due to walk-in or bookings outside the
-  --   the system?
   capacity integer NOT NULL,
   -- see https://plus.codes/
   -- location not strictly necessary for now
@@ -57,7 +54,12 @@ CREATE TABLE branch (
 
 CREATE TABLE customer (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  name varchar(100) NOT NULL
+  name varchar(100) NOT NULL,
+  email text NOT NULL UNIQUE,
+  password text NOT NULL,
+  -- to identify if the customer entity is a user of the system
+  -- used to identify call-in bookings
+  non_user bool NOT NULL
 );
 
 CREATE TABLE booking (
@@ -66,6 +68,8 @@ CREATE TABLE booking (
   -- we want to preserve bookings even if the restaurant/branch
   -- no longer exists
   customer_id uuid REFERENCES customer NOT NULL,
+  -- extra details like dietary restrictions, needing wheelchair access, etc
+  details text,
   branch_id uuid REFERENCES branch,
   throughout tsrange NOT NULL,
   -- TODO: determine if this exclusion contraint does what I think it
