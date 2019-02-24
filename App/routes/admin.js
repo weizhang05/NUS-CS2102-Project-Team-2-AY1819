@@ -9,6 +9,12 @@ FROM admins
 WHERE account_name = $1;
 `;
 
+const ADMIN_INFO_QUERY = `
+SELECT account_name
+FROM admins
+WHERE id = $1;
+`;
+
 const USERS_INFO_QUERY = `
 SELECT id, name
 FROM customer
@@ -19,7 +25,15 @@ const renderLogin = (req, res, next) => {
 };
 
 const renderDashboard = (req, res, next) => {
-  res.render('admin-dashboard');
+  const admin_id = req.cookies.admin;
+  pool.query(ADMIN_INFO_QUERY, [admin_id], (err, dbRes) => {
+    if (err) {
+      res.send("error!");
+    } else {
+      const { account_name } = dbRes.rows[0];
+      res.render('admin-dashboard', {user_name: account_name});
+    }
+  })
 };
 
 const renderEditUsers = (req, res, next) => {
@@ -45,7 +59,15 @@ const renderEditReservations = (req, res, next) => {
 };
 
 router.get('/', (req, res, next) => {
-  renderLogin(req, res, next);
+  if (req.cookies.admin) {
+    renderDashboard(req, res, next);
+  } else {
+    renderLogin(req, res, next);
+  }
+});
+
+router.get('/dashboard', (req, res, next) => {
+  renderDashboard(req, res, next);
 });
 
 router.get('/logout', (req, res, next) => {
@@ -63,7 +85,7 @@ router.post('/', (req, res, next) => {
       res.send("error!");
     } else {
       res.cookie('admin', dbRes.rows[0].id) ;
-      res.redirect('/dashboard')
+      res.redirect('/admin')
     }
   });
 });
