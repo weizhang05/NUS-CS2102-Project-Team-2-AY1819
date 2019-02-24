@@ -1,6 +1,6 @@
-var express = require('express');
-var pool = require('../pool');
-var router = express.Router();
+let express = require('express');
+let pool = require('../pool');
+let router = express.Router();
 
 // queries
 const EXISTING_ADMIN_QUERY = `
@@ -15,11 +15,11 @@ FROM customer
 `;
 
 const renderLogin = (req, res, next) => {
-  res.render('admin_login', {});
+  res.render('admin-login', {});
 };
 
 const renderDashboard = (req, res, next) => {
-  res.render('admin_dashboard')
+  res.render('admin-dashboard');
 };
 
 const renderEditUsers = (req, res, next) => {
@@ -36,12 +36,12 @@ const renderEditUsers = (req, res, next) => {
 const renderEditRestaurents = (req, res, next) => {
   // TODO: generate list of all restaurents & feed into page
   // have simple UI for "edit restaurent", "delete restaurent" & more?
-  res.render('admin_edit_restaurents')
+  res.render('admin-edit-restaurents')
 };
 
 const renderEditReservations = (req, res, next) => {
   // TODO: ???
-  res.render('admin_edit_reservations')
+  res.render('admin-edit-reservations')
 };
 
 router.get('/', (req, res, next) => {
@@ -58,6 +58,7 @@ router.post('/', (req, res, next) => {
   const { account_name } = req.body;
   console.log(account_name);
   pool.query(EXISTING_ADMIN_QUERY, [account_name], (err, dbRes) => {
+    console.log(err);
     if (err || dbRes.rows.length !== 1) {
       res.send("error!");
     } else {
