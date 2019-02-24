@@ -50,6 +50,11 @@ CREATE TABLE customer (
   name varchar(100) NOT NULL
 );
 
+CREATE TABLE admins (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  account_name varchar(100) NOT NULL
+);
+
 CREATE TABLE booking (
   -- capture operating hours constraint
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
