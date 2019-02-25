@@ -15,9 +15,14 @@ FROM admins
 WHERE id = $1;
 `;
 
-const USERS_INFO_QUERY = `
+const CUSTOMER_INFO_QUERY = `
 SELECT id, name
 FROM customer
+`;
+
+const DELETE_CUSTOMER_QUERY = `
+DELETE FROM customer
+WHERE id = $1;
 `;
 
 const renderLogin = (req, res, next) => {
@@ -37,7 +42,7 @@ const renderDashboard = (req, res, next) => {
 };
 
 const renderEditUser = (req, res, next) => {
-  pool.query(USERS_INFO_QUERY, (err, dbRes) => {
+  pool.query(CUSTOMER_INFO_QUERY, (err, dbRes) => {
     if (err) {
       res.send("error!");
     } else {
@@ -79,7 +84,6 @@ router.post('/', (req, res, next) => {
   const { account_name } = req.body;
   console.log(account_name);
   pool.query(EXISTING_ADMIN_QUERY, [account_name], (err, dbRes) => {
-    console.log(err);
     if (err || dbRes.rows.length !== 1) {
       res.send("error!");
     } else {
@@ -95,7 +99,13 @@ router.get('/edit-users', (req, res, next) => {
 
 router.post('/delete_user', (req, res, next) => {
   const { user_id } = req.body;
-  // TODO: do relevant sql
+  pool.query(DELETE_CUSTOMER_QUERY, [user_id], (err, dbRes) => {
+    if (err) {
+      res.send("error!");
+    } else {
+      res.redirect('/admin/edit-users')
+    }
+  });
 });
 
 router.post('/edit_user', (req, res, next) => {
