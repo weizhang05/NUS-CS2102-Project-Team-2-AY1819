@@ -36,13 +36,12 @@ const renderDashboard = (req, res, next) => {
   })
 };
 
-const renderEditUsers = (req, res, next) => {
+const renderEditUser = (req, res, next) => {
   pool.query(USERS_INFO_QUERY, (err, dbRes) => {
     if (err) {
       res.send("error!");
     } else {
-      // TODO: do stuff
-      res.render('admin_edit_users')
+      res.render('admin-edit-user', {users: dbRes.rows})
     }
   });
 };
@@ -90,8 +89,8 @@ router.post('/', (req, res, next) => {
   });
 });
 
-router.get('/edit_users', (req, res, next) => {
-  renderEditUsers(req, res, next);
+router.get('/edit-users', (req, res, next) => {
+  renderEditUser(req, res, next);
 });
 
 router.post('/delete_user', (req, res, next) => {

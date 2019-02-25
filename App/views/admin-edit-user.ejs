@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit Users</title>
+  <link rel='stylesheet' href='/stylesheets/style.css'/>
+</head>
+<h2>Existing Users</h2>
+<table style="border-spacing: 10px;">
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Name</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% for (const { id, name } of users) { %>
+    <tr>
+      <td><%= id%></td>
+      <td><%= name%></td>
+    </tr>
+  <%} %>
+  </tbody>
+</table>
+<br>
+<br>
+<h2>Edit User</h2>
+<form action="/admin/edit_user" method="POST">
+  <p>
+    <label for="user-id">User Id:</label>
+    <input type="text" id="user-id" name="user_id" placeholder="7ebc4635-aad7-427f-ab11-d9b52ab6c2503">
+  </p>
+  <p>
+    <label for="edit-user-name">New User Name:</label>
+    <input type="text" id="edit-user-name" name="new_user_name" placeholder="JohnSmith">
+  </p>
+  <button type="submit">Save Changes</button>
+</form>
+<br>
+<br>
+<h2>Delete User</h2>
+<form action="/admin/delete_user" method="POST">
+  <p>
+    <label for="user-id">User Id:</label>
+    <input type="text" id="user-id" name="user_id" placeholder="7ebc4635-aad7-427f-ab11-d9b52ab6c2503">
+  </p>
+  <button type="submit">Delete</button>
+</form>
+<body>
+</body>
+</html>
