@@ -25,6 +25,12 @@ DELETE FROM customer
 WHERE id = $1;
 `;
 
+const UPDATE_USER_QUERY = `
+UPDATE customer
+      SET name = $1
+      WHERE id = $2;
+`;
+
 const renderLogin = (req, res, next) => {
   res.render('admin-login', {});
 };
@@ -109,8 +115,17 @@ router.post('/delete_user', (req, res, next) => {
 });
 
 router.post('/edit_user', (req, res, next) => {
-  const { user_id, new_name } = req.body;
-  // TODO: do relevant sql
+  const { user_id, new_user_name } = req.body;
+  console.log(req.body);
+  console.log(new_user_name);
+  pool.query(UPDATE_USER_QUERY, [new_user_name, user_id], (err, dbRes) => {
+    if (err) {
+      console.log(err);
+      res.send("error!");
+    } else {
+      res.redirect('/admin/edit-users')
+    }
+  });
 });
 
 module.exports = router;
