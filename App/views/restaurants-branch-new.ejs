@@ -6,14 +6,14 @@
   </head>
   <body>
     <h1>Register New Branch</h1>
-    <form action="/restaurants/new-branch" method="POST">
+    <form action="/restaurants/branch/new/new" method="POST">
       <p>
         <label for="branch-name">Branch name: </label>
         <input type="text" id="branch-name" name="name">
       </p>
       <p>
         <label for="branch-address">Branch address: </label>
-        <input type="text" id="branch-address" name="address">
+        <textarea id="branch-address" name="address"></textarea>
       </p>
       <p>
         <label for="branch-plus-code">Plus code (optional): </label>

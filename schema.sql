@@ -24,7 +24,7 @@ CREATE TABLE restaurant_cuisine (
 -- possible alternative implementation: Markdown?
 CREATE TABLE menu_item (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  restaurant_id uuid REFERENCES restaurant NOT NULL,
+  restaurant_id uuid NOT NULL REFERENCES restaurant ON DELETE CASCADE,
   name varchar(100) NOT NULL,
   cents integer NOT NULL,
   UNIQUE (restaurant_id, name)
@@ -32,7 +32,7 @@ CREATE TABLE menu_item (
 
 CREATE TABLE branch (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  restaurant_id uuid REFERENCES restaurant NOT NULL,
+  restaurant_id uuid NOT NULL REFERENCES restaurant ON DELETE CASCADE,
   name varchar(100) NOT NULL,
   address text NOT NULL,
   plus_code varchar(10),
@@ -43,6 +43,22 @@ CREATE TABLE branch (
   -- see https://plus.codes/
   -- location not strictly necessary for now
   UNIQUE (restaurant_id, address)
+);
+
+CREATE TABLE opening_hours (
+  -- semantics: start_day = 0 is Sunday, 6 is Saturday
+  -- if (start_day, start_time) > (end_day, end_time), that means
+  -- it's open through Saturday 2359.
+  -- Start day/time is inclusive, end day/time is exclusive, unless
+  -- end time is XX59.
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  branch_id uuid NOT NULL REFERENCES branch ON DELETE CASCADE,
+  start_day integer NOT NULL,
+  start_time time NOT NULL,
+  end_day integer NOT NULL,
+  end_time time NOT NULL,
+  CHECK (start_day >= 0 AND start_day < 7),
+  CHECK (end_day >= 0 AND end_day < 7)
 );
 
 CREATE TABLE customer (
