@@ -23,4 +23,24 @@
     <%} %>
     </tbody>
 </table>
+<br>
+<br>
+<h2>Edit Restaurant</h2>
+<form action="/admin/edit_restaurant" method="POST">
+    <p>
+        <label for="restaurant-id">Restaurant Id:</label>
+        <input type="text" id="restaurant-id" name="restaurant_id" placeholder="7ebc4635-aad7-427f-ab11-d9b52ab6c2503">
+    </p>
+    <p>
+        <label for="edit-restaurant-account-name">New Restaurant Account Name:</label>
+        <input type="text" id="edit-restaurant-account-name" name="new_restaurant_account_name" placeholder="NewRestaurantAccountName">
+    </p>
+    <p>
+        <label for="edit-restaurant-name">New Restaurant Name:</label>
+        <input type="text" id="edit-restaurant-name" name="new_restaurant_name" placeholder="Wing Hut">
+    </p>
+    <button type="submit">Save Changes</button>
+</form>
+<br>
+<br>
 </html>

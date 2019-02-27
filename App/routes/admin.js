@@ -36,6 +36,12 @@ SELECT id, account_name, restaurant_name
 FROM restaurant
 `;
 
+const UPDATE_RESTAURANT_QUERY = `
+UPDATE restaurant
+      SET account_name = $1, restaurant_name = $2
+      WHERE id = $3;
+`;
+
 const renderLogin = (req, res, next) => {
   res.render('admin-login', {});
 };
@@ -142,6 +148,21 @@ router.post('/edit_user', (req, res, next) => {
 
 router.get('/edit-restaurants', (req, res, next) => {
   renderEditRestaurants(req, res, next);
+});
+
+router.post('/edit_restaurant', (req, res, next) => {
+  const { restaurant_id, new_restaurant_account_name, new_restaurant_name } = req.body;
+  console.log(req.body);
+  console.log(new_restaurant_account_name);
+  console.log(new_restaurant_name);
+  pool.query(UPDATE_RESTAURANT_QUERY, [new_restaurant_account_name, new_restaurant_name, restaurant_id], (err, dbRes) => {
+    if (err) {
+      console.log(err);
+      res.send("error!");
+    } else {
+      res.redirect('/admin/edit-restaurants')
+    }
+  });
 });
 
 module.exports = router;
