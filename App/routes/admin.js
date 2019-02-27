@@ -57,10 +57,10 @@ const renderEditUser = (req, res, next) => {
   });
 };
 
-const renderEditRestaurents = (req, res, next) => {
+const renderEditRestaurants = (req, res, next) => {
   // TODO: generate list of all restaurents & feed into page
   // have simple UI for "edit restaurent", "delete restaurent" & more?
-  res.render('admin-edit-restaurents')
+  res.render('admin-edit-restaurants')
 };
 
 const renderEditReservations = (req, res, next) => {
@@ -126,6 +126,10 @@ router.post('/edit_user', (req, res, next) => {
       res.redirect('/admin/edit-users')
     }
   });
+});
+
+router.get('/edit-restaurants', (req, res, next) => {
+  res.render('admin-edit-restaurants');
 });
 
 module.exports = router;
