@@ -36,7 +36,19 @@ SELECT id, account_name, restaurant_name
 FROM restaurant
 `;
 
-const UPDATE_RESTAURANT_QUERY = `
+const UPDATE_RESTAURANT_RESTNAME_QUERY = `
+UPDATE restaurant
+      SET restaurant_name = $1
+      WHERE id = $2;
+`;
+
+const UPDATE_RESTAURANT_ACCNAME_QUERY = `
+UPDATE restaurant
+      SET account_name = $1
+      WHERE id = $2;
+`;
+
+const UPDATE_RESTAURANT_ALL_QUERY = `
 UPDATE restaurant
       SET account_name = $1, restaurant_name = $2
       WHERE id = $3;
@@ -155,14 +167,34 @@ router.post('/edit_restaurant', (req, res, next) => {
   console.log(req.body);
   console.log(new_restaurant_account_name);
   console.log(new_restaurant_name);
-  pool.query(UPDATE_RESTAURANT_QUERY, [new_restaurant_account_name, new_restaurant_name, restaurant_id], (err, dbRes) => {
-    if (err) {
-      console.log(err);
-      res.send("error!");
-    } else {
-      res.redirect('/admin/edit-restaurants')
-    }
-  });
+  if (new_restaurant_account_name === '') {
+    pool.query(UPDATE_RESTAURANT_RESTNAME_QUERY, [new_restaurant_name, restaurant_id], (err, dbRes) => {
+      if (err) {
+        console.log(err);
+        res.send("error!");
+      } else {
+        res.redirect('/admin/edit-restaurants')
+      }
+    });
+  } else if (new_restaurant_name === '') {
+    pool.query(UPDATE_RESTAURANT_ACCNAME_QUERY, [new_restaurant_account_name, restaurant_id], (err, dbRes) => {
+      if (err) {
+        console.log(err);
+        res.send("error!");
+      } else {
+        res.redirect('/admin/edit-restaurants')
+      }
+    });
+  } else {
+      pool.query(UPDATE_RESTAURANT_ALL_QUERY, [new_restaurant_account_name, new_restaurant_name, restaurant_id], (err, dbRes) => {
+        if (err) {
+          console.log(err);
+          res.send("error!");
+        } else {
+          res.redirect('/admin/edit-restaurants')
+        }
+      })
+  }
 });
 
 module.exports = router;
