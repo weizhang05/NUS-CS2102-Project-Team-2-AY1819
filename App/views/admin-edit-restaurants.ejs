@@ -9,14 +9,16 @@
     <thead>
     <tr>
         <th>Id</th>
-        <th>Name</th>
+        <th>Account Name</th>
+        <th>Restaurant Name</th>
     </tr>
     </thead>
     <tbody>
-    <% for (const { id, name } of users) { %>
+    <% for (const { id, account_name, restaurant_name } of restaurants) { %>
         <tr>
             <td><%= id%></td>
-            <td><%= name%></td>
+            <td><%= account_name%></td>
+            <td><%= restaurant_name%></td>
         </tr>
     <%} %>
     </tbody>

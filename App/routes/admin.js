@@ -31,6 +31,11 @@ UPDATE customer
       WHERE id = $2;
 `;
 
+const RESTAURANT_INFO_QUERY = `
+SELECT id, account_name, restaurant_name
+FROM restaurant
+`;
+
 const renderLogin = (req, res, next) => {
   res.render('admin-login', {});
 };
@@ -58,9 +63,16 @@ const renderEditUser = (req, res, next) => {
 };
 
 const renderEditRestaurants = (req, res, next) => {
+  pool.query(RESTAURANT_INFO_QUERY, (err, dbRes) => {
+    if (err) {
+      res.send("error!");
+    } else {
+      res.render('admin-edit-restaurants', {restaurants: dbRes.rows})
+    }
+  });
   // TODO: generate list of all restaurents & feed into page
   // have simple UI for "edit restaurent", "delete restaurent" & more?
-  res.render('admin-edit-restaurants')
+  // res.render('admin-edit-restaurants')
 };
 
 const renderEditReservations = (req, res, next) => {
@@ -129,7 +141,7 @@ router.post('/edit_user', (req, res, next) => {
 });
 
 router.get('/edit-restaurants', (req, res, next) => {
-  res.render('admin-edit-restaurants');
+  renderEditRestaurants(req, res, next);
 });
 
 module.exports = router;
