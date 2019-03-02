@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Reservations</title>
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
+</head>
+<h2>Existing Reservations</h2>
+<table style="border-spacing: 10px;">
+    <thead>
+    <tr>
+        <th>Booking Id</th>
+        <th>Customer Id</th>
+        <th>Customer Name</th>
+        <th>Branch Id</th>
+        <th>Timing</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% for (const { id, customer_id, name, branch_id, throughout } of reservations) { %>
+        <tr>
+            <td><%= id%></td>
+            <td><%= customer_id%></td>
+            <td><%= name%></td>
+            <td><%= branch_id%></td>
+            <td><%= throughout%></td>
+        </tr>
+    <%} %>
+    </tbody>
+</table>
+<br>
+<br>
+<h2>Edit Restaurant</h2>
+<form action="/admin/edit_reservation" method="POST">
+    <p>
+        <label for="reservation-id">Reservation Id:</label>
+        <input type="text" id="reservation-id" name="reservation_id" placeholder="5fe63e0f-e526-4f3c-afb7-677d8f913e22">
+    </p>
+    <p>
+        <label for="edit-reservation-timing">New Reservation Timing:</label>
+        <input type="text" id="edit-reservation-timing" name="new_reservation_timing" placeholder="[&quot;2010-01-01 16:30:00&quot;,&quot;2010-01-01 18:00:00&quot;)">
+    </p>
+    <button type="submit">Save Changes</button>
+</form>
+<br>
+<br>
+</html>

@@ -54,6 +54,12 @@ UPDATE restaurant
       WHERE id = $3;
 `;
 
+const RESERVATION_INFO_QUERY = `
+SELECT b.id, b.customer_id, c.name, b.branch_id, b.throughout
+FROM booking b, customer c
+WHERE b.customer_id = c.id;
+`;
+
 const renderLogin = (req, res, next) => {
     res.render('admin-login', {});
 };
@@ -91,8 +97,13 @@ const renderEditRestaurants = (req, res, next) => {
 };
 
 const renderEditReservations = (req, res, next) => {
-    // TODO: ???
-    res.render('admin-edit-reservations')
+    pool.query(RESERVATION_INFO_QUERY, (err, dbRes) => {
+        if (err) {
+            res.send("error!");
+        } else {
+            res.render('admin-edit-reservations', {reservations: dbRes.rows});
+        }
+    });
 };
 
 router.get('/', (req, res, next) => {
@@ -192,6 +203,10 @@ router.post('/edit_restaurant', (req, res, next) => {
             }
         })
     }
+});
+
+router.get('/edit-bookings', (req, res, next) => {
+    renderEditReservations(req, res, next);
 });
 
 module.exports = router;
