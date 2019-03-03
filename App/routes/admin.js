@@ -54,6 +54,11 @@ UPDATE restaurant
       WHERE id = $3;
 `;
 
+const DELETE_RESTAURANT_QUERY = `
+DELETE FROM restaurant
+where id = $1;
+`;
+
 const RESERVATION_INFO_QUERY = `
 SELECT b.id, b.customer_id, c.name, b.branch_id, b.throughout
 FROM booking b, customer c
@@ -203,6 +208,17 @@ router.post('/edit_restaurant', (req, res, next) => {
             }
         })
     }
+});
+
+router.post('/delete_restaurant', (req, res, next) => {
+    const { restaurant_id } = req.body;
+    pool.query(DELETE_RESTAURANT_QUERY, [restaurant_id], (err, dbRes) => {
+        if (err) {
+            res.send("error!");
+        } else {
+            res.redirect('/admin/edit-restaurants')
+        }
+    });
 });
 
 router.get('/edit-bookings', (req, res, next) => {
