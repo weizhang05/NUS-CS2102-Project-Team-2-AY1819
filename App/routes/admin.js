@@ -2,6 +2,9 @@ let express = require('express');
 let pool = require('../pool');
 let router = express.Router();
 
+// TODO: document and compartmentalize routes/queries
+// TODO: some preprocessing to make input more user-friendly
+// TODO: standardize booking and reservation
 // queries
 const EXISTING_ADMIN_QUERY = `
 SELECT id
@@ -63,6 +66,17 @@ const RESERVATION_INFO_QUERY = `
 SELECT b.id, b.customer_id, c.name, b.branch_id, b.throughout
 FROM booking b, customer c
 WHERE b.customer_id = c.id;
+`;
+
+const UPDATE_RESERVATION_QUERY = `
+UPDATE booking
+      SET throughout = $1
+      WHERE id = $2;
+`;
+
+const DELETE_RESERVATION_QUERY = `
+DELETE FROM booking
+where id = $1;
 `;
 
 const renderLogin = (req, res, next) => {
@@ -223,6 +237,28 @@ router.post('/delete_restaurant', (req, res, next) => {
 
 router.get('/edit-bookings', (req, res, next) => {
     renderEditReservations(req, res, next);
+});
+
+router.post('/edit_reservation', (req, res, next) => {
+    const { reservation_timing, reservation_id } = req.body;
+    pool.query(UPDATE_RESERVATION_QUERY, [reservation_timing, reservation_id], (err, dbRes) => {
+        if (err) {
+            res.send("error!");
+        } else {
+            res.redirect('/admin/edit-bookings')
+        }
+    });
+});
+
+router.post('/delete_reservation', (req, res, next) => {
+    const { reservation_id } = req.body;
+    pool.query(DELETE_RESERVATION_QUERY, [reservation_id], (err, dbRes) => {
+        if (err) {
+            res.send("error!");
+        } else {
+            res.redirect('/admin/edit-bookings')
+        }
+    });
 });
 
 module.exports = router;

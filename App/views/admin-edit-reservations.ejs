@@ -29,7 +29,7 @@
 </table>
 <br>
 <br>
-<h2>Edit Restaurant</h2>
+<h2>Edit Reservation</h2>
 <form action="/admin/edit_reservation" method="POST">
     <p>
         <label for="reservation-id">Reservation Id:</label>
@@ -37,10 +37,18 @@
     </p>
     <p>
         <label for="edit-reservation-timing">New Reservation Timing:</label>
-        <input type="text" id="edit-reservation-timing" name="new_reservation_timing" placeholder="[&quot;2010-01-01 16:30:00&quot;,&quot;2010-01-01 18:00:00&quot;)">
+        <input type="text" id="edit-reservation-timing" name="reservation_timing" placeholder="[&quot;2010-01-01 16:30:00&quot;,&quot;2010-01-01 18:00:00&quot;)">
     </p>
     <button type="submit">Save Changes</button>
 </form>
 <br>
 <br>
+<h2>Delete Reservation</h2>
+<form action="/admin/delete_reservation" method="POST">
+    <p>
+        <label for="reservation-id">Reservation Id:</label>
+        <input type="text" id="reservation-id" name="reservation_id" placeholder="7ebc4635-aad7-427f-ab11-d9b52ab6c2503">
+    </p>
+    <button type="submit">Delete</button>
+</form>
 </html>
