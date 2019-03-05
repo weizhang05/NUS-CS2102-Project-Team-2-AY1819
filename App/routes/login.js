@@ -30,7 +30,7 @@ router.post('/', function(req, res, next) {
 			 console.log("Login failed!");
 		}
 		
-		res.redirect('/login')
+		res.redirect('/')
 	});
 });
 

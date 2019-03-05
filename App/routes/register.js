@@ -22,17 +22,19 @@ router.post('/', function(req, res, next) {
 	var pw = req.body.password;
 	var confirmPw = req.body.confirmPassword;
 	
-	var registerQuery = "SELECT * FROM customer WHERE '"+email+"' = email";
+	var accountExistQuery = "SELECT * FROM customer WHERE '"+email+"' = email";
 	
-	pool.query(registerQuery, (err, data) => {
+	pool.query(accountExistQuery, (err, data) => {
 		if(data["rowCount"] == 1){
 			console.log("User exists!");
 		}
 		else{
-			 console.log("meowwww");
+			var createAccountQuery = "INSERT INTO customer(name, email, password, non_user) values('"+name+"','"+email+"','"+pw+"',false);";
+			pool.query(createAccountQuery, (err, data) => {} );
+			console.log("Account created!");
 		}
 		
-		res.redirect('/register')
+		res.redirect('/')
 	});
 });
 
