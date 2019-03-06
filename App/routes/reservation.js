@@ -12,25 +12,9 @@ const pool = new Pool({
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('reservation', { title: 'Reservation' });
-});
-
-// POST
-router.post('/', function(req, res, next) {
-	var email = req.body.email;
-	var pw = req.body.password;
-	
-	var loginQuery = "select * from customer where email = '"+email+"' and password = '"+pw+"'";
-	
-	pool.query(loginQuery, (err, data) => {
-		if(data["rowCount"] == 1){
-			console.log("Login success!");
-		}
-		else{
-			 console.log("Login failed!");
-		}
-		
-		res.redirect('/reservation')
+	var getCuisineQuery = "SELECT * FROM cuisine";
+	pool.query(getCuisineQuery, (err, data) => {
+		res.render('reservation', { title: 'Reservation', data: data.rows });
 	});
 });
 
