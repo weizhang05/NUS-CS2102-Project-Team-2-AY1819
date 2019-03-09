@@ -86,11 +86,11 @@ const renderLogin = (req, res, next) => {
 const renderDashboard = (req, res, next) => {
     const admin_id = req.cookies.admin;
     pool.query(ADMIN_INFO_QUERY, [admin_id], (err, dbRes) => {
-        if (err) {
-            res.send("error!");
-        } else {
+        if (dbRes.rows[0] !== undefined) {
             const { account_name } = dbRes.rows[0];
             res.render('admin-dashboard', {user_name: account_name});
+        } else {
+            res.send("error!");
         }
     })
 };
