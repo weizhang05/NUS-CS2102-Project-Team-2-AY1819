@@ -1,6 +1,11 @@
-var express = require('express');
-var pool = require('../pool');
-var router = express.Router();
+const express = require('express');
+const pool = require('../pool');
+const branchRouter = require('./branch');
+const menuItemRouter = require('./menu');
+const router = express.Router();
+
+router.use('/branch', branchRouter);
+router.use('/menu', menuItemRouter);
 
 const NEW_RESTAURANT_QUERY = `
 INSERT INTO restaurant (account_name, restaurant_name)
@@ -20,27 +25,25 @@ FROM restaurant
 WHERE id = $1;
 `;
 
-const BRANCHES_QUERY = `
-SELECT id, name, address, plus_code, capacity
-FROM branch
-WHERE restaurant_id = $1;
-`
-
 const EDIT_RESTAURANT_QUERY = `
 UPDATE restaurant
 SET account_name = $2, restaurant_name = $3
 WHERE id = $1;
 `;
 
-const NEW_BRANCH_WITHOUT_PLUS_CODE = `
-INSERT INTO branch (restaurant_id, name, address, capacity)
-VALUES ($1, $2, $3, $4);
+const BRANCHES_QUERY = `
+SELECT id, name, address, plus_code, capacity
+FROM branch
+WHERE restaurant_id = $1
+ORDER BY name ASC;
 `;
 
-const NEW_BRANCH_WITH_PLUS_CODE = `
-INSERT INTO branch (restaurant_id, name, address, plus_code, capacity)
-VALUES ($1, $2, $3, $4, $5);
-`;
+const MENU_QUERY = `
+SELECT id, name, cents
+FROM menu_item
+WHERE restaurant_id = $1
+ORDER BY name ASC;
+`
 
 const renderLogin = (req, res, next) => {
   res.render('restaurants', {});
@@ -58,13 +61,21 @@ const renderDashboard = (req, res, next) => {
           res.send("error!");
         } else {
           const branches = dbBranchesRes.rows;
-          res.render('restaurants-dashboard', {
-            account_name,
-            restaurant_name,
-            branches,
+          pool.query(MENU_QUERY, [restaurant_id], (err, dbMenuRes) => {
+            if (err) {
+              res.send("error!");
+            } else {
+              const menu = dbMenuRes.rows;
+              res.render('restaurants-dashboard', {
+                account_name,
+                restaurant_name,
+                branches,
+                menu
+              });
+            }
           });
         }
-      })
+      });
     }
   });
 };
@@ -135,32 +146,6 @@ router.post('/edit', (req, res, next) => {
       res.redirect('/restaurants');
     }
   });
-});
-
-router.get('/new-branch', (req, res, next) => {
-  res.render('restaurants-new-branch');
-});
-
-router.post('/new-branch', (req, res, next) => {
-  const restaurant_id = req.cookies.restaurants;
-  const { name, address, plus_code, capacity } = req.body;
-  if (plus_code) {
-    pool.query(NEW_BRANCH_WITH_PLUS_CODE, [restaurant_id, name, address, plus_code, capacity], (err, dbRes) => {
-      if (err) {
-        res.send("error!");
-      } else {
-        res.redirect("/restaurants");
-      }
-    });
-  } else {
-    pool.query(NEW_BRANCH_WITHOUT_PLUS_CODE, [restaurant_id, name, address, capacity], (err, dbRes) => {
-      if (err) {
-        res.send("error!");
-      } else {
-        res.redirect("/restaurants");
-      }
-    });
-  }
 });
 
 module.exports = router;
