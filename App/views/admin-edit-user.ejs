@@ -3,9 +3,15 @@
 <head>
   <title>Edit Users</title>
   <link rel='stylesheet' href='/stylesheets/style.css'/>
+  <script src="/scripts/admin_edit_users.js" defer></script>
 </head>
 <h2>Existing Users</h2>
-<table style="border-spacing: 10px;">
+<p>
+  <label for="search-users">Search Users:</label>
+  <input type="text" id="search-users-input" name="search_users"/>
+</p>
+<p>There are <span id="user-count"><%= users.length %></span> matching users.</p>
+<table id="users-display" style="border-spacing: 10px;">
   <thead>
     <tr>
       <th>Id</th>
