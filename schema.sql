@@ -69,7 +69,6 @@ CREATE TABLE customer (
   -- to identify if the customer entity is a user of the system
   -- used to identify call-in bookings
   non_user bool NOT NULL
-  name varchar(100) NOT NULL
 );
 
 CREATE TABLE booking (
