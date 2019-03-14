@@ -18,9 +18,9 @@ var aboutRouter = require('./routes/about');
 var customersRouter = require('./routes/customers');
 
 var reservationRouter = require('./routes/reservation');
-var selectRestaurantRouter = require('./routes/selectRestaurant');
-var selectBranchRouter = require('./routes/selectBranch');
-var makeReservation = require('./routes/makeReservation');
+//var selectRestaurantRouter = require('./routes/selectRestaurant');
+//var selectBranchRouter = require('./routes/selectBranch');
+//var makeReservation = require('./routes/makeReservation');
 
 var app = express();
 
@@ -45,9 +45,9 @@ app.use('/admin', adminRouter);
 app.use('/about', aboutRouter);
 
 app.use('/reservation', reservationRouter);
-app.use('/selectRestaurant', selectRestaurantRouter);
-app.use('/selectBranch', selectBranchRouter);
-app.use('/makeReservation', makeReservation);
+//app.use('/selectRestaurant', selectRestaurantRouter);
+//app.use('/selectBranch', selectBranchRouter);
+//app.use('/makeReservation', makeReservation);
 
 app.use('/customers', customersRouter);
 
