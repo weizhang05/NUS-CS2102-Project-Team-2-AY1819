@@ -5,4 +5,5 @@ Setting up commands:
 ```
 cd App
 npm install
+node bin /www
 ```

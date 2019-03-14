@@ -94,8 +94,6 @@ CREATE TABLE booking (
   -- we want to preserve bookings even if the restaurant/branch
   -- no longer exists
   customer_id uuid REFERENCES customer NOT NULL,
-  -- extra details like dietary restrictions, needing wheelchair access, etc
-  details text,
   branch_id uuid REFERENCES branch,
   throughout tsrange NOT NULL,
   -- TODO: determine if this exclusion contraint does what I think it
