@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Restauranteur Login</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="/scripts/restaurants.js" defer></script>
+  </head>
+  <body>
+    <h1>Restauranteur Login</h1>
+    <div id="new-restauranteur-create-form">
+        <form action="/restaurants" method="POST">
+          <p>
+            <label for="new-account-name">Account name: </label>
+            <input type="text" id="new-account-name" name="account_name" placeholder="e.g. sallyskitchen">
+          </p>
+          <p>
+            <label for="new-restaurant-name">Restaurant name: </label>
+            <input type="text" id="new-restaurant-name" name="restaurant_name" placeholder="e.g. Sally's Kitchen">
+          </p>
+          <input type="hidden" id="login-type-new" name="login_type" value="new">
+          <button type="submit">Create Account</button>
+        </form>
+        <p>Already have an account? <a href="#" class="toggle-signin">Signin here!</a></p>
+    </div>
+    <div id="existing-restauranteur-login" style="display: none">
+        <form action="/restaurants" method="post">
+          <p>
+            <label for="existing-account-name">Account name: </label>
+            <input type="text" id="existing-account-name" name="account_name" placeholder="e.g. sallyskitchen">
+          </p>
+          <input type="hidden" id="login-type-existing" name="login_type" value="existing">
+          <button type="submit">Login</button>
+        </form>
+        <p>New user? <a href="#" class="toggle-signin">Create an account here!</a></p>
+    </div>
+  </body>
+</html>

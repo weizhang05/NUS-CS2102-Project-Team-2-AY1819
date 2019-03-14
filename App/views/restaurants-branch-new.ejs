@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Register New Branch</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1>Register New Branch</h1>
+    <form action="/restaurants/branch/new/new" method="POST">
+      <p>
+        <label for="branch-name">Branch name: </label>
+        <input type="text" id="branch-name" name="name">
+      </p>
+      <p>
+        <label for="branch-address">Branch address: </label>
+        <textarea id="branch-address" name="address"></textarea>
+      </p>
+      <p>
+        <label for="branch-plus-code">Plus code (optional): </label>
+        <input type="text" id="branch-plus-code" name="plus_code">
+      </p>
+      <p>
+        <label for="branch-capacity">Capacity: </label>
+        <input type="number" id="branch-capacity" name="capacity">
+      </p>
+      <button type="submit">Register Branch</button>
+    </form>
+  </body>
+</html>

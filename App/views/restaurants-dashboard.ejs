@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= restaurant_name %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <p><%= restaurant_name %> Dashboard</p>
+    <h1>Welcome, <%= account_name %></h1>
+    <p><a href="/restaurants/edit">Account settings</a></p>
+    <h2>Branches</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Address</th>
+          <th>Available/Capacity</th>
+          <th>Map</th>
+          <th>Edit</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (const { id, name, address, plus_code, capacity } of branches) { %>
+          <tr>
+            <td><%= name %></td>
+            <td><%= address %></td>
+            <td>??/<%= capacity %></td>
+            <td><% if (plus_code) {%>
+              <iframe
+                width="160"
+                height="160"
+                frameborder="0" style="border:0"
+                src="https://www.google.com/maps/embed/v1/place?key=AIzaSyC7XV830fTBzmprQW1s0Bv4NH1l9E1tH_4&q=<%= encodeURIComponent(plus_code) %>" allowfullscreen>
+              </iframe>
+            <% } %>
+            </td>
+            <td><a href="/restaurants/branch/<%= id.replace(/-/g,'') %>/edit">Edit</a></td>
+            <td>
+              <form action="/restaurants/branch/<%= id.replace(/-/g,'') %>/delete" method="POST">
+                <button>Delete!</button>
+              </form>
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+    <p><a href="/restaurants/branch/new/new">Register new branch</a></p>
+    <h2>Menu</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Price</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (const { id, name, cents } of menu) { %>
+          <tr>
+            <td><%= name %></td>
+            <td><%= cents.toString().slice(0, -2) + "." + cents.toString().slice(-2) %></td>
+            <td>
+              <form action="/restaurants/menu/<%= id.replace(/-/g,'') %>/delete" method="POST">
+                <button>Delete!</button>
+              </form>
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+    <h3>Add Menu Item</h3>
+    <form action="/restaurants/menu/new/new" method="POST">
+      <p>
+        <label for="new-menu-item-name">Menu item name: </label>
+        <input type="text" id="new-menu-item-name" name="name">
+      </p>
+      <p>
+        <label for="new-menu-item-name">Menu item price: </label>
+        <input type="number" id="new-menu-item-name" name="price" min="0" step="0.01">
+      </p>
+      <button type="submit">Add</button>
+    </form>
+    <p><a href="/restaurants/logout">Logout</a></p>
+  </body>
+</html>
