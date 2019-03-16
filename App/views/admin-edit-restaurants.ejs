@@ -3,9 +3,15 @@
 <head>
     <title>Edit Restaurants</title>
     <link rel='stylesheet' href='/stylesheets/style.css'/>
+    <script src="/scripts/admin-edit-restaurants.js"></script>
 </head>
 <h2>Existing Restaurants</h2>
-<table style="border-spacing: 10px;">
+<p>
+    <label for="search-restaurants">Search Restaurants:</label>
+    <input type="text" id="search-restaurants-input" name="search_restaurants"/>
+</p>
+<p>There are <span id="restaurants-count"><%= restaurants.length %></span> matching restaurants.</p>
+<table id ="restaurants-display" style="border-spacing: 10px;">
     <thead>
     <tr>
         <th>Id</th>
