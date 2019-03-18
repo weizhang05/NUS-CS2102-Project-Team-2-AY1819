@@ -110,7 +110,7 @@ const renderEditRestaurants = (req, res, next) => {
         if (err) {
             res.send("error!");
         } else {
-            res.render('admin-edit-restaurants', {restaurants: dbRes.rows})
+            res.render('admin-edit-restaurants', {restaurants: dbRes.rows, message: req.flash('info')});
         }
     });
 };
@@ -195,6 +195,7 @@ router.post('/edit_restaurant', (req, res, next) => {
     console.log(new_restaurant_account_name);
     console.log(new_restaurant_name);
     if (new_restaurant_account_name === '') {
+        req.flash('info', 'Successfully updated!')
         pool.query(UPDATE_RESTAURANT_RESTNAME_QUERY, [new_restaurant_name, restaurant_id], (err, dbRes) => {
             if (err) {
                 console.log(err);
@@ -204,6 +205,7 @@ router.post('/edit_restaurant', (req, res, next) => {
             }
         });
     } else if (new_restaurant_name === '') {
+        req.flash('info', 'Successfully updated!')
         pool.query(UPDATE_RESTAURANT_ACCNAME_QUERY, [new_restaurant_account_name, restaurant_id], (err, dbRes) => {
             if (err) {
                 console.log(err);
@@ -213,12 +215,13 @@ router.post('/edit_restaurant', (req, res, next) => {
             }
         });
     } else {
+        req.flash('info', 'Successfully updated!')
         pool.query(UPDATE_RESTAURANT_ALL_QUERY, [new_restaurant_account_name, new_restaurant_name, restaurant_id], (err, dbRes) => {
             if (err) {
                 console.log(err);
                 res.send("error!");
             } else {
-                res.redirect('/admin/edit-restaurants')
+                res.redirect('/admin/edit-restaurants');
             }
         })
     }
@@ -226,6 +229,7 @@ router.post('/edit_restaurant', (req, res, next) => {
 
 router.post('/delete_restaurant', (req, res, next) => {
     const { restaurant_id } = req.body;
+    req.flash('info', 'Successfully deleted!');
     pool.query(DELETE_RESTAURANT_QUERY, [restaurant_id], (err, dbRes) => {
         if (err) {
             res.send("error!");
