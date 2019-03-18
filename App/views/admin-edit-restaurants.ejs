@@ -32,10 +32,15 @@
 <br>
 <br>
 <h2>Edit Restaurant</h2>
+
 <form action="/admin/edit_restaurant" method="POST">
     <p>
         <label for="restaurant-id">Restaurant Id:</label>
-        <input type="text" id="restaurant-id" name="restaurant_id" placeholder="7ebc4635-aad7-427f-ab11-d9b52ab6c2503">
+        <select id = id="restaurant-id" name="restaurant_id">
+            <% for (const { id } of restaurants) { %>
+                <option><%= id%></option>
+            <%} %>
+        </select>
     </p>
     <p>
         <label for="edit-restaurant-account-name">New Restaurant Account Name:</label>
@@ -53,7 +58,11 @@
 <form action="/admin/delete_restaurant" method="POST">
     <p>
         <label for="restaurant-id">Restaurant Id:</label>
-        <input type="text" id="restaurant-id" name="restaurant_id" placeholder="7ebc4635-aad7-427f-ab11-d9b52ab6c2503">
+        <select id = id="restaurant-id" name="restaurant_id">
+            <% for (const { id } of restaurants) { %>
+                <option><%= id%></option>
+            <%} %>
+        </select>
     </p>
     <button type="submit">Delete</button>
 </form>
