@@ -1,5 +1,10 @@
 console.log("in the restaurants");
 
+function closeAlert() {
+    var x = document.getElementById("success-alert");
+    x.remove();
+}
+
 const restaurant_search = document.getElementById("search-restaurants-input");
 const restaurant_display = document.getElementById("restaurants-display");
 const restaurant_count = document.getElementById("restaurants-count");
