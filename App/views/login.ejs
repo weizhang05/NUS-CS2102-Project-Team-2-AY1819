@@ -5,10 +5,13 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
-	<form method="" action="">
-		<label>Username</label><input type="text" name="username">
+	<a href="/">Home</a> <a href="/login">Login</a> <a href="/register">Register</a> <a href="/reservation">Reservation</a>
+	<br>
+	
+	<form method="post" action="login">
+		Email: <input type="text" name="email" id="email">
 		<br>
-		<label>Password</label><input type="password" name="password">
+		Password: <input type="password" name="password" id="password">
 		<br>
 		<button type="submit" onclick="">Log In</button>
 	</form>
