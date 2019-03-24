@@ -12,7 +12,6 @@ var usersRouter = require('./routes/users');
 
 var loginRouter = require('./routes/login');
 var registerRouter = require('./routes/register');
-var reservationRouter = require('./routes/reservation');
 var restaurantsRouter = require('./routes/restaurants');
 var adminRouter = require('./routes/admin');
 var aboutRouter = require('./routes/about');
@@ -43,7 +42,6 @@ app.use('/users', usersRouter);
 
 app.use('/login', loginRouter);
 app.use('/register', registerRouter);
-app.use('/reservation', reservationRouter);
 app.use('/restaurants', restaurantsRouter);
 app.use('/admin', adminRouter);
 app.use('/about', aboutRouter);
