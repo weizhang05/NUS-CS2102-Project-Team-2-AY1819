@@ -162,7 +162,7 @@ router.get('/dashboard', (req, res, next) => {
 
 router.get('/logout', (req, res, next) => {
     res.clearCookie('admin');
-    res.redirect('/admin');
+    res.redirect('/');
 });
 
 // login
