@@ -78,4 +78,47 @@
     </p>
     <button type="submit">Delete</button>
 </form>
+<br>
+<br>
+    <h2>Add Cuisine</h2>
+    <form action="/admin/cuisine/new/new" method="POST">
+        <p>
+            <label for="restaurant-id">Restaurant Id:</label>
+            <input type="text" id="restaurant-id" name="restaurant_id" placeholder="UUID">
+        </p>
+        <p>
+            <label for="cuisine-name">Cuisine Name:</label>
+            <input type="text" id="cuisine-name" name="cuisine_name" placeholder="Western">
+        </p>
+        <button type="submit">Add</button>
+    </form>
+    <br>
+    <br>
+    <h2>Delete Cuisine</h2>
+    <p>
+        <label for="search-cuisines">Search Cuisines:</label>
+        <input type="text" id="search-cuisines-input" name="search_cuisines"/>
+    </p>
+    <table id ="cuisines-display">
+        <thead>
+        <tr>
+            <th>Restaurant Name</th>
+            <th>Cuisine Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% for (const {pair_id, restaurant_name, cuisine_name } of restaurant_cuisines) { %>
+        <tr>
+            <td><%= restaurant_name%></td>
+            <td><%= cuisine_name%></td>
+            <td>
+                <form action="/admin/cuisine/<%= pair_id.replace(/-/g,'') %>/delete" method="POST">
+                    <button type="submit">Delete!</button>
+                </form>
+            </td>
+        </tr>
+        <%} %>
+        </tbody>
+    </table>
+
 </html>

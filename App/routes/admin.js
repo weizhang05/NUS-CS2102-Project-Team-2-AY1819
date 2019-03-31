@@ -2,6 +2,10 @@ let express = require('express');
 let pool = require('../pool');
 let router = express.Router();
 
+const cuisineRouter = require('./cuisine');
+
+router.use('/cuisine', cuisineRouter);
+
 // TODO: document and compartmentalize routes/queries
 // TODO: some preprocessing to make input more user-friendly
 // TODO: standardize booking and reservation
@@ -37,6 +41,13 @@ UPDATE customer
 const RESTAURANT_INFO_QUERY = `
 SELECT id, account_name, restaurant_name
 FROM restaurant
+`;
+
+const CUISINES_INFO_QUERY = `
+SELECT rc.id pair_id, r.restaurant_name, c.name cuisine_name
+FROM restaurant_cuisine rc join cuisine c on rc.cuisine_id = c.id 
+    join restaurant r on r.id = rc.restaurant_id
+ORDER BY r.restaurant_name ASC;
 `;
 
 const UPDATE_RESTAURANT_RESTNAME_QUERY = `
@@ -106,11 +117,23 @@ const renderEditUser = (req, res, next) => {
 };
 
 const renderEditRestaurants = (req, res, next) => {
-    pool.query(RESTAURANT_INFO_QUERY, (err, dbRes) => {
+    pool.query(RESTAURANT_INFO_QUERY, (err, restaurantRes) => {
         if (err) {
             res.send("error!");
         } else {
-            res.render('admin-edit-restaurants', {restaurants: dbRes.rows, message: req.flash('info')});
+            pool.query(CUISINES_INFO_QUERY, (err, cuisineRes) => {
+              if (err) {
+                  console.log(err);
+                  res.send("error!");
+              } else {
+                  // console.log(cuisineRes);
+                  res.render('admin-edit-restaurants', {
+                    restaurants: restaurantRes.rows,
+                    restaurant_cuisines: cuisineRes.rows,
+                    message: req.flash('info')
+                  });
+              }
+            });
         }
     });
 };
@@ -145,7 +168,7 @@ router.get('/logout', (req, res, next) => {
 // login
 router.post('/', (req, res, next) => {
     const { account_name } = req.body;
-    console.log(account_name);
+    // console.log(account_name);
     pool.query(EXISTING_ADMIN_QUERY, [account_name], (err, dbRes) => {
         if (err || dbRes.rows.length !== 1) {
             res.send("error!");
@@ -173,8 +196,6 @@ router.post('/delete_user', (req, res, next) => {
 
 router.post('/edit_user', (req, res, next) => {
     const { user_id, new_user_name } = req.body;
-    console.log(req.body);
-    console.log(new_user_name);
     pool.query(UPDATE_USER_QUERY, [new_user_name, user_id], (err, dbRes) => {
         if (err) {
             console.log(err);
@@ -191,11 +212,11 @@ router.get('/edit-restaurants', (req, res, next) => {
 
 router.post('/edit_restaurant', (req, res, next) => {
     const { restaurant_id, new_restaurant_account_name, new_restaurant_name } = req.body;
-    console.log(req.body);
-    console.log(new_restaurant_account_name);
-    console.log(new_restaurant_name);
+    // console.log(req.body);
+    // console.log(new_restaurant_account_name);
+    // console.log(new_restaurant_name);
     if (new_restaurant_account_name === '') {
-        req.flash('info', 'Successfully updated!')
+        req.flash('info', 'Successfully updated!');
         pool.query(UPDATE_RESTAURANT_RESTNAME_QUERY, [new_restaurant_name, restaurant_id], (err, dbRes) => {
             if (err) {
                 console.log(err);
@@ -205,7 +226,7 @@ router.post('/edit_restaurant', (req, res, next) => {
             }
         });
     } else if (new_restaurant_name === '') {
-        req.flash('info', 'Successfully updated!')
+        req.flash('info', 'Successfully updated!');
         pool.query(UPDATE_RESTAURANT_ACCNAME_QUERY, [new_restaurant_account_name, restaurant_id], (err, dbRes) => {
             if (err) {
                 console.log(err);
@@ -215,7 +236,7 @@ router.post('/edit_restaurant', (req, res, next) => {
             }
         });
     } else {
-        req.flash('info', 'Successfully updated!')
+        req.flash('info', 'Successfully updated!');
         pool.query(UPDATE_RESTAURANT_ALL_QUERY, [new_restaurant_account_name, new_restaurant_name, restaurant_id], (err, dbRes) => {
             if (err) {
                 console.log(err);

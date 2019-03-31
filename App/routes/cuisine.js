@@ -30,46 +30,65 @@ WHERE id = $1
 
 const DELETE_RESTAURANT_CUISINE = `
 DELETE FROM restaurant_cuisine
-WHERE id = $1 AND restaurant_id = $2
+WHERE id = $1 
 `;
 
 
-function insert_restaurant_cuisine(res, restaurant_id, cuisine_id) {
+function insert_restaurant_cuisine(req, res, restaurant_id, cuisine_id) {
   pool.query(NEW_RESTAURANT_CUISINE, [restaurant_id, cuisine_id], (err, _) => {
     if (err) {
+      console.log(err);
       res.send("error_inserting_restaurant_cuisine!");
     } else {
-      res.redirect("/restaurants");
+      redirect(req, res);
     }
   });
 }
 
-// note: itemId is ignored.
-router.post('/:itemId/new', (req, res, next) => {
-  const restaurant_id = req.cookies.restaurants;
-  const { name } = req.body;
+// note: restaurant_id is ignored if user is not an admin
+router.post('/:restaurant_id/new', (req, res, next) => {
+  const { restaurant_id: r_id, cuisine_name } = req.body;
+  const restaurant_id = (function(is_admin) {
+    if (is_admin) {
+      return r_id;
+    } else {
+      return req.cookies.restaurants;
+    }
+  })(req.cookies.admin !== undefined);
+
+  console.log(cuisine_name);
   // get cuisine id, if does not exist, create
   // insert restaurant_cuisine
-  pool.query(INSERT_OR_RETRIEVE_CUISINE, [name], (err, dbRes) => {
+  pool.query(INSERT_OR_RETRIEVE_CUISINE, [cuisine_name], (err, dbRes) => {
     if (err) {
+      console.log(cuisine_name);
+      console.log(err);
       res.send("error inserting/retriving cuisine");
     } else {
       const cuisine_id = dbRes.rows[0].id;
-      insert_restaurant_cuisine(res, restaurant_id, cuisine_id)
+      insert_restaurant_cuisine(req, res, restaurant_id, cuisine_id)
     }
   });
 });
 
 router.post('/:itemId/delete', (req, res, next) => {
-  const restaurant_id = req.cookies.restaurants;
   const { itemId } = req.params;
-  pool.query(DELETE_RESTAURANT_CUISINE, [itemId, restaurant_id], (err, _) => {
+  pool.query(DELETE_RESTAURANT_CUISINE, [itemId], (err, _) => {
     if (err) {
       res.send("error!");
     } else {
-      res.redirect("/restaurants");
+      redirect(req, res);
     }
   });
 });
+
+function redirect(req, res) {
+  // bad code here... shouldn't be hardcoded
+  if (req.cookies.admin === undefined) {
+    res.redirect("/restaurants");
+  } else {
+    res.redirect("/admin/edit-restaurants")
+  }
+}
 
 module.exports = router;
