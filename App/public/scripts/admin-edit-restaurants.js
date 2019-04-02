@@ -5,6 +5,14 @@ function closeAlert() {
     x.remove();
 }
 
+$(document).ready(function () {
+    $('.restaurant-id-cuisine').on('change', function() {
+        var temp = $('.restaurant-id-cuisine :selected').text();
+        var restaurantName = $("td:contains('" + temp + "')").parent().find("td").eq(2).text();
+        $("#restaurant-name").val(restaurantName);
+    })
+});
+
 const restaurant_search = document.getElementById("search-restaurants-input");
 const restaurant_display = document.getElementById("restaurants-display");
 const restaurant_count = document.getElementById("restaurants-count");

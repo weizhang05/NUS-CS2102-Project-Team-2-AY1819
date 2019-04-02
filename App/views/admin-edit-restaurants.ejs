@@ -3,10 +3,10 @@
 <head>
     <title>Edit Restaurants</title>
     <link rel='stylesheet' href='/stylesheets/style.css'/>
-    <script src="/scripts/admin-edit-restaurants.js" defer></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="/scripts/admin-edit-restaurants.js" defer></script>
 
 <% if (message != '') { %>
     <div id = "success-alert" class="alert alert-success alert-dismissible fade show" role="alert">
@@ -84,7 +84,15 @@
     <form action="/admin/cuisine/new/new" method="POST">
         <p>
             <label for="restaurant-id">Restaurant Id:</label>
-            <input type="text" id="restaurant-id" name="restaurant_id" placeholder="UUID">
+            <select class="restaurant-id-cuisine" id="restaurant-id" name="restaurant_id">
+                <% for (const { id } of restaurants) { %>
+                    <option><%= id%></option>
+                <%} %>
+            </select>
+        </p>
+        <p>
+            <label for = "restaurant-name">Restaurant Name: </label>
+            <input type="text" id="restaurant-name" placeholder="My Restaurant" readonly="readonly">
         </p>
         <p>
             <label for="cuisine-name">Cuisine Name:</label>

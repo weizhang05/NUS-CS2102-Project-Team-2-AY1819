@@ -167,7 +167,7 @@ const renderEditRestaurants = (req, res, next) => {
                   console.log(err);
                   res.send("error!");
               } else {
-                  // console.log(cuisineRes);
+                  // console.log(restaurantRes);
                   res.render('admin-edit-restaurants', {
                     restaurants: restaurantRes.rows,
                     restaurant_cuisines: cuisineRes.rows,
