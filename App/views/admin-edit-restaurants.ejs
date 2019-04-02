@@ -17,7 +17,11 @@
     </div>
 <% } %>
 
-<h2>Existing Restaurants</h2>
+<a href="#existing-list">List of Restaurants</a> <a href="#restaurant-edit">Edit Restaurant</a>
+    <a href="#restaurant-delete">Delete Restaurant</a> <a href="#cuisine-add">Add Cuisine</a>
+    <a href="#cuisine-delete">Delete Cuisine</a>
+
+<h2 id="existing-list">Existing Restaurants</h2>
 <p>
     <label for="search-restaurants">Search Restaurants:</label>
     <input type="text" id="search-restaurants-input" name="search_restaurants"/>
@@ -43,8 +47,8 @@
 </table>
 <br>
 <br>
-<h2>Edit Restaurant</h2>
 
+<h2 id="restaurant-edit">Edit Restaurant</h2>
 <form action="/admin/edit_restaurant" method="POST">
     <p>
         <label for="restaurant-id">Restaurant Id:</label>
@@ -66,7 +70,7 @@
 </form>
 <br>
 <br>
-<h2>Delete Restaurant</h2>
+<h2 id="restaurant-delete">Delete Restaurant</h2>
 <form action="/admin/delete_restaurant" method="POST">
     <p>
         <label for="restaurant-id">Restaurant Id:</label>
@@ -80,7 +84,7 @@
 </form>
 <br>
 <br>
-    <h2>Add Cuisine</h2>
+    <h2 id="cuisine-add">Add Cuisine</h2>
     <form action="/admin/cuisine/new/new" method="POST">
         <p>
             <label for="restaurant-id">Restaurant Id:</label>
@@ -102,7 +106,7 @@
     </form>
     <br>
     <br>
-    <h2>Delete Cuisine</h2>
+    <h2 id="cuisine-delete">Delete Cuisine</h2>
     <p>
         <label for="search-cuisines">Search Cuisines:</label>
         <input type="text" id="search-cuisines-input" name="search_cuisines"/>
