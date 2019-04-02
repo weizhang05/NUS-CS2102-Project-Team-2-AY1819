@@ -90,6 +90,12 @@ DELETE FROM booking
 where id = $1;
 `;
 
+const BRANCHES_INFO_QUERY = `
+SELECT b.id, r.restaurant_name, b.name, b.address, b.plus_code, b.capacity
+FROM branch b, RESTAURANT r
+where b.restaurant_id = r.id
+`;
+
 /*
   Login and Dashboard Related
  */
@@ -167,12 +173,21 @@ const renderEditRestaurants = (req, res, next) => {
                   console.log(err);
                   res.send("error!");
               } else {
-                  // console.log(restaurantRes);
-                  res.render('admin-edit-restaurants', {
-                    restaurants: restaurantRes.rows,
-                    restaurant_cuisines: cuisineRes.rows,
-                    message: req.flash('info')
-                  });
+                  pool.query(BRANCHES_INFO_QUERY, (err, branchesRes) => {
+                      if(err) {
+                          console.log(err);
+                          res.send("error!");
+                      } else {
+                          // console.log(restaurantRes);
+                          res.render('admin-edit-restaurants', {
+                              restaurants: restaurantRes.rows,
+                              restaurant_cuisines: cuisineRes.rows,
+                              message: req.flash('info'),
+                              branches: branchesRes.rows
+                          });
+                      }
+                  })
+
               }
             });
         }

@@ -17,17 +17,19 @@
     </div>
 <% } %>
 
-<a href="#existing-list">List of Restaurants</a> <a href="#restaurant-edit">Edit Restaurant</a>
-    <a href="#restaurant-delete">Delete Restaurant</a> <a href="#cuisine-add">Add Cuisine</a>
-    <a href="#cuisine-delete">Delete Cuisine</a>
+<nav class="navbar navbar-light bg-light">
+    <a href="#existing-restaurants">List of Restaurants</a> <a href="#restaurant-edit">Edit Restaurant</a>
+        <a href="#restaurant-delete">Delete Restaurant</a> <a href="#cuisine-add">Add Cuisine</a>
+        <a href="#cuisine-delete">Delete Cuisine</a>
+</nav>
 
-<h2 id="existing-list">Existing Restaurants</h2>
+<h2 id="existing-restaurants">Existing Restaurants</h2>
 <p>
     <label for="search-restaurants">Search Restaurants:</label>
     <input type="text" id="search-restaurants-input" name="search_restaurants"/>
 </p>
 <p>There are <span id="restaurants-count"><%= restaurants.length %></span> matching restaurants.</p>
-<table id ="restaurants-display" style="border-spacing: 10px;">
+<table id ="restaurants-display" style="border-spacing: 10px;" class="table table-bordered">
     <thead>
     <tr>
         <th>Id</th>
@@ -111,7 +113,7 @@
         <label for="search-cuisines">Search Cuisines:</label>
         <input type="text" id="search-cuisines-input" name="search_cuisines"/>
     </p>
-    <table id ="cuisines-display">
+    <table id ="cuisines-display" class="table table-bordered">
         <thead>
         <tr>
             <th>Restaurant Name</th>
@@ -132,5 +134,36 @@
         <%} %>
         </tbody>
     </table>
+
+    <br>
+    <br>
+
+    <h2 id="existing-branches">Existing Branches</h2>
+    <table id ="branches-display" style="border-spacing: 10px;" class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Restaurant Name</th>
+            <th>Branch Name</th>
+            <th>Address</th>
+            <th>Plus Code</th>
+            <th>Capacity</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% for (const { id, restaurant_name, name, address, plus_code, capacity } of branches) { %>
+            <tr>
+                <td><%= id%></td>
+                <td><%= restaurant_name%></td>
+                <td><%= name%></td>
+                <td><%= address%></td>
+                <td><%= plus_code%></td>
+                <td><%= capacity%></td>
+            </tr>
+        <%} %>
+        </tbody>
+    </table>
+    <br>
+    <br>
 
 </html>
