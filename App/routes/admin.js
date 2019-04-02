@@ -6,10 +6,10 @@ const cuisineRouter = require('./cuisine');
 
 router.use('/cuisine', cuisineRouter);
 
-// TODO: document and compartmentalize routes/queries
 // TODO: some preprocessing to make input more user-friendly
 // TODO: standardize booking and reservation
-// queries
+
+
 const EXISTING_ADMIN_QUERY = `
 SELECT id
 FROM admins
@@ -90,6 +90,9 @@ DELETE FROM booking
 where id = $1;
 `;
 
+/*
+  Login and Dashboard Related
+ */
 const renderLogin = (req, res, next) => {
     res.render('admin-login', {});
 };
@@ -106,6 +109,41 @@ const renderDashboard = (req, res, next) => {
     })
 };
 
+// Check for admin login
+router.get('/', (req, res, next) => {
+    if (req.cookies.admin) {
+        renderDashboard(req, res, next);
+    } else {
+        renderLogin(req, res, next);
+    }
+});
+
+router.get('/dashboard', (req, res, next) => {
+    renderDashboard(req, res, next);
+});
+
+router.get('/logout', (req, res, next) => {
+    res.clearCookie('admin');
+    res.redirect('/');
+});
+
+// Submit login details. Adds a cookie to store the presence of an admin
+router.post('/', (req, res, next) => {
+    const { account_name } = req.body;
+    // console.log(account_name);
+    pool.query(EXISTING_ADMIN_QUERY, [account_name], (err, dbRes) => {
+        if (err || dbRes.rows.length !== 1) {
+            res.send("error!");
+        } else {
+            res.cookie('admin', dbRes.rows[0].id) ;
+            res.redirect('/admin')
+        }
+    });
+});
+/*
+  Render Edit User Page
+ */
+
 const renderEditUser = (req, res, next) => {
     pool.query(CUSTOMER_INFO_QUERY, (err, dbRes) => {
         if (err) {
@@ -116,6 +154,9 @@ const renderEditUser = (req, res, next) => {
     });
 };
 
+/*
+  Render Edit Restaurants Page
+ */
 const renderEditRestaurants = (req, res, next) => {
     pool.query(RESTAURANT_INFO_QUERY, (err, restaurantRes) => {
         if (err) {
@@ -138,6 +179,9 @@ const renderEditRestaurants = (req, res, next) => {
     });
 };
 
+/*
+  Render Edit Reservations Page
+ */
 const renderEditReservations = (req, res, next) => {
     pool.query(RESERVATION_INFO_QUERY, (err, dbRes) => {
         if (err) {
@@ -148,37 +192,9 @@ const renderEditReservations = (req, res, next) => {
     });
 };
 
-router.get('/', (req, res, next) => {
-    if (req.cookies.admin) {
-        renderDashboard(req, res, next);
-    } else {
-        renderLogin(req, res, next);
-    }
-});
-
-router.get('/dashboard', (req, res, next) => {
-    renderDashboard(req, res, next);
-});
-
-router.get('/logout', (req, res, next) => {
-    res.clearCookie('admin');
-    res.redirect('/');
-});
-
-// login
-router.post('/', (req, res, next) => {
-    const { account_name } = req.body;
-    // console.log(account_name);
-    pool.query(EXISTING_ADMIN_QUERY, [account_name], (err, dbRes) => {
-        if (err || dbRes.rows.length !== 1) {
-            res.send("error!");
-        } else {
-            res.cookie('admin', dbRes.rows[0].id) ;
-            res.redirect('/admin')
-        }
-    });
-});
-
+/*
+  Edit/Delete Users page and form POST requests
+ */
 router.get('/edit-users', (req, res, next) => {
     renderEditUser(req, res, next);
 });
@@ -206,10 +222,14 @@ router.post('/edit_user', (req, res, next) => {
     });
 });
 
+/*
+  Edit/Delete Restaurants page and form POST requests
+ */
 router.get('/edit-restaurants', (req, res, next) => {
     renderEditRestaurants(req, res, next);
 });
 
+// Edit Restaurant details
 router.post('/edit_restaurant', (req, res, next) => {
     const { restaurant_id, new_restaurant_account_name, new_restaurant_name } = req.body;
     // console.log(req.body);
@@ -248,6 +268,7 @@ router.post('/edit_restaurant', (req, res, next) => {
     }
 });
 
+// Delete Restaurant
 router.post('/delete_restaurant', (req, res, next) => {
     const { restaurant_id } = req.body;
     req.flash('info', 'Successfully deleted!');
@@ -260,6 +281,9 @@ router.post('/delete_restaurant', (req, res, next) => {
     });
 });
 
+/*
+  Edit/Delete Reservations page and form POST requests
+ */
 router.get('/edit-bookings', (req, res, next) => {
     renderEditReservations(req, res, next);
 });
