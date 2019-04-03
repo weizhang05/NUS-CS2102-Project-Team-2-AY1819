@@ -20,7 +20,7 @@
 <nav class="navbar navbar-light bg-light">
     <a href="#existing-restaurants">List of Restaurants</a> <a href="#restaurant-edit">Edit Restaurant</a>
         <a href="#restaurant-delete">Delete Restaurant</a> <a href="#cuisine-add">Add Cuisine</a>
-        <a href="#cuisine-delete">Delete Cuisine</a>
+        <a href="#cuisine-delete">Delete Cuisine</a><a href="#existing-branches">Existing Branches</a>
 </nav>
 
 <h2 id="existing-restaurants">Existing Restaurants</h2>
@@ -165,5 +165,23 @@
     </table>
     <br>
     <br>
+    <h2 id="branch-">Delete Branch</h2>
+    <form action="/admin/delete_branch" method="POST">
+        <p>
+            <label for="branch-id">Branch Id:</label>
+            <select class="branch-id" id="branch-id" name="branch_id">
+                <% for (const { id } of branches) { %>
+                    <option><%= id%></option>
+                <%} %>
+            </select>
+        </p>
+        <p>
+            <label for = "branch-name">Branch Name: </label>
+            <input type="text" id="branch-name" placeholder="My Branch" readonly="readonly">
+        </p>
+        <button type="submit">Delete</button>
+    </form>
+
+
 
 </html>

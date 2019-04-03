@@ -96,6 +96,11 @@ FROM branch b, RESTAURANT r
 where b.restaurant_id = r.id
 `;
 
+const BRANCH_DELETE_QUERY = `
+DELETE FROM branch
+where id = $1
+`;
+
 /*
   Login and Dashboard Related
  */
@@ -305,6 +310,7 @@ router.get('/edit-bookings', (req, res, next) => {
 
 router.post('/edit_reservation', (req, res, next) => {
     const { reservation_timing, reservation_id } = req.body;
+    req.flash('info', 'Successfully updated!');
     pool.query(UPDATE_RESERVATION_QUERY, [reservation_timing, reservation_id], (err, dbRes) => {
         if (err) {
             res.send("error!");
@@ -316,6 +322,7 @@ router.post('/edit_reservation', (req, res, next) => {
 
 router.post('/delete_reservation', (req, res, next) => {
     const { reservation_id } = req.body;
+    req.flash('info', 'Successfully deleted!');
     pool.query(DELETE_RESERVATION_QUERY, [reservation_id], (err, dbRes) => {
         if (err) {
             res.send("error!");
@@ -324,5 +331,19 @@ router.post('/delete_reservation', (req, res, next) => {
         }
     });
 });
+
+// Delete Branch
+router.post('/delete_branch', (req, res, next) => {
+    const { branch_id } = req.body;
+    req.flash('info', 'Successfully deleted!');
+    pool.query(BRANCH_DELETE_QUERY, [branch_id], (err, dbRes) => {
+        if (err) {
+            res.send("error!");
+        } else {
+            res.redirect('/admin/edit-restaurants')
+        }
+    });
+});
+
 
 module.exports = router;

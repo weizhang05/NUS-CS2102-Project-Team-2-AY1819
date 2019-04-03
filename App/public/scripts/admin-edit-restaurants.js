@@ -11,6 +11,12 @@ $(document).ready(function () {
         var restaurantName = $("td:contains('" + temp + "')").parent().find("td").eq(2).text();
         $("#restaurant-name").val(restaurantName);
     })
+
+    $('.branch-id').on('change', function() {
+        var temp = $('.branch-id :selected').text();
+        var branchName = $("td:contains('" + temp + "')").parent().find("td").eq(2).text();
+        $("#branch-name").val(branchName);
+    })
 });
 
 const restaurant_search = document.getElementById("search-restaurants-input");

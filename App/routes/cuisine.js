@@ -40,6 +40,7 @@ function insert_restaurant_cuisine(req, res, restaurant_id, cuisine_id) {
       console.log(err);
       res.send("error_inserting_restaurant_cuisine!");
     } else {
+      req.flash('info', 'Successfully added!');
       redirect(req, res);
     }
   });
