@@ -5,15 +5,15 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
-    <a href="/">Home</a> <a href="/login">Login</a> <a href="/register">Register</a> <a href="/reservation">Reservation</a>
+	<a href="/">Home</a> <a href="/login">Login</a> <a href="/register">Register</a> <a href="/reservation">Reservation</a>
 	<br>
 	
-    <p>Welcome to <%= title %>, please choose a cuisine:</p>
+    <p>Please choose a restaurant:</p>
 	<form method="post" action="selectRestaurant">
 		<tbody>
 			<% for(var i=0; i<data.length; i++) { %>
 			<tr>
-				<td><input type="radio" name="cuisine" value="<%= data[i].id%>"><%= data[i].name%></input></td>
+				<td><input type="radio" name="cuisine" value="<%= data[i].name%>"><%= data[i].name%></input></td>
 			</tr>
 			<% } %>
 		</tbody>
