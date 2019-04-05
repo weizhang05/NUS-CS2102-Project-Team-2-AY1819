@@ -8,6 +8,17 @@
     <a href="/">Home</a> <a href="/login">Login</a> <a href="/register">Register</a> <a href="/reservation">Reservation</a>
 	<br>
 	
-    <p>Welcome to <%= title %></p>
+    <p>Please choose a branch for <%= data[0].name%>:</p>
+	<form method="post" action="makeReservation">
+		<tbody>
+			<% for(var i=0; i<data.length; i++) { %>
+			<tr>
+				<td><input type="radio" name="branch" value="<%= data[i].id%>"><%= data[i].address%></input></td>
+			</tr>
+			<% } %>
+		</tbody>
+		<br>
+		<button type="submit">Next</button>
+	</form>
   </body>
 </html>

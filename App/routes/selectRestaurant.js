@@ -3,12 +3,8 @@ var router = express.Router();
 
 const { Pool } = require('pg')
 const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'postgres',
-  password: 'postgres',
-  port: 5432,
-})
+	connectionString: process.env.DATABASE_URL
+});
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -17,13 +13,11 @@ router.get('/', function(req, res, next) {
 
 // POST
 router.post('/', function(req, res, next) {
-	res.render('selectRestaurant', { title: 'Select Restaurant' });
 	var cuisine = req.body.cuisine;
 	
-	// var selectRestaurantQuery = "WITH rows AS(SELECT * FROM restaurant_cuisine WHERE cuisine_id = "+cuisine+" RETURNING restaurant_id) SELECT * FROM restaurant WHERE id = restaurant_id SELECT * FROM rows;";
-	var selectRestaurantQuery = "SELECT * FROM restaurant"
-	
+	var selectRestaurantQuery = "WITH rows AS(SELECT restaurant_id FROM restaurant_cuisine WHERE cuisine_id = '"+cuisine+"') SELECT * FROM restaurant WHERE id = (SELECT * FROM rows)";
 	pool.query(selectRestaurantQuery, (err, data) => {
+		console.log(data)
 		res.render('selectRestaurant', { title: 'Select Restaurant', data: data.rows });
 	});
 });
