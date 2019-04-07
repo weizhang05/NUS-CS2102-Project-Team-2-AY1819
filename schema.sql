@@ -121,3 +121,28 @@ CREATE TABLE operating_override (
   end_time time NOT NULL,
   UNIQUE (branch_id, override_date)
 );
+
+-- trigger for cleaning up cuisines
+-- restauranters directly add restaurant_cuisine & indirectly, cuisines
+-- use trigger to clean up cuisines when resturant_cuisines are deleted
+CREATE OR REPLACE FUNCTION cleanup_cuisine()
+RETURNS trigger AS
+$$
+DECLARE count NUMERIC;
+BEGIN
+  SELECT count(*) INTO count
+  FROM restaurant_cuisine rc
+  WHERE OLD.cuisine_id = rc.cuisine_id;
+  IF count = 0 THEN
+    DELETE FROM cuisine
+    WHERE cuisine.id = OLD.cuisine_id;
+  END IF;
+  RETURN NEW;
+END;
+$$
+language plpgsql;
+
+CREATE TRIGGER cleanup_cuisine
+AFTER DELETE ON restaurant_cuisine
+FOR EACH ROW
+EXECUTE PROCEDURE cleanup_cuisine();

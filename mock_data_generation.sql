@@ -16,3 +16,7 @@ INSERT INTO branch(restaurant_id, name, address, capacity)
 SELECT * FROM rows;
 
 INSERT INTO customer(name, email, password, non_user) VALUES('clyde','clyde@email.com','clyde',false);
+
+INSERT INTO admins (account_name)
+  VALUES ('admin1'), ('admin2');
+
