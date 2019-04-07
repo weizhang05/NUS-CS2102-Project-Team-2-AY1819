@@ -46,6 +46,34 @@
       </tbody>
     </table>
     <p><a href="/restaurants/branch/new/new">Register new branch</a></p>
+    <h2>Cuisines Served</h2>
+    <table>
+      <thead>
+      <tr>
+        <th>Name</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% for (const { id, name } of cuisines) { %>
+      <tr>
+        <td><%= name %></td>
+        <td>
+          <form action="/restaurants/cuisine/<%= id.replace(/-/g,'') %>/delete" method="POST">
+            <button>Delete!</button>
+          </form>
+        </td>
+      </tr>
+      <% } %>
+      </tbody>
+    </table>
+    <h3>Add Cuisines</h3>
+    <form action="/restaurants/cuisine/new/new" method="POST">
+      <p>
+        <label for="new-cuisine-name">Cuisine name: </label>
+        <input type="text" id="new-cuisine-name" name="cuisine_name">
+      </p>
+      <button type="submit">Add</button>
+    </form>
     <h2>Menu</h2>
     <table>
       <thead>

@@ -1,10 +1,12 @@
 const express = require('express');
 const pool = require('../pool');
 const branchRouter = require('./branch');
+const cuisineRouter = require('./cuisine');
 const menuItemRouter = require('./menu');
 const router = express.Router();
 
 router.use('/branch', branchRouter);
+router.use('/cuisine', cuisineRouter);
 router.use('/menu', menuItemRouter);
 
 const NEW_RESTAURANT_QUERY = `
@@ -43,19 +45,27 @@ SELECT id, name, cents
 FROM menu_item
 WHERE restaurant_id = $1
 ORDER BY name ASC;
-`
+`;
+
+const CUISINES_QUERY = `
+SELECT rc.id, name
+FROM restaurant_cuisine rc join cuisine c on rc.cuisine_id = c.id
+WHERE restaurant_id = $1
+ORDER BY name ASC;
+`;
+
 
 const renderLogin = (req, res, next) => {
   res.render('restaurants', {});
 };
 
 const renderDashboard = (req, res, next) => {
-  const restaurant_id = req.cookies.restaurants
+  const restaurant_id = req.cookies.restaurants;
   pool.query(RESTAURANT_INFO_QUERY, [restaurant_id], (err, dbRes) => {
     if (err || dbRes.rows.length !== 1) {
       res.send("error!");
     } else {
-      const { account_name, restaurant_name } = dbRes.rows[0];
+      const {account_name, restaurant_name} = dbRes.rows[0];
       pool.query(BRANCHES_QUERY, [restaurant_id], (err, dbBranchesRes) => {
         if (err) {
           res.send("error!");
@@ -66,16 +76,25 @@ const renderDashboard = (req, res, next) => {
               res.send("error!");
             } else {
               const menu = dbMenuRes.rows;
-              res.render('restaurants-dashboard', {
-                account_name,
-                restaurant_name,
-                branches,
-                menu
+              pool.query(CUISINES_QUERY, [restaurant_id], (err, dbCuisineRes) => {
+                if (err) {
+                  res.send("error!");
+                } else {
+                  const cuisines = dbCuisineRes.rows;
+                  res.render('restaurants-dashboard', {
+                    account_name,
+                    branches,
+                    cuisines,
+                    menu,
+                    restaurant_name
+                  });
+                }
               });
             }
           });
         }
       });
+
     }
   });
 };
@@ -95,7 +114,7 @@ router.get('/logout', (req, res, next) => {
 });
 
 router.post('/', (req, res, next) => {
-  const { account_name, restaurant_name, login_type } = req.body;
+  const {account_name, restaurant_name, login_type} = req.body;
   if (login_type === "new") {
     pool.query(NEW_RESTAURANT_QUERY, [account_name, restaurant_name], (err, dbRes) => {
       if (err || dbRes.rows.length !== 1) {
@@ -118,7 +137,7 @@ router.post('/', (req, res, next) => {
     });
   } else {
     res.status(404);
-    res.send({ error: "Invalid data" });
+    res.send({error: "Invalid data"});
   }
 });
 
@@ -127,7 +146,7 @@ router.get('/edit', (req, res, next) => {
     if (err || dbRes.rows.length !== 1) {
       res.send("error!");
     } else {
-      const { account_name, restaurant_name } = dbRes.rows[0];
+      const {account_name, restaurant_name} = dbRes.rows[0];
       res.render('restaurants-edit', {
         account_name,
         restaurant_name
@@ -137,7 +156,7 @@ router.get('/edit', (req, res, next) => {
 });
 
 router.post('/edit', (req, res, next) => {
-  const { account_name, restaurant_name } = req.body;
+  const {account_name, restaurant_name} = req.body;
   const id = req.cookies.restaurants;
   pool.query(EDIT_RESTAURANT_QUERY, [id, account_name, restaurant_name], (err, dbRes) => {
     if (err) {

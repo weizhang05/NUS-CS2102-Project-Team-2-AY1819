@@ -2,10 +2,14 @@ let express = require('express');
 let pool = require('../pool');
 let router = express.Router();
 
-// TODO: document and compartmentalize routes/queries
+const cuisineRouter = require('./cuisine');
+
+router.use('/cuisine', cuisineRouter);
+
 // TODO: some preprocessing to make input more user-friendly
 // TODO: standardize booking and reservation
-// queries
+
+
 const EXISTING_ADMIN_QUERY = `
 SELECT id
 FROM admins
@@ -37,6 +41,13 @@ UPDATE customer
 const RESTAURANT_INFO_QUERY = `
 SELECT id, account_name, restaurant_name
 FROM restaurant
+`;
+
+const CUISINES_INFO_QUERY = `
+SELECT rc.id pair_id, r.restaurant_name, c.name cuisine_name
+FROM restaurant_cuisine rc join cuisine c on rc.cuisine_id = c.id 
+    join restaurant r on r.id = rc.restaurant_id
+ORDER BY r.restaurant_name ASC;
 `;
 
 const UPDATE_RESTAURANT_RESTNAME_QUERY = `
@@ -79,6 +90,20 @@ DELETE FROM booking
 where id = $1;
 `;
 
+const BRANCHES_INFO_QUERY = `
+SELECT b.id, r.restaurant_name, b.name, b.address, b.plus_code, b.capacity
+FROM branch b, RESTAURANT r
+where b.restaurant_id = r.id
+`;
+
+const BRANCH_DELETE_QUERY = `
+DELETE FROM branch
+where id = $1
+`;
+
+/*
+  Login and Dashboard Related
+ */
 const renderLogin = (req, res, next) => {
     res.render('admin-login', {});
 };
@@ -95,36 +120,7 @@ const renderDashboard = (req, res, next) => {
     })
 };
 
-const renderEditUser = (req, res, next) => {
-    pool.query(CUSTOMER_INFO_QUERY, (err, dbRes) => {
-        if (err) {
-            res.send("error!");
-        } else {
-            res.render('admin-edit-user', {users: dbRes.rows})
-        }
-    });
-};
-
-const renderEditRestaurants = (req, res, next) => {
-    pool.query(RESTAURANT_INFO_QUERY, (err, dbRes) => {
-        if (err) {
-            res.send("error!");
-        } else {
-            res.render('admin-edit-restaurants', {restaurants: dbRes.rows})
-        }
-    });
-};
-
-const renderEditReservations = (req, res, next) => {
-    pool.query(RESERVATION_INFO_QUERY, (err, dbRes) => {
-        if (err) {
-            res.send("error!");
-        } else {
-            res.render('admin-edit-reservations', {reservations: dbRes.rows});
-        }
-    });
-};
-
+// Check for admin login
 router.get('/', (req, res, next) => {
     if (req.cookies.admin) {
         renderDashboard(req, res, next);
@@ -139,13 +135,13 @@ router.get('/dashboard', (req, res, next) => {
 
 router.get('/logout', (req, res, next) => {
     res.clearCookie('admin');
-    res.redirect('/admin');
+    res.redirect('/');
 });
 
-// login
+// Submit login details. Adds a cookie to store the presence of an admin
 router.post('/', (req, res, next) => {
     const { account_name } = req.body;
-    console.log(account_name);
+    // console.log(account_name);
     pool.query(EXISTING_ADMIN_QUERY, [account_name], (err, dbRes) => {
         if (err || dbRes.rows.length !== 1) {
             res.send("error!");
@@ -155,7 +151,70 @@ router.post('/', (req, res, next) => {
         }
     });
 });
+/*
+  Render Edit User Page
+ */
 
+const renderEditUser = (req, res, next) => {
+    pool.query(CUSTOMER_INFO_QUERY, (err, dbRes) => {
+        if (err) {
+            res.send("error!");
+        } else {
+            res.render('admin-edit-user', {users: dbRes.rows})
+        }
+    });
+};
+
+/*
+  Render Edit Restaurants Page
+ */
+const renderEditRestaurants = (req, res, next) => {
+    pool.query(RESTAURANT_INFO_QUERY, (err, restaurantRes) => {
+        if (err) {
+            res.send("error!");
+        } else {
+            pool.query(CUISINES_INFO_QUERY, (err, cuisineRes) => {
+              if (err) {
+                  console.log(err);
+                  res.send("error!");
+              } else {
+                  pool.query(BRANCHES_INFO_QUERY, (err, branchesRes) => {
+                      if(err) {
+                          console.log(err);
+                          res.send("error!");
+                      } else {
+                          // console.log(restaurantRes);
+                          res.render('admin-edit-restaurants', {
+                              restaurants: restaurantRes.rows,
+                              restaurant_cuisines: cuisineRes.rows,
+                              message: req.flash('info'),
+                              branches: branchesRes.rows
+                          });
+                      }
+                  })
+
+              }
+            });
+        }
+    });
+};
+
+/*
+  Render Edit Reservations Page
+ */
+const renderEditReservations = (req, res, next) => {
+    pool.query(RESERVATION_INFO_QUERY, (err, dbRes) => {
+        if (err) {
+            res.send("error!");
+        } else {
+            res.render('admin-edit-reservations', {reservations: dbRes.rows});
+        }
+    });
+};
+
+/*
+  Edit/Delete Users page and form POST requests
+ */
 router.get('/edit-users', (req, res, next) => {
     renderEditUser(req, res, next);
 });
@@ -173,8 +232,6 @@ router.post('/delete_user', (req, res, next) => {
 
 router.post('/edit_user', (req, res, next) => {
     const { user_id, new_user_name } = req.body;
-    console.log(req.body);
-    console.log(new_user_name);
     pool.query(UPDATE_USER_QUERY, [new_user_name, user_id], (err, dbRes) => {
         if (err) {
             console.log(err);
@@ -185,16 +242,21 @@ router.post('/edit_user', (req, res, next) => {
     });
 });
 
+/*
+  Edit/Delete Restaurants page and form POST requests
+ */
 router.get('/edit-restaurants', (req, res, next) => {
     renderEditRestaurants(req, res, next);
 });
 
+// Edit Restaurant details
 router.post('/edit_restaurant', (req, res, next) => {
     const { restaurant_id, new_restaurant_account_name, new_restaurant_name } = req.body;
-    console.log(req.body);
-    console.log(new_restaurant_account_name);
-    console.log(new_restaurant_name);
+    // console.log(req.body);
+    // console.log(new_restaurant_account_name);
+    // console.log(new_restaurant_name);
     if (new_restaurant_account_name === '') {
+        req.flash('info', 'Successfully updated!');
         pool.query(UPDATE_RESTAURANT_RESTNAME_QUERY, [new_restaurant_name, restaurant_id], (err, dbRes) => {
             if (err) {
                 console.log(err);
@@ -204,6 +266,7 @@ router.post('/edit_restaurant', (req, res, next) => {
             }
         });
     } else if (new_restaurant_name === '') {
+        req.flash('info', 'Successfully updated!');
         pool.query(UPDATE_RESTAURANT_ACCNAME_QUERY, [new_restaurant_account_name, restaurant_id], (err, dbRes) => {
             if (err) {
                 console.log(err);
@@ -213,19 +276,22 @@ router.post('/edit_restaurant', (req, res, next) => {
             }
         });
     } else {
+        req.flash('info', 'Successfully updated!');
         pool.query(UPDATE_RESTAURANT_ALL_QUERY, [new_restaurant_account_name, new_restaurant_name, restaurant_id], (err, dbRes) => {
             if (err) {
                 console.log(err);
                 res.send("error!");
             } else {
-                res.redirect('/admin/edit-restaurants')
+                res.redirect('/admin/edit-restaurants');
             }
         })
     }
 });
 
+// Delete Restaurant
 router.post('/delete_restaurant', (req, res, next) => {
     const { restaurant_id } = req.body;
+    req.flash('info', 'Successfully deleted!');
     pool.query(DELETE_RESTAURANT_QUERY, [restaurant_id], (err, dbRes) => {
         if (err) {
             res.send("error!");
@@ -235,12 +301,16 @@ router.post('/delete_restaurant', (req, res, next) => {
     });
 });
 
+/*
+  Edit/Delete Reservations page and form POST requests
+ */
 router.get('/edit-bookings', (req, res, next) => {
     renderEditReservations(req, res, next);
 });
 
 router.post('/edit_reservation', (req, res, next) => {
     const { reservation_timing, reservation_id } = req.body;
+    req.flash('info', 'Successfully updated!');
     pool.query(UPDATE_RESERVATION_QUERY, [reservation_timing, reservation_id], (err, dbRes) => {
         if (err) {
             res.send("error!");
@@ -252,6 +322,7 @@ router.post('/edit_reservation', (req, res, next) => {
 
 router.post('/delete_reservation', (req, res, next) => {
     const { reservation_id } = req.body;
+    req.flash('info', 'Successfully deleted!');
     pool.query(DELETE_RESERVATION_QUERY, [reservation_id], (err, dbRes) => {
         if (err) {
             res.send("error!");
@@ -260,5 +331,19 @@ router.post('/delete_reservation', (req, res, next) => {
         }
     });
 });
+
+// Delete Branch
+router.post('/delete_branch', (req, res, next) => {
+    const { branch_id } = req.body;
+    req.flash('info', 'Successfully deleted!');
+    pool.query(BRANCH_DELETE_QUERY, [branch_id], (err, dbRes) => {
+        if (err) {
+            res.send("error!");
+        } else {
+            res.redirect('/admin/edit-restaurants')
+        }
+    });
+});
+
 
 module.exports = router;

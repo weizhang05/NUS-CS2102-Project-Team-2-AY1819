@@ -3,9 +3,33 @@
 <head>
     <title>Edit Restaurants</title>
     <link rel='stylesheet' href='/stylesheets/style.css'/>
-</head>
-<h2>Existing Restaurants</h2>
-<table style="border-spacing: 10px;">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="/scripts/admin-edit-restaurants.js" defer></script>
+
+<% if (message != '') { %>
+    <div id = "success-alert" class="alert alert-success alert-dismissible fade show" role="alert">
+        <%= message %>
+        <button type="button" class="close" data-dismiss="alert" onclick="closeAlert()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+<% } %>
+
+<nav class="navbar navbar-light bg-light">
+    <a href="#existing-restaurants">List of Restaurants</a> <a href="#restaurant-edit">Edit Restaurant</a>
+        <a href="#restaurant-delete">Delete Restaurant</a> <a href="#cuisine-add">Add Cuisine</a>
+        <a href="#cuisine-delete">Delete Cuisine</a><a href="#existing-branches">Existing Branches</a>
+</nav>
+
+<h2 id="existing-restaurants">Existing Restaurants</h2>
+<p>
+    <label for="search-restaurants">Search Restaurants:</label>
+    <input type="text" id="search-restaurants-input" name="search_restaurants"/>
+</p>
+<p>There are <span id="restaurants-count"><%= restaurants.length %></span> matching restaurants.</p>
+<table id ="restaurants-display" style="border-spacing: 10px;" class="table table-bordered">
     <thead>
     <tr>
         <th>Id</th>
@@ -25,11 +49,16 @@
 </table>
 <br>
 <br>
-<h2>Edit Restaurant</h2>
+
+<h2 id="restaurant-edit">Edit Restaurant</h2>
 <form action="/admin/edit_restaurant" method="POST">
     <p>
         <label for="restaurant-id">Restaurant Id:</label>
-        <input type="text" id="restaurant-id" name="restaurant_id" placeholder="7ebc4635-aad7-427f-ab11-d9b52ab6c2503">
+        <select id = id="restaurant-id" name="restaurant_id">
+            <% for (const { id } of restaurants) { %>
+                <option><%= id%></option>
+            <%} %>
+        </select>
     </p>
     <p>
         <label for="edit-restaurant-account-name">New Restaurant Account Name:</label>
@@ -43,12 +72,116 @@
 </form>
 <br>
 <br>
-<h2>Delete Restaurant</h2>
+<h2 id="restaurant-delete">Delete Restaurant</h2>
 <form action="/admin/delete_restaurant" method="POST">
     <p>
         <label for="restaurant-id">Restaurant Id:</label>
-        <input type="text" id="restaurant-id" name="restaurant_id" placeholder="7ebc4635-aad7-427f-ab11-d9b52ab6c2503">
+        <select id = id="restaurant-id" name="restaurant_id">
+            <% for (const { id } of restaurants) { %>
+                <option><%= id%></option>
+            <%} %>
+        </select>
     </p>
     <button type="submit">Delete</button>
 </form>
+    <br>
+<hr>
+    <br>
+    <h2 id="cuisine-add">Add Cuisine</h2>
+    <form action="/admin/cuisine/new/new" method="POST">
+        <p>
+            <label for="restaurant-id">Restaurant Id:</label>
+            <select class="restaurant-id-cuisine" id="restaurant-id" name="restaurant_id">
+                <% for (const { id } of restaurants) { %>
+                    <option><%= id%></option>
+                <%} %>
+            </select>
+        </p>
+        <p>
+            <label for = "restaurant-name">Restaurant Name: </label>
+            <input type="text" id="restaurant-name" placeholder="My Restaurant" readonly="readonly">
+        </p>
+        <p>
+            <label for="cuisine-name">Cuisine Name:</label>
+            <input type="text" id="cuisine-name" name="cuisine_name" placeholder="Western">
+        </p>
+        <button type="submit">Add</button>
+    </form>
+    <br>
+    <br>
+    <h2 id="cuisine-delete">Delete Cuisine</h2>
+    <p>
+        <label for="search-cuisines">Search Cuisines:</label>
+        <input type="text" id="search-cuisines-input" name="search_cuisines"/>
+    </p>
+    <table id ="cuisines-display" class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Restaurant Name</th>
+            <th>Cuisine Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% for (const {pair_id, restaurant_name, cuisine_name } of restaurant_cuisines) { %>
+        <tr>
+            <td><%= restaurant_name%></td>
+            <td><%= cuisine_name%></td>
+            <td>
+                <form action="/admin/cuisine/<%= pair_id.replace(/-/g,'') %>/delete" method="POST">
+                    <button type="submit">Delete!</button>
+                </form>
+            </td>
+        </tr>
+        <%} %>
+        </tbody>
+    </table>
+    <br>
+    <hr>
+    <br>
+    <h2 id="existing-branches">Existing Branches</h2>
+    <table id ="branches-display" style="border-spacing: 10px;" class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Restaurant Name</th>
+            <th>Branch Name</th>
+            <th>Address</th>
+            <th>Plus Code</th>
+            <th>Capacity</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% for (const { id, restaurant_name, name, address, plus_code, capacity } of branches) { %>
+            <tr>
+                <td><%= id%></td>
+                <td><%= restaurant_name%></td>
+                <td><%= name%></td>
+                <td><%= address%></td>
+                <td><%= plus_code%></td>
+                <td><%= capacity%></td>
+            </tr>
+        <%} %>
+        </tbody>
+    </table>
+    <br>
+    <br>
+    <h2 id="branch-">Delete Branch</h2>
+    <form action="/admin/delete_branch" method="POST">
+        <p>
+            <label for="branch-id">Branch Id:</label>
+            <select class="branch-id" id="branch-id" name="branch_id">
+                <% for (const { id } of branches) { %>
+                    <option><%= id%></option>
+                <%} %>
+            </select>
+        </p>
+        <p>
+            <label for = "branch-name">Branch Name: </label>
+            <input type="text" id="branch-name" placeholder="My Branch" readonly="readonly">
+        </p>
+        <button type="submit">Delete</button>
+    </form>
+
+
+
 </html>
