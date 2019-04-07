@@ -1,14 +1,19 @@
 var express = require('express');
 var router = express.Router();
 
+<<<<<<< HEAD
 const pool = require('../pool');
+=======
+const { Pool } = require('pg')
+const pool = new Pool({
+	connectionString: process.env.DATABASE_URL
+});
+>>>>>>> customers
 
-/* GET home page. */
 router.get('/', function(req, res, next) {
 	res.render('login', { title: 'Log In' });
 });
 
-// POST
 router.post('/', function(req, res, next) {
 	var email = req.body.email;
 	var pw = req.body.password;
@@ -16,6 +21,7 @@ router.post('/', function(req, res, next) {
 	var loginQuery = "select * from customer where email = '"+email+"' and password = '"+pw+"'";
 	
 	pool.query(loginQuery, (err, data) => {
+		console.log(data["rows"]["name"]);
 		if(data["rowCount"] == 1){
 			console.log("Login success!");
 		}
