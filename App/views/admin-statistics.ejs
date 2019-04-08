@@ -2,11 +2,29 @@
 <html>
 
 <head>
-    <title><%= user_name%></title>
+    <title>Statistics</title>
     <link rel='stylesheet' href='/stylesheets/style.css'/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 
-<p>Statistics Dashboard</p>
-<h1>Welcome, <%= user_name%></h1>
+<h2>Statistics Dashboard</h2>
+<table id ="cuisine-count-display" style="border-spacing: 10px;" class="table table-bordered">
+    <thead>
+    <tr>
+        <th>Cuisine</th>
+        <th>Number of Restaurants</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% for (const { cuisine, count } of cuisineCount) { %>
+        <tr>
+            <td><%= cuisine%></td>
+            <td><%= count%></td>
+        </tr>
+    <%} %>
+    </tbody>
+</table>
 
 </HTML>

@@ -101,6 +101,16 @@ DELETE FROM branch
 where id = $1
 `;
 
+const STATS_RESTAURANT_CUISINE = `
+WITH CombinedTable
+as (select c.name as cuisine
+    from cuisine c join restaurant_cuisine rc on c.id = rc.cuisine_id)
+
+SELECT cuisine, count(*) as count
+FROM CombinedTable ct
+GROUP BY cuisine
+`
+
 /*
   Login and Dashboard Related
  */
@@ -353,13 +363,14 @@ router.get('/statistics', (req, res, next) => {
 });
 
 const renderStatistics = (req, res, next) => {
-    const admin_id = req.cookies.admin;
-    pool.query(ADMIN_INFO_QUERY, [admin_id], (err, dbRes) => {
-        if (dbRes.rows[0] !== undefined) {
-            const { account_name } = dbRes.rows[0];
-            res.render('admin-statistics', {user_name: account_name});
-        } else {
+    pool.query(STATS_RESTAURANT_CUISINE, (err, cuisineCountRes) => {
+        if (err) {
             res.send("error!");
+        } else {
+            res.render('admin-statistics', {
+                cuisineCount: cuisineCountRes.rows,
+                message: req.flash('info'),
+            });
         }
     })
 };
