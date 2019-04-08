@@ -1,11 +1,11 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
-  </body>
-</html>
+<% include customerTemplate/beforeLoginHeader %>
+	
+<form method="post" action="register">
+	Name: <input name="name" id="name" type="text"><br>
+	Email: <input name="email" id="email" type="email"><br>
+	Password: <input name="password" id="password" type="password"><br>
+	Confirm Password: <input name="confirmPassword" id="confirmPassword" type="password"><br>
+	<button type="submit">Register</button>
+</form>
+	
+<% include customerTemplate/footer %>

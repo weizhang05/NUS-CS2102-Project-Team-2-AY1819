@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+	<a href="/">Home</a> <a href="/login">Login</a> <a href="/register">Register</a> <a href="/reservation">Reservation</a>
+	<br>
+	
+    <p>Please choose a restaurant:</p>
+	<form method="post" action="selectBranch">
+		<tbody>
+			<% for(var i=0; i<data.length; i++) { %>
+			<tr>
+				<td><input type="radio" name="restaurant" value="<%= data[i].id%>"><%= data[i].restaurant_name%></input></td>
+			</tr>
+			<% } %>
+		</tbody>
+		<br>
+		<button type="submit">Next</button>
+	</form>
+  </body>
+</html>
