@@ -4,10 +4,20 @@ let router = express.Router();
 
 // Index
 router.get('/', function(req, res, next) {
-  res.render('customerIndex', { title: 'CS2102 Restaurant' });
+	if(req.cookies.customer){
+		res.render('customerIndexAfterLogin', { title: 'CS2102 Restaurant' });
+	}
+	else{
+		res.render('customerIndexBeforeLogin', { title: 'CS2102 Restaurant' });
+	}
 });
 router.post('/', function(req, res, next) {
-  res.render('customerIndex', { title: 'CS2102 Restaurant' });
+	if(req.cookies.customer){
+		res.render('customerIndexAfterLogin', { title: 'CS2102 Restaurant' });
+	}
+	else{
+		res.render('customerIndexBeforeLogin', { title: 'CS2102 Restaurant' });
+	}
 });
 
 // Register
@@ -68,7 +78,7 @@ router.get('/reservation', function(req, res, next) {
 });
 // Select restaurant
 router.get('/selectRestaurant', function(req, res, next) {
-	res.redirect('/reservation');
+	res.redirect('reservation');
 });
 router.post('/selectRestaurant', function(req, res, next) {
 	var cuisine = req.body.cuisine;
@@ -81,7 +91,7 @@ router.post('/selectRestaurant', function(req, res, next) {
 });
 // Select branch
 router.get('/selectBranch', function(req, res, next) {
-	res.redirect('/reservation');
+	res.redirect('reservation');
 });
 router.post('/selectBranch', function(req, res, next) {
 	var restaurant = req.body.restaurant;
@@ -94,7 +104,7 @@ router.post('/selectBranch', function(req, res, next) {
 });
 // Reservation (End)
 router.get('/makeReservation', function(req, res, next) {
-	res.redirect('/reservation');
+	res.redirect('reservation');
 });
 router.post('/makeReservation', function(req, res, next) {
 	var branch = req.body.branch;
@@ -115,6 +125,17 @@ router.post('/makeReservation', function(req, res, next) {
 			res.render('makeReservation', { title: 'Booking is done!', data: data.rows });
 		}		
 	});
+});
+
+// Logout
+router.get('/logout', function(req, res, next) {
+	res.clearCookie('customer');
+	res.redirect('/');
+	
+});
+router.get('/logout', function(req, res, next) {
+	res.clearCookie('customer');
+	res.redirect('/');
 });
 
 
