@@ -345,5 +345,24 @@ router.post('/delete_branch', (req, res, next) => {
     });
 });
 
+/*
+ Statistics Related Routing
+ */
+router.get('/statistics', (req, res, next) => {
+    renderStatistics(req, res, next);
+});
+
+const renderStatistics = (req, res, next) => {
+    const admin_id = req.cookies.admin;
+    pool.query(ADMIN_INFO_QUERY, [admin_id], (err, dbRes) => {
+        if (dbRes.rows[0] !== undefined) {
+            const { account_name } = dbRes.rows[0];
+            res.render('admin-statistics', {user_name: account_name});
+        } else {
+            res.send("error!");
+        }
+    })
+};
+
 
 module.exports = router;
