@@ -1,15 +1,9 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-	
-	<link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
-  </head>
-  <body>
-	<a href="/">Home</a> <a href="/login">Login</a> <a href="/register">Register</a> <a href="/reservation">Reservation</a>
-	<br>
-	
-    <h1>Customer Home Page</h1>
-  </body>
-</html>
+<% include customerTemplate/beforeLoginHeader %>
+
+<div id="banner" class="row">
+	<div id="title" class="col-lg-12">
+		<h3>Reserving Gourmet Spots At Your Finger Tips</h3>
+	</div>
+</div>
+
+<% include customerTemplate/footer %>
