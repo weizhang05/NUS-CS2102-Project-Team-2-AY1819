@@ -109,6 +109,7 @@ as (select c.name as cuisine
 SELECT cuisine, count(*) as count
 FROM CombinedTable ct
 GROUP BY cuisine
+ORDER BY count desc
 `
 
 /*
