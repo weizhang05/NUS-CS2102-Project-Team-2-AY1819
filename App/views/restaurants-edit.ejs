@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= account_name %> Account Settings</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <p>Account Settings</p>
+    <form action="/restaurants/edit" method="POST">
+      <p>
+        <label for="edit-account-name">Account name: </label>
+        <input type="text" id="edit-account-name" name="account_name" placeholder="e.g. sallyskitchen" value="<%= account_name %>">
+      </p>
+      <p>
+        <label for="edit-restaurant-name">Restaurant name: </label>
+        <input type="text" id="edit-restaurant-name" name="restaurant_name" placeholder="e.g. Sally's Kitchen" value="<%= restaurant_name %>">
+      </p>
+      <button type="submit">Save Changes</button>
+    </form>
+    <p><a href="/restaurants">Back to dashboard</a></p>
+  </body>
+</html>

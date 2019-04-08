@@ -1,6 +1,18 @@
 CREATE EXTENSION "pgcrypto";
 CREATE EXTENSION "btree_gist";
 
+DROP TABLE restaurant cascade;
+DROP TABLE restaurant_cuisine cascade;
+DROP TABLE cuisine cascade;
+DROP TABLE menu_item cascade;
+DROP TABLE branch cascade;
+DROP TABLE opening_hours;
+DROP TABLE customer cascade;
+DROP TABLE admins cascade;
+DROP TABLE booking cascade;
+DROP TABLE menu_item_override cascade;
+DROP TABLE operating_override cascade;
+
 CREATE TABLE restaurant (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   account_name varchar(100) NOT NULL UNIQUE,
@@ -71,6 +83,11 @@ CREATE TABLE customer (
   non_user bool NOT NULL
 );
 
+CREATE TABLE admins (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  account_name varchar(100) NOT NULL
+);
+
 CREATE TABLE booking (
   -- capture operating hours constraint
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -104,3 +121,28 @@ CREATE TABLE operating_override (
   end_time time NOT NULL,
   UNIQUE (branch_id, override_date)
 );
+
+-- trigger for cleaning up cuisines
+-- restauranters directly add restaurant_cuisine & indirectly, cuisines
+-- use trigger to clean up cuisines when resturant_cuisines are deleted
+CREATE OR REPLACE FUNCTION cleanup_cuisine()
+RETURNS trigger AS
+$$
+DECLARE count NUMERIC;
+BEGIN
+  SELECT count(*) INTO count
+  FROM restaurant_cuisine rc
+  WHERE OLD.cuisine_id = rc.cuisine_id;
+  IF count = 0 THEN
+    DELETE FROM cuisine
+    WHERE cuisine.id = OLD.cuisine_id;
+  END IF;
+  RETURN NEW;
+END;
+$$
+language plpgsql;
+
+CREATE TRIGGER cleanup_cuisine
+AFTER DELETE ON restaurant_cuisine
+FOR EACH ROW
+EXECUTE PROCEDURE cleanup_cuisine();
