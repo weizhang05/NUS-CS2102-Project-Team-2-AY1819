@@ -4,10 +4,10 @@ let router = express.Router();
 
 // Index
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'CS2102 Restaurant' });
+  res.render('customerIndex', { title: 'CS2102 Restaurant' });
 });
 router.post('/', function(req, res, next) {
-  res.render('index', { title: 'CS2102 Restaurant' });
+  res.render('customerIndex', { title: 'CS2102 Restaurant' });
 });
 
 // Register
