@@ -128,7 +128,7 @@ SELECT lower(throughout)::time as time_list, br.name as branch_name, count(*) as
 FROM booking b, branch br
 WHERE b.branch_id = br.id
 group by lower(throughout)::time, branch_name
-order by time_List desc;
+order by branch_name, booking_count desc;
 `
 
 /*
