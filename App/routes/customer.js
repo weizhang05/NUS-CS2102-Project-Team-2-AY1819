@@ -34,7 +34,7 @@ router.post('/register', function(req, res, next) {
 	var accountExistQuery = "SELECT * FROM customer WHERE '"+email+"' = email";
 	
 	pool.query(accountExistQuery, (err, data) => {
-		if(data["rowCount"] == 1){
+		if(data["rowCount"] === 1){
 			console.log("User exists!");
 		}
 		else{
@@ -51,6 +51,7 @@ router.post('/register', function(req, res, next) {
 router.get('/login', function(req, res, next) {
 	res.render('login', { title: 'Log In' });
 });
+
 router.post('/login', function(req, res, next) {
 	var email = req.body.email;
 	var pw = req.body.password;
