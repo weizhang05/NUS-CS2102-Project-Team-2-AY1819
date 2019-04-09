@@ -1,17 +1,17 @@
 CREATE EXTENSION "pgcrypto";
 CREATE EXTENSION "btree_gist";
 
-DROP TABLE restaurant cascade;
-DROP TABLE restaurant_cuisine cascade;
-DROP TABLE cuisine cascade;
-DROP TABLE menu_item cascade;
-DROP TABLE branch cascade;
-DROP TABLE opening_hours;
-DROP TABLE customer cascade;
-DROP TABLE admins cascade;
-DROP TABLE booking cascade;
-DROP TABLE menu_item_override cascade;
-DROP TABLE operating_override cascade;
+DROP TABLE IF EXISTS restaurant cascade;
+DROP TABLE IF EXISTS restaurant_cuisine cascade;
+DROP TABLE IF EXISTS cuisine cascade;
+DROP TABLE IF EXISTS menu_item cascade;
+DROP TABLE IF EXISTS branch cascade;
+DROP TABLE IF EXISTS opening_hours;
+DROP TABLE IF EXISTS customer cascade;
+DROP TABLE IF EXISTS admins cascade;
+DROP TABLE IF EXISTS booking cascade;
+DROP TABLE IF EXISTS menu_item_override cascade;
+DROP TABLE IF EXISTS operating_override cascade;
 
 CREATE TABLE restaurant (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
