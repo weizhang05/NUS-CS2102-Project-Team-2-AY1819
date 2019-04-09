@@ -5,14 +5,14 @@ INSERT INTO cuisine(name) values('italian');
 -- INSERT RESTAURANT AND BRANCH
 WITH rows AS (
 INSERT INTO restaurant(account_name, restaurant_name) VALUES('pastamania', 'Pasta Mania')
-RETURNING id, restaurant_name, 'somewhere', 100
+RETURNING id, 'pasta_branch1', 'def street 123', 100
 )
 INSERT INTO branch(restaurant_id, name, address, capacity)
 SELECT * FROM rows;
 
 WITH rows AS (
 INSERT INTO restaurant(account_name, restaurant_name) VALUES('whiterabbit', 'White Rabbit')
-RETURNING id, restaurant_name, 'somewhere', 100
+RETURNING id, 'rabbit_branch1', 'abc street 123', 100
 )
 INSERT INTO branch(restaurant_id, name, address, capacity)
 SELECT * FROM rows;

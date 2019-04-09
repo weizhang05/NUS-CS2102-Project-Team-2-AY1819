@@ -95,6 +95,7 @@ CREATE TABLE booking (
   -- no longer exists
   customer_id uuid REFERENCES customer NOT NULL,
   branch_id uuid REFERENCES branch,
+  pax integer NOT NULL,
   throughout tsrange NOT NULL,
   -- TODO: determine if this exclusion contraint does what I think it
   --   does and actually 
