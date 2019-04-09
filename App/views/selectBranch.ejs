@@ -7,20 +7,33 @@
   <body>
     <a href="/">Home</a> <a href="/login">Login</a> <a href="/register">Register</a> <a href="/reservation">Reservation</a>
 	<br>
-	
-    <p>Please choose a branch for <%= data[0].name%>:</p>
+		<p>Please choose a branch for <b>TODO: PUT RESTAURANT NAME HERE</b></p>
 	<form method="post" action="makeReservation">
-		Num of Pax: <input type="number" name="num"></input>
-		<br>
+		<table id="branches-display" style="border-spacing: 10px;">
+		<thead>
+		<tr>
+			<th>Branch</th>
+			<th>Address</th>
+		</tr>
+		</thead>
 		<tbody>
-			<% for(var i=0; i<data.length; i++) { %>
+			<% for(const {id, name, address} of data) { %>
 			<tr>
-				<td><input type="radio" name="branch" value="<%= data[i].id%>"><%= data[i].address%></input></td>
+				<td>
+					<input id="branch-id" type="radio" name="branch" value="<%=id%>"/>
+				</td>
+				<td><%=name%></td>
+				<td><%=address%></td>
 			</tr>
 			<% } %>
 		</tbody>
+		</table>
 		<br>
-		<button type="submit">Next</button>
+		<label for="reservation-pax">Booking for: </label>
+		<input id="reservation-pax" type="number" name="reservationPax" value="2"/>
+   	<br>
+		<br>
+		<button type="submit">Done</button>
 	</form>
   </body>
 </html>

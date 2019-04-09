@@ -71,6 +71,7 @@ router.post('/login', function(req, res, next) {
 	});
 });
 
+
 // Reservation (Start)
 router.get('/reservation', function(req, res, next) {
 	var getCuisineQuery = "SELECT * FROM cuisine";
@@ -78,6 +79,7 @@ router.get('/reservation', function(req, res, next) {
 		res.render('reservation', { title: 'Reservation', data: data.rows });
 	});
 });
+
 // Select restaurant
 router.get('/selectRestaurant', function(req, res, next) {
 	res.redirect('reservation');
@@ -87,10 +89,11 @@ router.post('/selectRestaurant', function(req, res, next) {
 	
 	var selectRestaurantQuery = "WITH rows AS(SELECT restaurant_id FROM restaurant_cuisine WHERE cuisine_id = '"+cuisine+"') SELECT * FROM restaurant WHERE id = (SELECT * FROM rows)";
 	pool.query(selectRestaurantQuery, (err, data) => {
-		console.log(data)
+		console.log(data);
 		res.render('selectRestaurant', { title: 'Select Restaurant', data: data.rows });
 	});
 });
+
 // Select branch
 router.get('/selectBranch', function(req, res, next) {
 	res.redirect('reservation');
@@ -100,28 +103,34 @@ router.post('/selectBranch', function(req, res, next) {
 	
 	var selectBranchQuery = "SELECT * FROM branch WHERE restaurant_id = '"+restaurant+"'";
 	pool.query(selectBranchQuery, (err, data) => {
-		console.log(data)
+		console.log(data);
 		res.render('selectBranch', { title: 'Select Branch', data: data.rows });
 	});
 });
+
+
+const CHECK_AVAILABILITY_QUERY = `
+SELECT id
+FROM admins
+WHERE account_name = $1;
+`;
+
+const MAKE_BOOKING_QUERY = `
+
+`;
+
 // Reservation (End)
 router.get('/makeReservation', function(req, res, next) {
 	res.redirect('reservation');
 });
+
 router.post('/makeReservation', function(req, res, next) {
-	var branch = req.body.branch;
-	var num = req.body.num;
+	const {branch, reservationPax, start, end} = req.body;
 	
-	var checkAvailabilityQuery = "SELECT 1 FROM branch WHERE id = '"+branch+"' AND "+num+" <= capacity";
-	pool.query(checkAvailabilityQuery, (err, data) => {
-		if(data["rowCount"] == 1){
-			// requires changing ID to currently logged in user
-			var createReservationQuery = "INSERT INTO booking(customer_id, branch_id, throughout) VALUES('"+data["rows"]["id"]+"', '"+branch+"', '[2010-01-01 14:30, 2010-01-01 15:30)')";
-			pool.query(createReservationQuery, (err, data) => {
-			});
-			
-			var updateBranchQuery = "UPDATE branch SET capacity = capacity - "+num+" WHERE id = '"+branch+"'";
-			pool.query(updateBranchQuery, (err, data) => {
+	pool.query(CHECK_AVAILABILITY_QUERY, (err, data) => {
+		if(data["rowCount"] === 1){
+
+			pool.query(MAKE_BOOKING_QUERY, (err, data) => {
 			});
 			
 			res.render('makeReservation', { title: 'Booking is done!', data: data.rows });
