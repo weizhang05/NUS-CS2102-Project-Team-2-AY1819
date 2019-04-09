@@ -7,12 +7,12 @@
   <body>
     <a href="/">Home</a> <a href="/login">Login</a> <a href="/register">Register</a> <a href="/reservation">Reservation</a>
 	<br>
-		<p>Please choose a branch for <b>TODO: PUT RESTAURANT NAME HERE</b></p>
+		<p>Please choose a <%= restaurant_name%> branch</p>
 	<form method="post" action="makeReservation">
 		<table id="branches-display" style="border-spacing: 10px;">
 		<thead>
 		<tr>
-			<th>Branches</th>
+			<th>Branch</th>
 			<th>Name</th>
 			<th>Address</th>
 		</tr>
@@ -31,8 +31,16 @@
 		</table>
 		<br>
 		<label for="reservation-pax">Booking for: </label>
-		<input id="reservation-pax" type="number" name="reservationPax" value="2"/>
+		<input id="reservation-pax" type="number" name="reservationPax" value="2" required/>
    	<br>
+		<br>
+		<label for="timing">Choose a booking timing: </label>
+		<input id="timing" type="time" step="900" name="reservationPax"/>
+		<br>
+		<br>
+		<label for="duration">Duration (mins): </label>
+		<input id="duration" type="number" name="duration" value="60" min="30" step="15" required/>
+		<br>
 		<br>
 		<button type="submit">Done</button>
 	</form>

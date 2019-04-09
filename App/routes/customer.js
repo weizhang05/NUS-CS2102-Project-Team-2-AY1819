@@ -2,6 +2,12 @@ let express = require('express');
 let pool = require('../pool');
 let router = express.Router();
 
+const RESTAURANT_NAME_QUERY = `
+SELECT name 
+FROM restaurant r
+WHERE r.id = $1
+`;
+
 // Index
 function goIndex(req, res) {
   if(req.cookies.customer){
@@ -95,16 +101,23 @@ router.post('/selectRestaurant', function(req, res, next) {
 });
 
 // Select branch
+
+const RESTAURANT_BRANCHES_QUERY = `
+SELECT * 
+FROM branch b join restaurant r 
+ON b.restaurant_id = r.id
+WHERE restaurant_id = $1
+`;
+
 router.get('/selectBranch', function(req, res, next) {
 	res.redirect('reservation');
 });
 router.post('/selectBranch', function(req, res, next) {
-	var restaurant = req.body.restaurant;
-	
-	var selectBranchQuery = "SELECT * FROM branch WHERE restaurant_id = '"+restaurant+"'";
-	pool.query(selectBranchQuery, (err, data) => {
-		console.log(data);
-		res.render('selectBranch', { title: 'Select Branch', data: data.rows });
+	const restaurant_id = req.body.restaurant;
+	pool.query(RESTAURANT_BRANCHES_QUERY, [restaurant_id], (err, branchesData) => {
+		console.log(branchesData.rows);
+    rname = branchesData.rows[0].restaurant_name;
+    res.render('selectBranch', { title: 'Select Branch', restaurant_name: rname, data: branchesData.rows });
 	});
 });
 
@@ -128,13 +141,16 @@ router.post('/makeReservation', function(req, res, next) {
 	const {branch, reservationPax, start, end} = req.body;
 	
 	pool.query(CHECK_AVAILABILITY_QUERY, (err, data) => {
-		if(data["rowCount"] === 1){
+		if (err) {
+      console.log(err);
+    } else {
+      if(data.rows[0]){
+        pool.query(MAKE_BOOKING_QUERY, (err, data) => {
 
-			pool.query(MAKE_BOOKING_QUERY, (err, data) => {
-			});
-			
-			res.render('makeReservation', { title: 'Booking is done!', data: data.rows });
-		}		
+        });
+        res.render('makeReservation', { title: 'Booking is done!', data: data.rows });
+      }
+    }
 	});
 });
 
