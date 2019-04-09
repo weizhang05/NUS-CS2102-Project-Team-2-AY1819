@@ -1,11 +1,16 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <a href="/">Home</a> <a href="/login">Login</a> <a href="/register">Register</a> <a href="/reservation">Reservation</a>
+<% include customerTemplate/afterLoginHeader %>
+	
+<p>Please choose a branch for <%= data[0].name%>:</p>
+<form method="post" action="makeReservation">
+	Num of Pax: <input type="number" name="num"></input>
+	<br>
+	<tbody>
+		<% for(var i=0; i<data.length; i++) { %>
+		<tr>
+			<td><input type="radio" name="branch" value="<%= data[i].id%>"><%= data[i].address%></input></td>
+		</tr>
+		<% } %>
+	</tbody>
 	<br>
 		<p>Please choose a <%= restaurant_name%> branch</p>
 	<form method="post" action="makeReservation">
@@ -44,5 +49,5 @@
 		<br>
 		<button type="submit">Done</button>
 	</form>
-  </body>
-</html>
+	
+<% include customerTemplate/footer %>

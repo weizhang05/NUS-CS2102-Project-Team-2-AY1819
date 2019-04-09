@@ -77,15 +77,25 @@ router.post('/login', function(req, res, next) {
 	});
 });
 
-
-// Reservation (Start)
+// List reservation
 router.get('/reservation', function(req, res, next) {
-	var getCuisineQuery = "SELECT * FROM cuisine";
+	let customerCookie = req.cookies.customer[0];
+	var getCuisineQuery = "SELECT * FROM booking WHERE customer_id = '"+customerCookie["id"]+"'";
 	pool.query(getCuisineQuery, (err, data) => {
 		res.render('reservation', { title: 'Reservation', data: data.rows });
 	});
 });
 
+// Reservation (Start)
+router.get('/selectCuisine', function(req, res, next) {
+	res.redirect('reservation');
+});
+router.post('/selectCuisine', function(req, res, next) {
+	var getCuisineQuery = "SELECT * FROM cuisine";
+	pool.query(getCuisineQuery, (err, data) => {
+		res.render('selectCuisine', { title: 'Select Cuisine', data: data.rows });
+	});
+});
 // Select restaurant
 router.get('/selectRestaurant', function(req, res, next) {
 	res.redirect('reservation');
