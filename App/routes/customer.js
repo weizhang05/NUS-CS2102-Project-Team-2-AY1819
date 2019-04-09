@@ -106,7 +106,6 @@ router.post('/selectRestaurant', function(req, res, next) {
 	// TODO: HIDE RESTAURANTS WITHOUT ANY BRANCHES
 	var selectRestaurantQuery = "WITH rows AS(SELECT restaurant_id FROM restaurant_cuisine WHERE cuisine_id = '"+cuisine+"') SELECT * FROM restaurant WHERE id = (SELECT * FROM rows)";
 	pool.query(selectRestaurantQuery, (err, data) => {
-		console.log(data);
 		res.render('selectRestaurant', { title: 'Select Restaurant', data: data.rows });
 	});
 });
@@ -126,9 +125,8 @@ router.get('/selectBranch', function(req, res, next) {
 router.post('/selectBranch', function(req, res, next) {
 	const restaurant_id = req.body.restaurant;
 	pool.query(RESTAURANT_BRANCHES_QUERY, [restaurant_id], (err, branchesData) => {
-		console.log(branchesData.rows);
-    rname = branchesData.rows[0].restaurant_name;
-    res.render('selectBranch', { title: 'Select Branch', restaurant_name: rname, data: branchesData.rows });
+		rname = branchesData.rows[0].restaurant_name;
+		res.render('selectBranch', { title: 'Select Branch', restaurant_name: rname, data: branchesData.rows });
 	});
 });
 
@@ -175,7 +173,7 @@ EXISTS (
 
 // save to booking
 const MAKE_BOOKING_QUERY = `
-	
+INSERT INTO booking(customer_id, branch_id, pax, throughout) VALUES($1, $2, $3, $4)
 `;
 
 // Reservation (End)
@@ -184,20 +182,17 @@ router.get('/makeReservation', function(req, res, next) {
 });
 
 router.post('/makeReservation', function(req, res, next) {
+	console.log("making reservation: ");
 	console.log(req.body);
 	const {branch_id, reservation_pax, reservation_datetime, duration} = req.body;
 	
-	pool.query(CHECK_AVAILABILITY_QUERY, (err, data) => {
-		if (err) {
-      console.log(err);
-    } else {
-      if(data.rows[0]){
-        pool.query(MAKE_BOOKING_QUERY, (err, data) => {
-
-        });
-        res.render('makeReservation', { title: 'Booking is done!', data: data.rows });
-      }
-    }
+	pool.query(CHECK_AVAILABILITY_QUERY, [branch_id, reservation_pax, reservation_datetime, duration], (err, data) => {
+		console.log(data);
+		if(data.rows[0]){
+			pool.query(MAKE_BOOKING_QUERY, [branch_id, reservation_pax, reservation_datetime, duration], (err, data) => {
+			});
+			res.render('makeReservation', { title: 'Booking is done!', data: data.rows });
+		}
 	});
 });
 
