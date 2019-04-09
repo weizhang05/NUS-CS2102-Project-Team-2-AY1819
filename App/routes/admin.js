@@ -5,131 +5,10 @@ let router = express.Router();
 const cuisineRouter = require('./cuisine');
 
 router.use('/cuisine', cuisineRouter);
+const queries = require('../public/scripts/admin_sql_queries');
 
 // TODO: some preprocessing to make input more user-friendly
 // TODO: standardize booking and reservation
-
-
-const EXISTING_ADMIN_QUERY = `
-SELECT id
-FROM admins
-WHERE account_name = $1;
-`;
-
-const ADMIN_INFO_QUERY = `
-SELECT account_name
-FROM admins
-WHERE id = $1;
-`;
-
-const CUSTOMER_INFO_QUERY = `
-SELECT id, name
-FROM customer
-`;
-
-const DELETE_CUSTOMER_QUERY = `
-DELETE FROM customer
-WHERE id = $1;
-`;
-
-const UPDATE_USER_QUERY = `
-UPDATE customer
-      SET name = $1
-      WHERE id = $2;
-`;
-
-const RESTAURANT_INFO_QUERY = `
-SELECT id, account_name, restaurant_name
-FROM restaurant
-`;
-
-const CUISINES_INFO_QUERY = `
-SELECT rc.id pair_id, r.restaurant_name, c.name cuisine_name
-FROM restaurant_cuisine rc join cuisine c on rc.cuisine_id = c.id 
-    join restaurant r on r.id = rc.restaurant_id
-ORDER BY r.restaurant_name ASC;
-`;
-
-const UPDATE_RESTAURANT_RESTNAME_QUERY = `
-UPDATE restaurant
-      SET restaurant_name = $1
-      WHERE id = $2;
-`;
-
-const UPDATE_RESTAURANT_ACCNAME_QUERY = `
-UPDATE restaurant
-      SET account_name = $1
-      WHERE id = $2;
-`;
-
-const UPDATE_RESTAURANT_ALL_QUERY = `
-UPDATE restaurant
-      SET account_name = $1, restaurant_name = $2
-      WHERE id = $3;
-`;
-
-const DELETE_RESTAURANT_QUERY = `
-DELETE FROM restaurant
-where id = $1;
-`;
-
-const RESERVATION_INFO_QUERY = `
-SELECT b.id, b.customer_id, c.name, b.branch_id, b.throughout
-FROM booking b, customer c
-WHERE b.customer_id = c.id;
-`;
-
-const UPDATE_RESERVATION_QUERY = `
-UPDATE booking
-      SET throughout = $1
-      WHERE id = $2;
-`;
-
-const DELETE_RESERVATION_QUERY = `
-DELETE FROM booking
-where id = $1;
-`;
-
-const BRANCHES_INFO_QUERY = `
-SELECT b.id, r.restaurant_name, b.name, b.address, b.plus_code, b.capacity
-FROM branch b, RESTAURANT r
-where b.restaurant_id = r.id
-`;
-
-const BRANCH_DELETE_QUERY = `
-DELETE FROM branch
-where id = $1
-`;
-
-const STATS_RESTAURANT_CUISINE_COUNT = `
-WITH CombinedTable
-as (select c.name as cuisine
-    from cuisine c join restaurant_cuisine rc on c.id = rc.cuisine_id)
-
-SELECT cuisine, count(*) as count
-FROM CombinedTable ct
-GROUP BY cuisine
-ORDER BY count desc
-`
-
-const STATS_MOST_BOOKED_RESTAURANT = `
-WITH CombinedTable
-as (SELECT br.name as branch_name, r.restaurant_name as restaurant_name
-    FROM branch br join booking bo on br.id = bo.branch_id, restaurant r
-    WHERE r.id = br.restaurant_id)
-
-SELECT branch_name, restaurant_name, count(*) as count
-FROM CombinedTable
-GROUP BY branch_name, restaurant_name;
-`
-
-const STATS_POPULAR_BOOKING_TIME = `
-SELECT lower(throughout)::time as time_list, br.name as branch_name, count(*) as booking_count
-FROM booking b, branch br
-WHERE b.branch_id = br.id
-group by lower(throughout)::time, branch_name
-order by branch_name, booking_count desc;
-`
 
 /*
   Login and Dashboard Related
@@ -140,7 +19,7 @@ const renderLogin = (req, res, next) => {
 
 const renderDashboard = (req, res, next) => {
     const admin_id = req.cookies.admin;
-    pool.query(ADMIN_INFO_QUERY, [admin_id], (err, dbRes) => {
+    pool.query(queries.ADMIN_INFO_QUERY, [admin_id], (err, dbRes) => {
         if (dbRes.rows[0] !== undefined) {
             const { account_name } = dbRes.rows[0];
             res.render('admin-dashboard', {user_name: account_name});
@@ -172,7 +51,7 @@ router.get('/logout', (req, res, next) => {
 router.post('/', (req, res, next) => {
     const { account_name } = req.body;
     // console.log(account_name);
-    pool.query(EXISTING_ADMIN_QUERY, [account_name], (err, dbRes) => {
+    pool.query(queries.EXISTING_ADMIN_QUERY, [account_name], (err, dbRes) => {
         if (err || dbRes.rows.length !== 1) {
             res.send("error!");
         } else {
@@ -186,7 +65,7 @@ router.post('/', (req, res, next) => {
  */
 
 const renderEditUser = (req, res, next) => {
-    pool.query(CUSTOMER_INFO_QUERY, (err, dbRes) => {
+    pool.query(queries.CUSTOMER_INFO_QUERY, (err, dbRes) => {
         if (err) {
             res.send("error!");
         } else {
@@ -199,16 +78,16 @@ const renderEditUser = (req, res, next) => {
   Render Edit Restaurants Page
  */
 const renderEditRestaurants = (req, res, next) => {
-    pool.query(RESTAURANT_INFO_QUERY, (err, restaurantRes) => {
+    pool.query(queries.RESTAURANT_INFO_QUERY, (err, restaurantRes) => {
         if (err) {
             res.send("error!");
         } else {
-            pool.query(CUISINES_INFO_QUERY, (err, cuisineRes) => {
+            pool.query(queries.CUISINES_INFO_QUERY, (err, cuisineRes) => {
               if (err) {
                   console.log(err);
                   res.send("error!");
               } else {
-                  pool.query(BRANCHES_INFO_QUERY, (err, branchesRes) => {
+                  pool.query(queries.BRANCHES_INFO_QUERY, (err, branchesRes) => {
                       if(err) {
                           console.log(err);
                           res.send("error!");
@@ -251,7 +130,7 @@ router.get('/edit-users', (req, res, next) => {
 
 router.post('/delete_user', (req, res, next) => {
     const { user_id } = req.body;
-    pool.query(DELETE_CUSTOMER_QUERY, [user_id], (err, dbRes) => {
+    pool.query(queries.DELETE_CUSTOMER_QUERY, [user_id], (err, dbRes) => {
         if (err) {
             res.send("error!");
         } else {
@@ -262,7 +141,7 @@ router.post('/delete_user', (req, res, next) => {
 
 router.post('/edit_user', (req, res, next) => {
     const { user_id, new_user_name } = req.body;
-    pool.query(UPDATE_USER_QUERY, [new_user_name, user_id], (err, dbRes) => {
+    pool.query(queries.UPDATE_USER_QUERY, [new_user_name, user_id], (err, dbRes) => {
         if (err) {
             console.log(err);
             res.send("error!");
@@ -287,7 +166,7 @@ router.post('/edit_restaurant', (req, res, next) => {
     // console.log(new_restaurant_name);
     if (new_restaurant_account_name === '') {
         req.flash('info', 'Successfully updated!');
-        pool.query(UPDATE_RESTAURANT_RESTNAME_QUERY, [new_restaurant_name, restaurant_id], (err, dbRes) => {
+        pool.query(queries.UPDATE_RESTAURANT_RESTNAME_QUERY, [new_restaurant_name, restaurant_id], (err, dbRes) => {
             if (err) {
                 console.log(err);
                 res.send("error!");
@@ -297,7 +176,7 @@ router.post('/edit_restaurant', (req, res, next) => {
         });
     } else if (new_restaurant_name === '') {
         req.flash('info', 'Successfully updated!');
-        pool.query(UPDATE_RESTAURANT_ACCNAME_QUERY, [new_restaurant_account_name, restaurant_id], (err, dbRes) => {
+        pool.query(queries.UPDATE_RESTAURANT_ACCNAME_QUERY, [new_restaurant_account_name, restaurant_id], (err, dbRes) => {
             if (err) {
                 console.log(err);
                 res.send("error!");
@@ -307,7 +186,7 @@ router.post('/edit_restaurant', (req, res, next) => {
         });
     } else {
         req.flash('info', 'Successfully updated!');
-        pool.query(UPDATE_RESTAURANT_ALL_QUERY, [new_restaurant_account_name, new_restaurant_name, restaurant_id], (err, dbRes) => {
+        pool.query(queries.UPDATE_RESTAURANT_ALL_QUERY, [new_restaurant_account_name, new_restaurant_name, restaurant_id], (err, dbRes) => {
             if (err) {
                 console.log(err);
                 res.send("error!");
@@ -322,7 +201,7 @@ router.post('/edit_restaurant', (req, res, next) => {
 router.post('/delete_restaurant', (req, res, next) => {
     const { restaurant_id } = req.body;
     req.flash('info', 'Successfully deleted!');
-    pool.query(DELETE_RESTAURANT_QUERY, [restaurant_id], (err, dbRes) => {
+    pool.query(queries.DELETE_RESTAURANT_QUERY, [restaurant_id], (err, dbRes) => {
         if (err) {
             res.send("error!");
         } else {
@@ -341,7 +220,7 @@ router.get('/edit-bookings', (req, res, next) => {
 router.post('/edit_reservation', (req, res, next) => {
     const { reservation_timing, reservation_id } = req.body;
     req.flash('info', 'Successfully updated!');
-    pool.query(UPDATE_RESERVATION_QUERY, [reservation_timing, reservation_id], (err, dbRes) => {
+    pool.query(queries.UPDATE_RESERVATION_QUERY, [reservation_timing, reservation_id], (err, dbRes) => {
         if (err) {
             res.send("error!");
         } else {
@@ -353,7 +232,7 @@ router.post('/edit_reservation', (req, res, next) => {
 router.post('/delete_reservation', (req, res, next) => {
     const { reservation_id } = req.body;
     req.flash('info', 'Successfully deleted!');
-    pool.query(DELETE_RESERVATION_QUERY, [reservation_id], (err, dbRes) => {
+    pool.query(queries.DELETE_RESERVATION_QUERY, [reservation_id], (err, dbRes) => {
         if (err) {
             res.send("error!");
         } else {
@@ -366,7 +245,7 @@ router.post('/delete_reservation', (req, res, next) => {
 router.post('/delete_branch', (req, res, next) => {
     const { branch_id } = req.body;
     req.flash('info', 'Successfully deleted!');
-    pool.query(BRANCH_DELETE_QUERY, [branch_id], (err, dbRes) => {
+    pool.query(queries.BRANCH_DELETE_QUERY, [branch_id], (err, dbRes) => {
         if (err) {
             res.send("error!");
         } else {
@@ -383,15 +262,15 @@ router.get('/statistics', (req, res, next) => {
 });
 
 const renderStatistics = (req, res, next) => {
-    pool.query(STATS_RESTAURANT_CUISINE_COUNT, (err, cuisineCountRes) => {
+    pool.query(queries.STATS_RESTAURANT_CUISINE_COUNT, (err, cuisineCountRes) => {
         if (err) {
             res.send("error!");
         } else {
-            pool.query(STATS_MOST_BOOKED_RESTAURANT, (err, bookingCountRes) => {
+            pool.query(queries.STATS_MOST_BOOKED_RESTAURANT, (err, bookingCountRes) => {
                 if (err) {
                     res.send("error!");
                 } else {
-                    pool.query(STATS_POPULAR_BOOKING_TIME, (err, popularTimingRes) => {
+                    pool.query(queries.STATS_POPULAR_BOOKING_TIME, (err, popularTimingRes) => {
                         if (err) {
                             res.send("error!");
                         } else {
