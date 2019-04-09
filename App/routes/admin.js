@@ -101,7 +101,7 @@ DELETE FROM branch
 where id = $1
 `;
 
-const STATS_RESTAURANT_CUISINE = `
+const STATS_RESTAURANT_CUISINE_COUNT = `
 WITH CombinedTable
 as (select c.name as cuisine
     from cuisine c join restaurant_cuisine rc on c.id = rc.cuisine_id)
@@ -110,6 +110,17 @@ SELECT cuisine, count(*) as count
 FROM CombinedTable ct
 GROUP BY cuisine
 ORDER BY count desc
+`
+
+const STATS_MOST_BOOKED_RESTAURANT = `
+WITH CombinedTable
+as (SELECT br.name as branch_name, r.restaurant_name as restaurant_name
+    FROM branch br join booking bo on br.id = bo.branch_id, restaurant r
+    WHERE r.id = br.restaurant_id)
+
+SELECT branch_name, restaurant_name, count(*) as count
+FROM CombinedTable
+GROUP BY branch_name, restaurant_name;
 `
 
 /*
@@ -364,13 +375,20 @@ router.get('/statistics', (req, res, next) => {
 });
 
 const renderStatistics = (req, res, next) => {
-    pool.query(STATS_RESTAURANT_CUISINE, (err, cuisineCountRes) => {
+    pool.query(STATS_RESTAURANT_CUISINE_COUNT, (err, cuisineCountRes) => {
         if (err) {
             res.send("error!");
         } else {
-            res.render('admin-statistics', {
-                cuisineCount: cuisineCountRes.rows,
-                message: req.flash('info'),
+            pool.query(STATS_MOST_BOOKED_RESTAURANT, (err, bookingCountRes) => {
+                if (err) {
+                    res.send("error!");
+                } else {
+                    res.render('admin-statistics', {
+                        cuisineCount: cuisineCountRes.rows,
+                        bookingCount: bookingCountRes.rows,
+                        message: req.flash('info'),
+                    });
+                }
             });
         }
     })
