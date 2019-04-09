@@ -33,8 +33,5 @@ SELECT * FROM rows;
 -- INSERT CUSTOMER
 INSERT INTO customer(name, email, password, non_user) VALUES('clyde','clyde@email.com','clyde',false);
 
-INSERT INTO admins (account_name)
-  VALUES ('admin1'), ('admin2');
-
-
-INSERT INTO customer(name, email, password, non_user) VALUES('mabel','mabel@email.com','mabel',false);
+-- INSERT ADMIN
+INSERT INTO admins (account_name) VALUES ('admin1'), ('admin2');
