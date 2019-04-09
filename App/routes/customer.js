@@ -92,7 +92,8 @@ router.get('/selectRestaurant', function(req, res, next) {
 });
 router.post('/selectRestaurant', function(req, res, next) {
 	var cuisine = req.body.cuisine;
-	
+
+	// TODO: HIDE RESTAURANTS WITHOUT ANY BRANCHES
 	var selectRestaurantQuery = "WITH rows AS(SELECT restaurant_id FROM restaurant_cuisine WHERE cuisine_id = '"+cuisine+"') SELECT * FROM restaurant WHERE id = (SELECT * FROM rows)";
 	pool.query(selectRestaurantQuery, (err, data) => {
 		console.log(data);
