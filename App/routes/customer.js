@@ -59,7 +59,7 @@ router.post('/login', function(req, res, next) {
 	var loginQuery = "select * from customer where email = '"+email+"' and password = '"+pw+"'";
 	
 	pool.query(loginQuery, (err, data) => {
-		if(data["rowCount"] == 1){
+		if(data["rowCount"] === 1){
 			res.cookie("customer", data["rows"]);
 			console.log("Login success!");
 		}
