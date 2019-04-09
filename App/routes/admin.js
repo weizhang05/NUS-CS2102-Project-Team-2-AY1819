@@ -123,6 +123,14 @@ FROM CombinedTable
 GROUP BY branch_name, restaurant_name;
 `
 
+const STATS_POPULAR_BOOKING_TIME = `
+SELECT lower(throughout)::time as time_list, br.name as branch_name, count(*) as booking_count
+FROM booking b, branch br
+WHERE b.branch_id = br.id
+group by lower(throughout)::time, branch_name
+order by time_List desc;
+`
+
 /*
   Login and Dashboard Related
  */
@@ -383,10 +391,17 @@ const renderStatistics = (req, res, next) => {
                 if (err) {
                     res.send("error!");
                 } else {
-                    res.render('admin-statistics', {
-                        cuisineCount: cuisineCountRes.rows,
-                        bookingCount: bookingCountRes.rows,
-                        message: req.flash('info'),
+                    pool.query(STATS_POPULAR_BOOKING_TIME, (err, popularTimingRes) => {
+                        if (err) {
+                            res.send("error!");
+                        } else {
+                            res.render('admin-statistics', {
+                                cuisineCount: cuisineCountRes.rows,
+                                bookingCount: bookingCountRes.rows,
+                                popularTiming: popularTimingRes.rows,
+                                message: req.flash('info'),
+                            });
+                        }
                     });
                 }
             });
