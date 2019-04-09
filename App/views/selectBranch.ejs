@@ -21,7 +21,7 @@
 			<% for(const {id, name, address} of data) { %>
 			<tr>
 				<td>
-					<input id="branch-id" type="radio" name="branch" value="<%=id%>"/>
+					<input id="branch-id" type="radio" name="branch_id" value="<%=id%>"/>
 				</td>
 				<td><%=name%></td>
 				<td><%=address%></td>
@@ -31,11 +31,11 @@
 		</table>
 		<br>
 		<label for="reservation-pax">Booking for: </label>
-		<input id="reservation-pax" type="number" name="reservationPax" value="2" required/>
+		<input id="reservation-pax" type="number" name="reservation_pax" value="2" required/>
    	<br>
 		<br>
-		<label for="timing">Choose a booking timing: </label>
-		<input id="timing" type="time" step="900" name="reservationPax"/>
+		<label for="reservation-datetime">Choose a booking date & time: </label>
+		<input id="reservation-datetime" type="datetime-local" step="900" name="reservation_datetime"/>
 		<br>
 		<br>
 		<label for="duration">Duration (mins): </label>

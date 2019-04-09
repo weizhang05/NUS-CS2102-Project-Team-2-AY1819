@@ -123,14 +123,49 @@ router.post('/selectBranch', function(req, res, next) {
 });
 
 
+// 1) check if datetime in opening hours
+// 2) check if branch has capacity
+// 3) check operating hours override
+
+// $1 = branch id
+// $2 = start_day (int 0-6)
+// $3 = start_time (time)
+// $4 = start_ts (timestamp)
+// $5 = end_day (int 0-6)
+// $6 = end_time (time)
+// $7 = end_ts (timestamp)
+// $8 = booking_pax
+
+// TODO: add operating hrs override after basic version works
+// assumes that opening_hours for the branch has no strange overlaps
 const CHECK_AVAILABILITY_QUERY = `
-SELECT id
-FROM admins
-WHERE account_name = $1;
+SELECT 1 
+FROM opening_hours op1
+WHERE op1.branch_id = $1 and 
+EXISTS (
+	select 1 
+	FROM opening_hours op2
+	WHERE op2.branch_id = op1.branch_id, 
+				op2.start_day <= $2,
+				op2.start_time <= $3,
+				op2.end_day >= $5,
+				op2.end_time > $6
+) and 
+EXISTS (
+	select 1
+	FROM branch br
+	WHERE br.branch_id = op1.branch_id,
+				(SELECT SUM(pax) 
+					FROM booking bk
+          WHERE br.branch_id = bk.branch_id
+          	AND b.throughout <@ tsrange($4, $7, '[)') <= br.capcacity - $8
+
+)
 `;
 
+// save to booking
 const MAKE_BOOKING_QUERY = `
-
+	
 `;
 
 // Reservation (End)
@@ -139,7 +174,8 @@ router.get('/makeReservation', function(req, res, next) {
 });
 
 router.post('/makeReservation', function(req, res, next) {
-	const {branch, reservationPax, start, end} = req.body;
+	console.log(req.body);
+	const {branch_id, reservation_pax, reservation_datetime, duration} = req.body;
 	
 	pool.query(CHECK_AVAILABILITY_QUERY, (err, data) => {
 		if (err) {
