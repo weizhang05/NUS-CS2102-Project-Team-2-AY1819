@@ -3,27 +3,28 @@ let pool = require('../pool');
 let router = express.Router();
 
 // Index
+function goIndex(req, res) {
+  if(req.cookies.customer){
+    res.render('customerIndexAfterLogin', { title: 'CS2102 Restaurant' });
+  }
+  else{
+    res.render('customerIndexBeforeLogin', { title: 'CS2102 Restaurant' });
+  }
+}
+
 router.get('/', function(req, res, next) {
-	if(req.cookies.customer){
-		res.render('customerIndexAfterLogin', { title: 'CS2102 Restaurant' });
-	}
-	else{
-		res.render('customerIndexBeforeLogin', { title: 'CS2102 Restaurant' });
-	}
+	goIndex(req, res)
 });
+
 router.post('/', function(req, res, next) {
-	if(req.cookies.customer){
-		res.render('customerIndexAfterLogin', { title: 'CS2102 Restaurant' });
-	}
-	else{
-		res.render('customerIndexBeforeLogin', { title: 'CS2102 Restaurant' });
-	}
+  goIndex(req, res)
 });
 
 // Register
 router.get('/register', function(req, res, next) {
   res.render('register', { title: 'Register' });
 });
+
 router.post('/register', function(req, res, next) {
 	var name = req.body.name;
 	var email = req.body.email;
