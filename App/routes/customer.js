@@ -75,13 +75,23 @@ ON b.restaurant_id = r.id
 WHERE b.restaurant_id = $1
 `;
 
-const GET_ALL_BRANCHES_RATINGS_QUERY =
-`select branch.name as branch_name, restaurant.restaurant_name, coalesce(avg(cast(rating as Float)), 0) as average_rating, coalesce(count(rating), 0) as number_of_ratings
-from (branch left outer join rating on rating.branch_id = branch.id) join restaurant on branch.restaurant_id = restaurant.id
-group by branch.name, restaurant.restaurant_name
-order by average_rating desc;
+const GET_ALL_BRANCHES_RATINGS_QUERY = `
+SELECT branch.name as branch_name, restaurant.restaurant_name, COALESCE(avg(cast(rating as Float)), 0) as average_rating, COALESCE(count(rating), 0) as number_of_ratings
+FROM (branch left outer join rating on rating.branch_id = branch.id) join restaurant on branch.restaurant_id = restaurant.id
+GROUP BY branch.name, restaurant.restaurant_name
+ORDER BY average_rating desc, restaurant_name asc, branch_name asc;
 `
 
+const GET_ALL_RESTAURANT_RATINGS_QUERY = `
+WITH restaurant_rating_total as (SELECT restaurant.restaurant_name, COALESCE(sum(cast(rating as Float)), 0) as sum_rating, COALESCE(count(rating), 0) as number_of_ratings
+FROM (branch left outer join rating on rating.branch_id = branch.id) join restaurant on branch.restaurant_id = restaurant.id
+GROUP BY restaurant.restaurant_name
+ORDER BY sum_rating desc, restaurant_name asc
+)
+
+SELECT restaurant_name, case when number_of_ratings > 0 then (sum_rating / number_of_ratings) else 0 end as average_rating, number_of_ratings
+FROM restaurant_rating_total;
+`
 
 
 // Index
@@ -269,12 +279,20 @@ router.post('/customer/makeReservation', function(req, res, next) {
 });
 
 router.get('/customer/rating', function(req, res, next) {
-    pool.query(GET_ALL_BRANCHES_RATINGS_QUERY, (err, data) => {
+    pool.query(GET_ALL_BRANCHES_RATINGS_QUERY, (err, branchesRatingRes) => {
         if (err) {
-            console.log("error with making booking");
+            console.log("error with retrieving branches ratings");
             console.log(err);
         } else {
-            res.render('rating', { branches_rating: data.rows });
+            pool.query(GET_ALL_RESTAURANT_RATINGS_QUERY, (err, restaurantRatingRes) => {
+                if (err) {
+                    console.log("error with retrieving restaurant ratings");
+                    console.log(err);
+                } else {
+                    res.render('rating', { branchesRatings: branchesRatingRes.rows,
+                                           restaurantRatings: restaurantRatingRes.rows});
+                }
+            });
         }
     });
 });

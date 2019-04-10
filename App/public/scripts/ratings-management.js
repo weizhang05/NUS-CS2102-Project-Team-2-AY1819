@@ -19,3 +19,25 @@ branches_search.addEventListener('input', function(event) {
     }
     branches_count.textContent = matches;
 });
+
+const restaurants_search = document.getElementById("search-restaurants-rating-input");
+const restaurants_rating_display = document.getElementById("restaurants-rating-display");
+const restaurants_count = document.getElementById("restaurants-count");
+
+restaurants_search.addEventListener('input', function(event) {
+    const search_txt = restaurants_search.value;
+    const tbody = restaurants_rating_display.tBodies[0];
+    let matches = 0;
+    for (const row of tbody.rows) {
+        let found = false;
+        for (const cell of row.cells) {
+            if (cell.textContent.search(search_txt) >= 0) {
+                found = true;
+                matches += 1;
+                break;
+            }
+        }
+        row.style.display = found ? "" : "none";
+    }
+    restaurants_count.textContent = matches;
+});

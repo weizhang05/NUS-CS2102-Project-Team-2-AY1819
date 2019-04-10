@@ -4,7 +4,12 @@
     <script src="/scripts/ratings-management.js" defer></script>
 </head>
 
-
+<br>
+<nav class="navbar navbar-light bg-light">
+    <a href="#branches-rating">Branches Rating</a>
+    <a href="#restaurants-rating">Restaurant Rating</a>
+    <a href="#rate-branch">Rate Branch</a>
+</nav>
 <body>
 <br>
 <h2 id="branches-rating">View Ratings by Branch</h2>
@@ -12,7 +17,7 @@
     <label for="search-branches-rating">Search Branches:</label>
     <input type="text" id="search-branches-rating-input" name="search_branches"/>
 </p>
-<p>There are <span id="branches-count"><%= branches_rating.length %></span> matching branches.</p>
+<p>There are <span id="branches-count"><%= branchesRatings.length %></span> matching branches.</p>
 <table id="branches-rating-display" style="border-spacing: 10px;" class="table table-bordered">
     <thead>
     <tr>
@@ -23,7 +28,7 @@
     </tr>
     </thead>
     <tbody>
-    <% for (const {branch_name, restaurant_name, average_rating, number_of_ratings} of branches_rating) { %>
+    <% for (const {branch_name, restaurant_name, average_rating, number_of_ratings} of branchesRatings) { %>
         <tr>
             <td><%= branch_name %></td>
             <td><%= restaurant_name %></td>
@@ -35,10 +40,33 @@
 </table>
 <br>
 
-<h2>View Ratings by Restaurant</h2>
+<h2 id="restaurants-rating">View Ratings by Restaurant</h2>
+<p>
+    <label for="search-restaurants-rating">Search Branches:</label>
+    <input type="text" id="search-restaurants-rating-input" name="search_restaurants"/>
+</p>
+<p>There are <span id="restaurants-count"><%= restaurantRatings.length %></span> matching restaurants.</p>
+<table id="restaurants-rating-display" style="border-spacing: 10px;" class="table table-bordered">
+    <thead>
+    <tr>
+        <th>Restaurant Name</th>
+        <th>Average Rating</th>
+        <th>Number of Ratings</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% for (const {restaurant_name, average_rating, number_of_ratings} of restaurantRatings) { %>
+        <tr>
+            <td><%= restaurant_name %></td>
+            <td><%= average_rating %></td>
+            <td><%= number_of_ratings %></td>
+        </tr>
+    <% } %>
+    </tbody>
+</table>
+<br>
 
-
-<h2>Rate Branch</h2>
+<h2 id="rate-branch">Rate Branch</h2>
 <form action="/rate" method="POST">
     <p>
     </p>
