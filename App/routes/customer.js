@@ -69,10 +69,10 @@ VALUES($1, $2, $3, tsrange($4, $5, '[)'))
 `;
 
 const GET_RESTAURANT_BRANCHES_QUERY = `
-SELECT b.id id, restaurant_name, b.name, address, plus_code 
+SELECT b.id id, restaurant_name, b.name, address, plus_code, oh.start_time AS start, oh.end_time AS end
 FROM branch b join restaurant r
-ON b.restaurant_id = r.id
-WHERE b.restaurant_id = $1
+ON b.restaurant_id = r.id, opening_hours oh
+WHERE b.restaurant_id = $1 AND oh.branch_id = b.id
 `;
 
 

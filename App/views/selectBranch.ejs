@@ -7,14 +7,16 @@
 	<tr>
 		<th>Branch Name</th>
 		<th>Address</th>
+		<th>Operating Hours</th>
 		<th></th>
 	</tr>
 	</thead>
 	<tbody>
-		<% for(const {id, name, address} of data) { %>
+		<% for(const {id, name, address, start, end} of data) { %>
 		<tr>
 			<td><input id="branch-id" type="radio" name="branch_id" value="<%=id%>"/>&nbsp<%=name%></td>
 			<td><%=address%></td>
+			<td><%=start%> - <%=end%></td>
 		</tr>
 		<% } %>
 	</tbody>
