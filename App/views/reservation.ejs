@@ -15,12 +15,21 @@
 </div>
 
 <h3>Current Reservations</h3>
-<tbody>
+<table id="currentReservation">
+	<tr>
+		<td></td>
+		<td>Address</td>
+		<td>Num of Pax</td>
+		<td>Time</td>
+	</tr>
 	<% for(var i=0; i<data.length; i++) { %>
 	<tr>
 		<td><%= data[i].name%></td>
+		<td><%= data[i].address%></td>
+		<td><%= data[i].num%></td>
+		<td><%= data[i].time%></td>
 	</tr>
 	<% } %>
-</tbody>
+</table>
 	
 <% include customerTemplate/footer %>

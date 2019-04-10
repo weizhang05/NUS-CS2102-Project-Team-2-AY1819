@@ -96,11 +96,11 @@ router.post('/', function(req, res, next) {
 });
 
 // Register
-router.get('/register', function(req, res, next) {
+router.get('/customer/register', function(req, res, next) {
   res.render('register', { title: 'Register' });
 });
 
-router.post('/register', function(req, res, next) {
+router.post('/customer/register', function(req, res, next) {
 	var name = req.body.name;
 	var email = req.body.email;
 	var pw = req.body.password;
@@ -123,11 +123,11 @@ router.post('/register', function(req, res, next) {
 });
 
 // Login
-router.get('/login', function(req, res, next) {
+router.get('/customer/login', function(req, res, next) {
 	res.render('login', { title: 'Log In' });
 });
 
-router.post('/login', function(req, res, next) {
+router.post('/customer/login', function(req, res, next) {
 	var email = req.body.email;
 	var pw = req.body.password;
 	
@@ -147,30 +147,30 @@ router.post('/login', function(req, res, next) {
 });
 
 // List reservation
-router.get('/reservation', function(req, res, next) {
+router.get('/customer/reservation', function(req, res, next) {
 	console.log(req.cookies);
 	let customerCookie = req.cookies.customer[0];
-	var getCuisineQuery = "SELECT * FROM booking WHERE customer_id = '"+customerCookie["id"]+"'";
+	var getCuisineQuery = "SELECT bk.id AS id, br.name AS name, br.address AS address, bk.pax AS num, bk.throughout AS time FROM booking bk, branch br WHERE bk.branch_id = br.id AND bk.customer_id = '"+customerCookie["id"]+"'";
 	pool.query(getCuisineQuery, (err, data) => {
 		res.render('reservation', { title: 'Reservation', data: data.rows });
 	});
 });
 
 // Reservation (Start)
-router.get('/selectCuisine', function(req, res, next) {
+router.get('/customer/selectCuisine', function(req, res, next) {
 	res.redirect('reservation');
 });
-router.post('/selectCuisine', function(req, res, next) {
+router.post('/customer/selectCuisine', function(req, res, next) {
 	var getCuisineQuery = "SELECT * FROM cuisine";
 	pool.query(getCuisineQuery, (err, data) => {
 		res.render('selectCuisine', { title: 'Select Cuisine', data: data.rows });
 	});
 });
 // Select restaurant
-router.get('/selectRestaurant', function(req, res, next) {
+router.get('/customer/selectRestaurant', function(req, res, next) {
 	res.redirect('reservation');
 });
-router.post('/selectRestaurant', function(req, res, next) {
+router.post('/customer/selectRestaurant', function(req, res, next) {
 	var cuisine = req.body.cuisine;
 
 	// TODO: HIDE RESTAURANTS WITHOUT ANY BRANCHES
@@ -181,10 +181,10 @@ router.post('/selectRestaurant', function(req, res, next) {
 });
 
 // Select branch
-router.get('/selectBranch', function(req, res, next) {
+router.get('/customer/selectBranch', function(req, res, next) {
 	res.redirect('reservation');
 });
-router.post('/selectBranch', function(req, res, next) {
+router.post('/customer/selectBranch', function(req, res, next) {
 	const restaurant_id = req.body.restaurant;
 	pool.query(GET_RESTAURANT_BRANCHES_QUERY, [restaurant_id], (err, branchesData) => {
 	  if (err) {
@@ -198,11 +198,11 @@ router.post('/selectBranch', function(req, res, next) {
 
 
 // Reservation (End)
-router.get('/makeReservation', function(req, res, next) {
+router.get('/customer/makeReservation', function(req, res, next) {
 	res.redirect('reservation');
 });
 
-router.post('/makeReservation', function(req, res, next) {
+router.post('/customer/makeReservation', function(req, res, next) {
 	const {branch_id, reservation_pax, reservation_datetime, duration_mins} = req.body;
 
 	const start_time = new Date(reservation_datetime);
@@ -222,6 +222,7 @@ router.post('/makeReservation', function(req, res, next) {
 		reservation_pax
 	];
 
+	console.log("AVAILABLE DATA");
   console.log(availability_data);
 
 	pool.query(CHECK_BRANCH_AVAILABILITY_QUERY, availability_data, (err, data) => {
@@ -230,6 +231,7 @@ router.post('/makeReservation', function(req, res, next) {
       console.log(err);
 		} else {
 	  	const hasAvailability = data.rowCount === 1;
+		console.log(data);
       if(hasAvailability){
       	const customerId = req.cookies.customer[0].id;
         const make_booking_data = [customerId, branch_id, reservation_pax, start_time, end_time];
@@ -252,12 +254,12 @@ router.post('/makeReservation', function(req, res, next) {
 });
 
 // Logout
-router.get('/logout', function(req, res, next) {
+router.get('/customer/logout', function(req, res, next) {
 	res.clearCookie('customer');
 	res.redirect('/');
 	
 });
-router.get('/logout', function(req, res, next) {
+router.get('/customer/logout', function(req, res, next) {
 	res.clearCookie('customer');
 	res.redirect('/');
 });
