@@ -1,12 +1,17 @@
 -- INSERT CUISINE
-INSERT INTO cuisine(name) values('european');
-INSERT INTO cuisine(name) values('italian');
+INSERT INTO cuisine(name) values('European');
+INSERT INTO cuisine(name) values('Italian');
 
 -- INSERT RESTAURANT AND BRANCH
 WITH rows AS (
 INSERT INTO restaurant(account_name, restaurant_name)
 VALUES('pastamania', 'Pasta Mania')
-RETURNING id, 'pasta_branch1', 'def street 123', 100
+RETURNING id, 'Pasta Mania @ Tampines', 'Tampines Mall', 100
+)
+INSERT INTO branch(restaurant_id, name, address, capacity)
+SELECT * FROM rows;
+WITH rows AS (
+SELECT id, 'Jurong @ Pasta Mania', 'JEM', 100 FROM restaurant r WHERE restaurant_name = 'Pasta Mania'
 )
 INSERT INTO branch(restaurant_id, name, address, capacity)
 SELECT * FROM rows;
@@ -14,7 +19,25 @@ SELECT * FROM rows;
 WITH rows AS (
 INSERT INTO restaurant(account_name, restaurant_name)
 VALUES('whiterabbit', 'White Rabbit')
-RETURNING id, 'rabbit_branch1', 'abc street 123', 100
+RETURNING id, 'White Rabbit @ Harding', 'Harding Road', 100
+)
+INSERT INTO branch(restaurant_id, name, address, capacity)
+SELECT * FROM rows;
+
+WITH rows AS (
+INSERT INTO restaurant(account_name, restaurant_name)
+VALUES('bangkokjam', 'Bangkok Jam')
+RETURNING id, 'BKJ @ Bugis', 'Bugis+', 100
+)
+INSERT INTO branch(restaurant_id, name, address, capacity)
+SELECT * FROM rows;
+WITH rows AS (
+SELECT id, 'BKJ @ GWC', 'Great World City', 100 FROM restaurant r WHERE restaurant_name = 'Bangkok Jam'
+)
+INSERT INTO branch(restaurant_id, name, address, capacity)
+SELECT * FROM rows;
+WITH rows AS (
+SELECT id, 'BKJ @ Doby Ghout', 'Plaza Singapura', 100 FROM restaurant r WHERE restaurant_name = 'Bangkok Jam'
 )
 INSERT INTO branch(restaurant_id, name, address, capacity)
 SELECT * FROM rows;
