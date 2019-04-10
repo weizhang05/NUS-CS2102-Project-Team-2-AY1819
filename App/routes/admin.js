@@ -44,7 +44,7 @@ router.get('/dashboard', (req, res, next) => {
 
 router.get('/logout', (req, res, next) => {
     res.clearCookie('admin');
-    res.redirect('/');
+    res.redirect('/admin');
 });
 
 // Submit login details. Adds a cookie to store the presence of an admin
