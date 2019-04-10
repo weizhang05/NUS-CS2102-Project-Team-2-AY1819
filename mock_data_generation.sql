@@ -79,9 +79,25 @@ VALUES ('admin1'), ('admin2');
 
 -- INSERT BOOKING HRS
 WITH rest AS (
-SELECT b.id, 0, '22:00'::time, 1, '02:00'::time
+SELECT b.id, 0, '08:00'::time, 1, '10:00'::time
 FROM branch b
-WHERE b.name = 'W'
+WHERE b.name = 'Pasta Mania @ Tampines' OR b.name = 'Jurong @ Pasta Mania'
+)
+INSERT INTO opening_hours(branch_id, start_day, start_time, end_day, end_time)
+SELECT * FROM rest;	
+
+WITH rest AS (
+SELECT b.id, 0, '12:00'::time, 1, '12:00'::time
+FROM branch b
+WHERE b.name = 'White Rabbit @ Harding'
+)
+INSERT INTO opening_hours(branch_id, start_day, start_time, end_day, end_time)
+SELECT * FROM rest;
+
+WITH rest AS (
+SELECT b.id, 0, '08:00'::time, 1, '10:00'::time
+FROM branch b
+WHERE b.name = 'BKJ @ Bugis' OR b.name = 'BKJ @ GWC' OR b.name = 'BKJ @ Doby Ghout'
 )
 INSERT INTO opening_hours(branch_id, start_day, start_time, end_day, end_time)
 SELECT * FROM rest;
