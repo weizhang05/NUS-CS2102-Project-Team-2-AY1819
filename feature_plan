@@ -1,0 +1,13 @@
+Known Features List
+
+Restaurants (subfeature INCOMPLETE, complete)
+  create, read, update, delete complete
+  Branches (subfeature INCOMPLETE, complete)
+    create, read, update, delete complete
+    Opening hours (no subfeatures, complete)
+    Opening hours override (no subfeatures, complete)
+    Menu item override (no subfeatures, complete)
+  Cuisine (no subfeatures, complete)
+  Menu item (no subfeatures, complete)
+Users (Feature incomplete, incomplete)
+Reviews (Feature incomplete, incomplete)

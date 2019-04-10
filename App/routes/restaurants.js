@@ -3,11 +3,13 @@ const pool = require('../pool');
 const branchRouter = require('./branch');
 const cuisineRouter = require('./cuisine');
 const menuItemRouter = require('./menu');
+const hoursTemplateRouter = require('./hours-template');
 const router = express.Router();
 
 router.use('/branch', branchRouter);
 router.use('/cuisine', cuisineRouter);
 router.use('/menu', menuItemRouter);
+router.use('/hours', hoursTemplateRouter);
 
 const NEW_RESTAURANT_QUERY = `
 INSERT INTO restaurant (account_name, restaurant_name)
@@ -54,6 +56,32 @@ WHERE restaurant_id = $1
 ORDER BY name ASC;
 `;
 
+const OPEN_HOURS_TEMPLATE_QUERY = `
+SELECT id, restaurant_id, start_day, start_time, end_day, end_time
+FROM opening_hours_template
+WHERE restaurant_id = $1
+ORDER BY (start_day, start_time) ASC;
+`;
+
+const intToDayStr = (i) => {
+  switch (i) {
+    case 0:
+    return "Sunday";
+    case 1:
+    return "Monday";
+    case 2:
+    return "Tuesday";
+    case 3:
+    return "Wednesday";
+    case 4:
+    return "Thursday";
+    case 5:
+    return "Friday";
+    case 6:
+    return "Saturday";
+  }
+};
+
 
 const renderLogin = (req, res, next) => {
   res.render('restaurants', {});
@@ -81,12 +109,22 @@ const renderDashboard = (req, res, next) => {
                   res.send("error!");
                 } else {
                   const cuisines = dbCuisineRes.rows;
-                  res.render('restaurants-dashboard', {
-                    account_name,
-                    branches,
-                    cuisines,
-                    menu,
-                    restaurant_name
+                  pool.query(OPEN_HOURS_TEMPLATE_QUERY, [restaurant_id], (err, dbOpenHoursTemplateRes) => {
+                    if (err) {
+                      res.send("error!");
+                    } else {
+                      const hours = dbOpenHoursTemplateRes.rows;
+                      res.render('restaurants-dashboard', {
+                        restaurant_id,
+                        account_name,
+                        branches,
+                        cuisines,
+                        menu,
+                        restaurant_name,
+                        hours,
+                        intToDayStr,
+                      });
+                    }
                   });
                 }
               });

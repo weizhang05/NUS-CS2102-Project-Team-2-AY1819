@@ -49,13 +49,8 @@ function insert_restaurant_cuisine(req, res, restaurant_id, cuisine_id) {
 // note: restaurant_id is ignored if user is not an admin
 router.post('/:restaurant_id/new', (req, res, next) => {
   const { restaurant_id: r_id, cuisine_name } = req.body;
-  const restaurant_id = (function(is_admin) {
-    if (is_admin) {
-      return r_id;
-    } else {
-      return req.cookies.restaurants;
-    }
-  })(req.cookies.admin !== undefined);
+  const restaurant_id = (req.cookies.admin !== undefined) ? r_id : req.cookies.restaurants;
+  console.log(req.cookies);
 
   console.log(cuisine_name);
   // get cuisine id, if does not exist, create

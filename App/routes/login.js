@@ -1,14 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-<<<<<<< HEAD
 const pool = require('../pool');
-=======
-const { Pool } = require('pg')
-const pool = new Pool({
-	connectionString: process.env.DATABASE_URL
-});
->>>>>>> customers
 
 router.get('/', function(req, res, next) {
 	res.render('login', { title: 'Log In' });

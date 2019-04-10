@@ -1,8 +1,15 @@
+/* https://blog.koley.in/baserock/ */
+/* https://jrl.ninja/etc/1/ */
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  line-height: 1.6;
+  max-width: 38rem;
+  padding: 2rem;
+  margin: auto;
 }
-
+img {
+  max-width: 100%;
+}
 a {
-  color: #00B7FF;
+  color: #2ECC40;
 }
