@@ -77,7 +77,7 @@ VALUES('clyde','clyde@email.com','clyde',false),
 INSERT INTO admins (account_name)
 VALUES ('admin1'), ('admin2');
 
--- INSERT BOOKING HRS
+-- INSERT OPENING HRS
 WITH rest AS (
 SELECT b.id, 0, '08:00'::time, 1, '10:00'::time
 FROM branch b

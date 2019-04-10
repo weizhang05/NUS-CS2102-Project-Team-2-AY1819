@@ -17,14 +17,14 @@
 			<td>Num of Pax</td>
 			<td>Time</td>
 		</tr>
-		<% for(var i=0; i<data.length; i++) { %>
+		<% for(var i=0; i<data.rows.length; i++) { %>
 		<form method="post" action="deleteReservation">
 			<tr>
-				<td><%= data[i].name%></td>
-				<td><%= data[i].address%></td>
-				<td name="num" value="<%= data[i].num%>"><%= data[i].num%></td>
-				<td><%= data[i].time%></td>
-				<input type="hidden" name="id" value="<%= data[i].id%>">
+				<td><%= data.rows[i].name%></td>
+				<td><%= data.rows[i].address%></td>
+				<td name="num" value="<%= data.rows[i].num%>"><%= data.rows[i].num%></td>
+				<td><%= data.rows[i].time%></td>
+				<input type="hidden" name="id" value="<%= data.rows[i].id%>">
 				<td><button type="submit">Delete</button></td>
 			</tr>
 		</form>

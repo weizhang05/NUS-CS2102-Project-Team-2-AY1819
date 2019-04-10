@@ -159,8 +159,7 @@ router.get('/customer/reservation', function(req, res, next) {
 	let customerCookie = req.cookies.customer[0];
 	var getCuisineQuery = "SELECT bk.id AS id, br.name AS name, br.address AS address, bk.pax AS num, bk.throughout AS time FROM booking bk, branch br WHERE bk.branch_id = br.id AND bk.customer_id = '"+customerCookie["id"]+"'";
 	pool.query(getCuisineQuery, (err, data) => {
-		console.log(data);
-		res.render('reservation', { title: 'Reservation', data: data.rows });
+		res.render('reservation', { title: 'Reservation', data: data });
 	});
 });
 
@@ -230,10 +229,7 @@ router.post('/customer/makeReservation', function(req, res, next) {
 		end_time,
 		reservation_pax
 	];
-
-	console.log("AVAILABLE DATA");
-  console.log(availability_data);
-
+	
 	pool.query(CHECK_BRANCH_AVAILABILITY_QUERY, availability_data, (err, data) => {
 	  if (err) {
       console.log("error with avail query");
@@ -242,6 +238,7 @@ router.post('/customer/makeReservation', function(req, res, next) {
 	  	const hasAvailability = data.rowCount === 1;
 		console.log(data);
       if(hasAvailability){
+		  console.log("ATTEMPTING TO INSERT");
       	const customerId = req.cookies.customer[0].id;
         const make_booking_data = [customerId, branch_id, reservation_pax, start_time, end_time];
         console.log(make_booking_data);
