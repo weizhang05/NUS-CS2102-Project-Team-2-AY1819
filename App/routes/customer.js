@@ -294,7 +294,7 @@ router.post('/customer/deleteReservation', function(req, res, next) {
 	});
 	
 	var deleteReservationQuery = "DELETE FROM booking WHERE id = '"+bookingId+"'";
-	pool.query(deleteReservationQuery, (err, data) => {\
+	pool.query(deleteReservationQuery, (err, data) => {
 	});
 	
 	let customerCookie = req.cookies.customer[0];
