@@ -104,7 +104,7 @@ SELECT * FROM rest;
 
 -- INSERT BOOKING
 WITH item AS (
-SELECT c.id, b.id, 1, tsrange('2019-04-14T16:00:00.000Z', '2019-04-14T17:00:00.000Z','[)')
+SELECT c.id, b.id, 1, tsrange('2019-05-14T16:00:00.000Z', '2019-05-14T17:00:00.000Z','[)')
 FROM customer c, branch b
 WHERE b.name = 'BKJ @ GWC' and c.name = 'a'
 )
@@ -112,7 +112,7 @@ INSERT INTO booking(customer_id, branch_id, pax, throughout)
 SELECT * FROM item;
 
 WITH item AS (
-SELECT c.id, b.id, 1, tsrange('2019-04-14T16:00:00.000Z', '2019-04-14T17:30:00.000Z','[)')
+SELECT c.id, b.id, 1, tsrange('2019-05-14T16:00:00.000Z', '2019-05-14T17:30:00.000Z','[)')
 FROM customer c, branch b
 WHERE b.name = 'White Rabbit @ Harding' and c.name = 'clyde'
 )
