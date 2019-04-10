@@ -95,6 +95,14 @@ router.post('/', function(req, res, next) {
   goIndex(req, res)
 });
 
+router.get('/customer', function(req, res, next) {
+	goIndex(req, res)
+});
+
+router.post('/customer', function(req, res, next) {
+  goIndex(req, res)
+});
+
 // Register
 router.get('/customer/register', function(req, res, next) {
   res.render('register', { title: 'Register' });
