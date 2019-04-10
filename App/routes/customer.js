@@ -2,11 +2,73 @@ let express = require('express');
 let pool = require('../pool');
 let router = express.Router();
 
-const RESTAURANT_NAME_QUERY = `
-SELECT name 
-FROM restaurant r
-WHERE r.id = $1
+
+// Check if making a booking at a branch is possible
+// 1) check if start/end booking time is in operating hours
+// 		4 cases:
+//		 	1) booking_start is on start_day
+//		 	booking_end is before end_day
+//		 	2) booking_start is after start day
+//		 	booking_end is on end_day
+//		 	3) booking_start is on start_day
+//		 	booking_end is on end_day
+//		 	4) book_start is after start_day
+//		 	book_end is before end_day
+// 2) check if branch has capacity
+// 3) check operating hours override
+
+// $1 = branch id
+// $2 = start_day (int 0-6)
+// $3 = start_time (time)
+// $4 = end_day
+// $5 = end_time
+// $6 = start_ts (timestamp)
+// $7 = end_ts
+// $8 = booking_pax
+const CHECK_BRANCH_AVAILABILITY_QUERY = `
+SELECT 1
+FROM opening_hours op1
+WHERE op1.branch_id = $1 and
+EXISTS (
+  select 1
+  FROM opening_hours op2
+  WHERE op2.branch_id = op1.branch_id
+  AND (
+  (op2.start_day = $2
+  AND op2.start_time <= $3
+  AND op2.end_day > $4)
+  OR
+  (op2.start_day < $2
+  AND op2.end_time >= $5
+  AND op2.end_day = $4)
+  OR
+  (op2.start_day = $2
+  AND op2.end_day = $4
+  AND op2.start_time <= $3 
+  AND op2.end_time >= $5)
+  OR
+  (op2.start_day < $2
+  AND op2.end_day > $4)
+	)
+) AND 
+EXISTS (
+	select 1
+	FROM branch br
+	WHERE br.id = op1.branch_id
+	AND 
+      br.capacity - $8 >= 
+      (SELECT COALESCE(SUM(bk.pax), 0)
+        FROM booking bk
+        WHERE br.id = bk.branch_id
+        AND bk.throughout && tsrange($6, $7, '[)'))
+)
 `;
+
+const MAKE_BOOKING_QUERY = `
+INSERT INTO booking(customer_id, branch_id, pax, throughout)
+VALUES($1, $2, $3, tsrange($4, $5, '[)'))
+`;
+
 
 // Index
 function goIndex(req, res) {
@@ -136,74 +198,6 @@ router.post('/selectBranch', function(req, res, next) {
 });
 
 
-// 1) check if datetime in opening hours
-// 		4 cases:
-//		 	1) booking_start is on start_day
-//		 	booking_end is before end_day
-//		 	2) booking_start is after start day
-//		 	booking_end is on end_day
-//		 	3) booking_start is on start_day
-//		 	booking_end is on end_day
-//		 	4) book_start is after start_day
-//		 	book_end is before end_day
-// 2) check if branch has capacity
-// 3) check operating hours override
-
-// $1 = branch id
-// $2 = start_day (int 0-6)
-// $3 = start_time (time)
-// $4 = end_day
-// $5 = end_time (int 0-6)
-// $6 = start_ts (time)
-// $7 = end_ts (timestamp)
-// $8 = booking_pax
-
-// TODO: add operating hrs override after basic version works
-// assumes that opening_hours for the branch has no strange overlaps
-const CHECK_AVAILABILITY_QUERY = `
-SELECT 1
-FROM opening_hours op1
-WHERE op1.branch_id = $1 and
-EXISTS (
-  select 1
-  FROM opening_hours op2
-  WHERE op2.branch_id = op1.branch_id
-  AND (
-  (op2.start_day = $2
-  AND op2.start_time <= $3
-  AND op2.end_day > $4)
-  OR
-  (op2.start_day < $2
-  AND op2.end_time >= $5
-  AND op2.end_day = $4)
-  OR
-  (op2.start_day = $2
-  AND op2.end_day = $4
-  AND op2.start_time <= $3 
-  AND op2.end_time >= $5)
-  OR
-  (op2.start_day < $2
-  AND op2.end_day > $4)
-	)
-) AND 
-EXISTS (
-	select 1
-	FROM branch br
-	WHERE br.id = op1.branch_id
-	AND 
-      br.capacity - $8 >= 
-      (SELECT COALESCE(SUM(bk.pax), 0)
-        FROM booking bk
-        WHERE br.id = bk.branch_id
-        AND bk.throughout && tsrange($6, $7, '[)'))
-)
-`;
-
-const MAKE_BOOKING_QUERY = `
-INSERT INTO booking(customer_id, branch_id, pax, throughout)
-VALUES($1, $2, $3, tsrange($4, $5, '[)'))
-`;
-
 // Reservation (End)
 router.get('/makeReservation', function(req, res, next) {
 	res.redirect('reservation');
@@ -231,7 +225,7 @@ router.post('/makeReservation', function(req, res, next) {
 
   console.log(availability_data);
 
-	pool.query(CHECK_AVAILABILITY_QUERY, availability_data, (err, data) => {
+	pool.query(CHECK_BRANCH_AVAILABILITY_QUERY, availability_data, (err, data) => {
 	  if (err) {
       console.log("error with avail query");
       console.log(err);
