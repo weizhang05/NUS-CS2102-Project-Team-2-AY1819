@@ -261,6 +261,11 @@ router.post('/customer/makeReservation', function(req, res, next) {
 	});
 });
 
+router.get('/customer/rating', function(req, res, next) {
+	res.render('rating');
+
+});
+
 // Logout
 router.get('/customer/logout', function(req, res, next) {
 	res.clearCookie('customer');
