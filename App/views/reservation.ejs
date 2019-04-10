@@ -22,8 +22,10 @@
 			<tr>
 				<td><%= data.rows[i].name%></td>
 				<td><%= data.rows[i].address%></td>
-				<td name="num" value="<%= data.rows[i].num%>"><%= data.rows[i].num%></td>
+				<td><%= data.rows[i].num%></td>
 				<td><%= data.rows[i].time%></td>
+				<input type="hidden" name="branchName" value="<%= data.rows[i].name%>">
+				<input type="hidden" name="num" value="<%= data.rows[i].num%>">
 				<input type="hidden" name="id" value="<%= data.rows[i].id%>">
 				<td><button type="submit">Delete</button></td>
 			</tr>

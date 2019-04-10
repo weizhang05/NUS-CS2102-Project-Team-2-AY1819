@@ -248,6 +248,7 @@ router.post('/customer/makeReservation', function(req, res, next) {
             console.log("error with making booking");
             console.log(err);
           } else {
+			  console.log("SUCCESS");
             res.render('makeReservation', { title: 'Booking is done!', data: data.rows });
 					}
         });
@@ -283,13 +284,16 @@ router.get('/customer/deleteReservation', function(req, res, next) {
 	res.redirect('reservation');
 });
 router.post('/customer/deleteReservation', function(req, res, next) {
+	console.log(req.body);
 	const bookingId = req.body.id;
-	var deleteReservationQuery = "DELETE FROM booking WHERE id = '"+bookingId+"'";
+	const num = req.body.num;
+	const branchName = req.body.branchName
 	
-	var updateBranchCapacityQuery = "UPDATE booking SET capacity = (capacity + "+req.body.num+") where id = '"+bookingId+"'";
+	var updateBranchCapacityQuery = "UPDATE branch SET capacity = (capacity + "+num+") where name = '"+branchName+"'";
 	pool.query(updateBranchCapacityQuery, (err, data) => {
 	});
 	
+	var deleteReservationQuery = "DELETE FROM booking WHERE id = '"+bookingId+"'";
 	pool.query(deleteReservationQuery, (err, data) => {
 		res.render('reservation', { title: 'Reservation', data: data.rows });
 	});
