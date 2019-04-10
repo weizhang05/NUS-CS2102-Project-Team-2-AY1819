@@ -5,13 +5,13 @@ const user_display = document.getElementById("users-display");
 const user_count = document.getElementById("user-count");
 
 user_search.addEventListener('input', function(event) {
-    const search_txt = user_search.value;
+    const search_txt = user_search.value.toLowerCase();
     const tbody = user_display.tBodies[0];
     let matches = 0;
     for (const row of tbody.rows) {
         let found = false;
         for (const cell of row.cells) {
-            if (cell.textContent.search(search_txt) >= 0) {
+            if (cell.textContent.toLowerCase().search(search_txt) >= 0) {
                 found = true;
                 matches += 1;
                 break;
