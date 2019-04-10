@@ -270,7 +270,7 @@ router.post('/customer/deleteReservation', function(req, res, next) {
 	const bookingId = req.body.id;
 	var deleteReservationQuery = "DELETE FROM booking WHERE id = '"+bookingId+"'";
 	
-	var updateBranchCapacityQuery = "UPDATE booking SET capacity = (capacity + "+req.body.num") where id = '"+bookingId+"'";
+	var updateBranchCapacityQuery = "UPDATE booking SET capacity = (capacity + "+req.body.num+") where id = '"+bookingId+"'";
 	pool.query(updateBranchCapacityQuery, (err, data) => {
 	});
 	
