@@ -2,7 +2,6 @@ let express = require('express');
 let pool = require('../pool');
 let router = express.Router();
 
-
 // Check if making a booking at a branch is possible
 // 1) check if start/end booking time is in operating hours
 // 		4 cases:
@@ -68,6 +67,14 @@ const MAKE_BOOKING_QUERY = `
 INSERT INTO booking(customer_id, branch_id, pax, throughout)
 VALUES($1, $2, $3, tsrange($4, $5, '[)'))
 `;
+
+const GET_RESTAURANT_BRANCHES_QUERY = `
+SELECT b.id id, restaurant_name, b.name, address, plus_code 
+FROM branch b join restaurant r
+ON b.restaurant_id = r.id
+WHERE b.restaurant_id = $1
+`;
+
 
 
 // Index
@@ -174,20 +181,12 @@ router.post('/selectRestaurant', function(req, res, next) {
 });
 
 // Select branch
-
-const RESTAURANT_BRANCHES_QUERY = `
-SELECT b.id id, restaurant_name, b.name, address, plus_code 
-FROM branch b join restaurant r
-ON b.restaurant_id = r.id
-WHERE b.restaurant_id = $1
-`;
-
 router.get('/selectBranch', function(req, res, next) {
 	res.redirect('reservation');
 });
 router.post('/selectBranch', function(req, res, next) {
 	const restaurant_id = req.body.restaurant;
-	pool.query(RESTAURANT_BRANCHES_QUERY, [restaurant_id], (err, branchesData) => {
+	pool.query(GET_RESTAURANT_BRANCHES_QUERY, [restaurant_id], (err, branchesData) => {
 	  if (err) {
 	  	console.log(err);
 		} else {
@@ -230,12 +229,8 @@ router.post('/makeReservation', function(req, res, next) {
       console.log("error with avail query");
       console.log(err);
 		} else {
-
-      console.log(data);
 	  	const hasAvailability = data.rowCount === 1;
-
       if(hasAvailability){
-
       	const customerId = req.cookies.customer[0].id;
         const make_booking_data = [customerId, branch_id, reservation_pax, start_time, end_time];
         console.log(make_booking_data);
@@ -249,7 +244,8 @@ router.post('/makeReservation', function(req, res, next) {
 					}
         });
       } else {
-        console.log("no availablity");
+        // TODO: show an error screen for no availability
+        console.log("no availability");
 			}
 		}
 	});
