@@ -119,4 +119,11 @@ WHERE b.name = 'White Rabbit @ Harding' and c.name = 'clyde'
 INSERT INTO booking(customer_id, branch_id, pax, throughout)
 SELECT * FROM item;
 
--- tables below not used for milestone 1
+-- INSERT MENU ITEM
+WITH item AS (
+SELECT r.id, 'Mooncakes', 200
+FROM restaurant r
+WHERE r.restaurant_name = 'White Rabbit'
+)
+INSERT INTO menu_item(restaurant_id, name, cents)
+SELECT * FROM item;
