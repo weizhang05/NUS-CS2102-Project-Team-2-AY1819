@@ -294,8 +294,13 @@ router.post('/customer/deleteReservation', function(req, res, next) {
 	});
 	
 	var deleteReservationQuery = "DELETE FROM booking WHERE id = '"+bookingId+"'";
-	pool.query(deleteReservationQuery, (err, data) => {
-		res.render('reservation', { title: 'Reservation', data: data.rows });
+	pool.query(deleteReservationQuery, (err, data) => {\
+	});
+	
+	let customerCookie = req.cookies.customer[0];
+	var getCuisineQuery = "SELECT bk.id AS id, br.name AS name, br.address AS address, bk.pax AS num, bk.throughout AS time FROM booking bk, branch br WHERE bk.branch_id = br.id AND bk.customer_id = '"+customerCookie["id"]+"'";
+	pool.query(getCuisineQuery, (err, data) => {
+		res.render('reservation', { title: 'Reservation', data: data });
 	});
 });
 
