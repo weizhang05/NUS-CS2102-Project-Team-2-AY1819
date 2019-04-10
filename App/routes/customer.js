@@ -164,6 +164,47 @@ router.get('/customer/reservation', function(req, res, next) {
 	});
 });
 
+const CUISINE_QUERY = `
+SELECT id, name
+FROM cuisine;
+`;
+const CHOOSE_LOCATION_QUERY = `
+SELECT R.id AS restaurant_id, R.restaurant_name AS restaurant_name, B.id AS branch_id, B.name AS branch_name, B.address AS address
+FROM branch B
+JOIN restaurant R ON (B.restaurant_id = R.id)
+JOIN restaurant_cuisine RC ON (R.id = RC.restaurant_id)
+WHERE TRUE
+AND (RC.cuisine_id = ANY ($1) OR $1 IS NULL)
+AND (R.restaurant_name LIKE $2 OR B.name LIKE $2 OR $2 IS NULL)
+LIMIT 50;
+`;
+router.get('/customer/chooseLocation', (req, res) => {
+	const selectedCuisines = [];
+	for (const key in req.query) {
+		if (key.startsWith('cuisine-')) {
+			selectedCuisines.push(req.query[key]);
+		}
+	}
+	const nameSubstring = req.query.filter_name;
+	pool.query(CUISINE_QUERY, (err, dbCuisineRes) => {
+		const cuisines = dbCuisineRes.rows;
+		pool.query(CHOOSE_LOCATION_QUERY,
+		[
+			selectedCuisines.length > 0 ? selectedCuisines : null,
+			nameSubstring ? '%' + nameSubstring + '%' : null,
+		],
+		(err, dbLocationRes) => {
+			const branches = dbLocationRes.rows;
+			res.render('chooseLocation', {
+				selectedCuisines,
+				nameSubstring,
+				cuisines,
+				branches
+			});
+		})
+	})
+});
+
 // Reservation (Start)
 router.get('/customer/selectCuisine', function(req, res, next) {
 	res.redirect('reservation');

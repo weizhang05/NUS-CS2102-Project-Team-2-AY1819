@@ -1,0 +1,57 @@
+<% include customerTemplate/afterLoginHeader %>
+
+<h2>Filters</h2>
+<form method="GET" action="chooseLocation">
+	<div>
+		<p>Filter by cuisine:
+			<% for (const cuisine of cuisines) { %>
+					<input type="checkbox" id="<%= cuisine.id %>" name="cuisine-<%= cuisine.id %>" value="<%= cuisine.id %>" <%= selectedCuisines.includes(cuisine.id) ? 'checked' : '' %>>
+					<label for="<%= cuisine.id %>"><%= cuisine.name %></label>
+			<% } %>
+		</p>
+		<p>
+			Filter by name: <input type="text" name="filter_name" value="<%= nameSubstring || '' %>">
+		</p>
+	</div>
+		<button type="submit">Filter</button>
+</form>
+
+<h2>Filter results; choose a restaurant:</h2>
+<form method="post" action="makeReservation">
+	<table id="branches-display" style="border-spacing: 10px;">
+	<thead>
+	<tr>
+		<th>Select?</th>
+		<th>Name</th>
+		<th>Address</th>
+	</tr>
+	</thead>
+	<tbody>
+		<% for(const { restaurant_name, branch_id, branch_name, address } of branches) { %>
+		<tr>
+			<td>
+				<input id="branch-id" type="radio" name="branch_id" value="<%= branch_id %>"/>
+			</td>
+			<td><%= restaurant_name %>, <%= branch_name %></td>
+			<td><%=address%></td>
+		</tr>
+		<% } %>
+	</tbody>
+	</table>
+	<br>
+	<label for="reservation-pax">Booking for: </label>
+	<input id="reservation-pax" type="number" name="reservation_pax" value="2" required/>
+<br>
+	<br>
+	<label for="reservation-datetime">Choose a booking date & time: </label>
+	<input id="reservation-datetime" type="datetime-local" step="900" name="reservation_datetime"/>
+	<br>
+	<br>
+	<label for="duration">Duration (mins): </label>
+	<input id="duration" type="number" name="duration_mins" value="60" min="30" step="15" required/>
+	<br>
+	<br>
+	<button type="submit">Done</button>
+</form>
+	
+<% include customerTemplate/footer %>
