@@ -1,16 +1,17 @@
 <% include customerTemplate/afterLoginHeader %>
-	
-<p>Please choose a restaurant:</p>
-<form method="post" action="selectBranch">
-	<tbody>
-		<% for(var i=0; i<data.length; i++) { %>
-		<tr>
-			<td><input type="radio" name="restaurant" value="<%= data[i].id%>"><%= data[i].restaurant_name%></input></td>
-		</tr>
-		<% } %>
-	</tbody>
-	<br>
-	<button type="submit">Next</button>
-</form>
+<div id="mainBody">
+	<p>Please choose a restaurant:</p>
+	<form method="post" action="selectBranch">
+		<tbody>
+			<% for(var i=0; i<data.length; i++) { %>
+			<tr>
+				<td><input type="radio" name="restaurant" value="<%= data[i].id%>"><%= data[i].restaurant_name%></input></td>
+			</tr>
+			<% } %>
+		</tbody>
+		<br>
+		<button type="submit">Next</button>
+	</form>
+</div>
 	
 <% include customerTemplate/footer %>

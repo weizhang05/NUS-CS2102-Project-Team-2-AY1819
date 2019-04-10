@@ -156,10 +156,10 @@ router.post('/customer/login', function(req, res, next) {
 
 // List reservation
 router.get('/customer/reservation', function(req, res, next) {
-	console.log(req.cookies);
 	let customerCookie = req.cookies.customer[0];
 	var getCuisineQuery = "SELECT bk.id AS id, br.name AS name, br.address AS address, bk.pax AS num, bk.throughout AS time FROM booking bk, branch br WHERE bk.branch_id = br.id AND bk.customer_id = '"+customerCookie["id"]+"'";
 	pool.query(getCuisineQuery, (err, data) => {
+		console.log(data);
 		res.render('reservation', { title: 'Reservation', data: data.rows });
 	});
 });
@@ -211,6 +211,7 @@ router.get('/customer/makeReservation', function(req, res, next) {
 });
 
 router.post('/customer/makeReservation', function(req, res, next) {
+	console.log(req.body);
 	const {branch_id, reservation_pax, reservation_datetime, duration_mins} = req.body;
 
 	const start_time = new Date(reservation_datetime);
@@ -260,6 +261,24 @@ router.post('/customer/makeReservation', function(req, res, next) {
 		}
 	});
 });
+
+// Delete reservation
+router.get('/customer/deleteReservation', function(req, res, next) {
+	res.redirect('reservation');
+});
+router.post('/customer/deleteReservation', function(req, res, next) {
+	const bookingId = req.body.id;
+	var deleteReservationQuery = "DELETE FROM booking WHERE id = '"+bookingId+"'";
+	
+	var updateBranchCapacityQuery = "UPDATE booking SET capacity = (capacity + "+req.body.num") where id = '"+bookingId+"'";
+	pool.query(updateBranchCapacityQuery, (err, data) => {
+	});
+	
+	pool.query(deleteReservationQuery, (err, data) => {
+		res.render('reservation', { title: 'Reservation', data: data.rows });
+	});
+});
+
 
 // Logout
 router.get('/customer/logout', function(req, res, next) {

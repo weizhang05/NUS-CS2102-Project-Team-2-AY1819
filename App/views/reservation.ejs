@@ -1,35 +1,43 @@
 <% include customerTemplate/afterLoginHeader %>
-	
-<div class="row">
-	<div class="col-lg-2">
-		<form method="post" action="selectCuisine">
-			<button type="submit">Make Reservation</button>
-		</form>
+<div id="mainBody">
+	<div class="row">
+		<div class="col-lg-2">
+			<form method="post" action="selectCuisine">
+				<button type="submit">Make Reservation</button>
+			</form>
+		</div>
 	</div>
-	<div class="col-lg-2">
-		<!-- TODO -->
-		<form method="post" action="#">
-			<button type="submit">Delete Reservation</button>
-		</form>
-	</div>
-</div>
 
-<h3>Current Reservations</h3>
-<table id="currentReservation">
-	<tr>
-		<td></td>
-		<td>Address</td>
-		<td>Num of Pax</td>
-		<td>Time</td>
-	</tr>
-	<% for(var i=0; i<data.length; i++) { %>
-	<tr>
-		<td><%= data[i].name%></td>
-		<td><%= data[i].address%></td>
-		<td><%= data[i].num%></td>
-		<td><%= data[i].time%></td>
-	</tr>
-	<% } %>
-</table>
+	<h3>Current Reservations</h3>
+	<% if(data.rowCount > 0){ %>
+	<table id="currentReservation">
+		<tr>
+			<td></td>
+			<td>Address</td>
+			<td>Num of Pax</td>
+			<td>Time</td>
+		</tr>
+		<% for(var i=0; i<data.length; i++) { %>
+		<form method="post" action="deleteReservation">
+			<tr>
+				<td><%= data[i].name%></td>
+				<td><%= data[i].address%></td>
+				<td name="num" value="<%= data[i].num%>"><%= data[i].num%></td>
+				<td><%= data[i].time%></td>
+				<input type="hidden" name="id" value="<%= data[i].id%>">
+				<td><button type="submit">Delete</button></td>
+			</tr>
+		</form>
+		<%
+			}
+		}
+		else{
+		%>
+		You have no upcoming reservations!
+		<%
+		}
+		%>
+	</table>
+</div>
 	
 <% include customerTemplate/footer %>

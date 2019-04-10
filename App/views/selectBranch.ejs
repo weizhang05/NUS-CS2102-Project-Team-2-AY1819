@@ -1,22 +1,19 @@
 <% include customerTemplate/afterLoginHeader %>
-
+<div id="mainBody">
 <p>Please choose a <%= restaurant_name%> branch</p>
 <form method="post" action="makeReservation">
 	<table id="branches-display" style="border-spacing: 10px;">
 	<thead>
 	<tr>
-		<th>Branch</th>
-		<th>Name</th>
+		<th>Branch Name</th>
 		<th>Address</th>
+		<th></th>
 	</tr>
 	</thead>
 	<tbody>
 		<% for(const {id, name, address} of data) { %>
 		<tr>
-			<td>
-				<input id="branch-id" type="radio" name="branch_id" value="<%=id%>"/>
-			</td>
-			<td><%=name%></td>
+			<td><input id="branch-id" type="radio" name="branch_id" value="<%=id%>"/>&nbsp<%=name%></td>
 			<td><%=address%></td>
 		</tr>
 		<% } %>
@@ -37,5 +34,7 @@
 	<br>
 	<button type="submit">Done</button>
 </form>
+
+</div>
 	
 <% include customerTemplate/footer %>
