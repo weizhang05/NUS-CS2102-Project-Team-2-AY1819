@@ -123,6 +123,30 @@ CREATE TABLE operating_override (
   UNIQUE (branch_id, override_date)
 );
 
+-- ensure duration >= 1hr
+-- ensure start time > now
+-- ensure booking start < booking end
+CREATE OR REPLACE FUNCTION booking_duration_check()
+RETURNS trigger AS
+$$
+BEGIN
+  IF upper(NEW.throughout) - lower(NEW.throughout) < '1 hour'::interval
+    OR isempty(NEW.throughout)
+    OR lower(NEW.throughout) < current_timestamp
+  THEN
+    RETURN NULL;
+  END IF;
+  RETURN NEW;
+END
+$$
+language plpgsql;
+
+CREATE TRIGGER booking_duration_check
+BEFORE INSERT OR UPDATE
+ON booking
+FOR EACH ROW
+EXECUTE PROCEDURE booking_duration_check();
+
 -- trigger for cleaning up cuisines
 -- restauranters directly add restaurant_cuisine & indirectly, cuisines
 -- use trigger to clean up cuisines when resturant_cuisines are deleted
@@ -147,3 +171,23 @@ CREATE TRIGGER cleanup_cuisine
 AFTER DELETE ON restaurant_cuisine
 FOR EACH ROW
 EXECUTE PROCEDURE cleanup_cuisine();
+
+-- menu item price must be >= 0
+CREATE OR REPLACE FUNCTION validate_menu_item()
+RETURNS trigger AS
+$$
+BEGIN
+  IF NEW.cents < 0
+  THEN
+    RETURN NULL;
+  END IF;
+  RETURN NEW;
+END;
+$$
+language plpgsql;
+
+CREATE TRIGGER validate_menu_item
+BEFORE INSERT OR UPDATE
+ON menu_item
+FOR EACH ROW
+EXECUTE PROCEDURE validate_menu_item();
