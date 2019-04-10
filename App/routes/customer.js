@@ -251,10 +251,29 @@ router.post('/customer/makeReservation', function(req, res, next) {
             res.render('makeReservation', { title: 'Booking is done!', data: data.rows });
 					}
         });
-      } else {
-        // TODO: show an error screen for no availability
-        console.log("no availability");
-			}
+      } 
+		else {
+			console.log("no availability");
+			const getRestaurantId = "SELECT DISTINCT restaurant_id AS id FROM branch WHERE id = '"+branch_id+"'"
+			pool.query(getRestaurantId, (err, branchesData) => {
+				if (err) {
+					console.log(err);
+				}
+				else {
+					rId = branchesData.rows[0].id;
+
+					pool.query(GET_RESTAURANT_BRANCHES_QUERY, [rId], (err, branchesData) => {
+						if (err) {
+							console.log(err);
+						} 
+						else {
+							rname = branchesData.rows[0].restaurant_name;
+							res.render('selectBranch', { title: 'Select Branch', restaurant_name: rname, data: branchesData.rows });
+						}
+					});
+				}
+			});
+		}
 		}
 	});
 });
