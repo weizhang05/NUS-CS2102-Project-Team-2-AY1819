@@ -1,19 +1,15 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-	<a href="/">Home</a> <a href="/login">Login</a> <a href="/register">Register</a> <a href="/reservation">Reservation</a>
-	<br>
+<% include customerTemplate/beforeLoginHeader %>
+
+<div class="row">
+	<div class="col-lg-12">
+		<form method="post" action="login">
+			Email: <input type="text" name="email" id="email">
+			<br>
+			Password: <input type="password" name="password" id="password">
+			<br>
+			<button type="submit" onclick="">Log In</button>
+		</form>
+	</div>
+</div>
 	
-	<form method="post" action="login">
-		Email: <input type="text" name="email" id="email">
-		<br>
-		Password: <input type="password" name="password" id="password">
-		<br>
-		<button type="submit" onclick="">Log In</button>
-	</form>
-  </body>
-</html>
+<% include customerTemplate/footer %>

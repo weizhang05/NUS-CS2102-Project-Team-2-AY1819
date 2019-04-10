@@ -1,24 +1,35 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <a href="/">Home</a> <a href="/login">Login</a> <a href="/register">Register</a> <a href="/reservation">Reservation</a>
-	<br>
+<% include customerTemplate/afterLoginHeader %>
 	
-    <p>Welcome to <%= title %>, please choose a cuisine:</p>
-	<form method="post" action="selectRestaurant">
-		<tbody>
-			<% for(var i=0; i<data.length; i++) { %>
-			<tr>
-				<td><input type="radio" name="cuisine" value="<%= data[i].id%>"><%= data[i].name%></input></td>
-			</tr>
-			<% } %>
-		</tbody>
-		<br>
-		<button type="submit">Next</button>
-	</form>
-  </body>
-</html>
+<div class="row">
+	<div class="col-lg-2">
+		<form method="post" action="selectCuisine">
+			<button type="submit">Make Reservation</button>
+		</form>
+	</div>
+	<div class="col-lg-2">
+		<!-- TODO -->
+		<form method="post" action="#">
+			<button type="submit">Delete Reservation</button>
+		</form>
+	</div>
+</div>
+
+<h3>Current Reservations</h3>
+<table id="currentReservation">
+	<tr>
+		<td></td>
+		<td>Address</td>
+		<td>Num of Pax</td>
+		<td>Time</td>
+	</tr>
+	<% for(var i=0; i<data.length; i++) { %>
+	<tr>
+		<td><%= data[i].name%></td>
+		<td><%= data[i].address%></td>
+		<td><%= data[i].num%></td>
+		<td><%= data[i].time%></td>
+	</tr>
+	<% } %>
+</table>
+	
+<% include customerTemplate/footer %>

@@ -23,7 +23,7 @@ WHERE id = $1;
 `;
 
 const CUSTOMER_INFO_QUERY = `
-SELECT id, name
+SELECT id, name, email
 FROM customer
 `;
 
@@ -33,9 +33,19 @@ WHERE id = $1;
 `;
 
 const UPDATE_USER_QUERY = `
+WITH custinfo AS (
+    SELECT id, 
+    coalesce($2, c.name) as name, 
+    coalesce($3, c.password) as password,
+    coalesce($4, c.email) as email
+    FROM customer c
+    WHERE c.id = $1
+)
 UPDATE customer
-      SET name = $1
-      WHERE id = $2;
+SET name = (SELECT name from custinfo),
+password = (SELECT password from custinfo),
+email = (SELECT email from custinfo)
+WHERE id = (SELECT id from custinfo);
 `;
 
 const RESTAURANT_INFO_QUERY = `
@@ -230,9 +240,17 @@ router.post('/delete_user', (req, res, next) => {
     });
 });
 
+function emptyToNull(str) {
+    return (str === "") ? null : str;
+}
+
 router.post('/edit_user', (req, res, next) => {
-    const { user_id, new_user_name } = req.body;
-    pool.query(UPDATE_USER_QUERY, [new_user_name, user_id], (err, dbRes) => {
+    const new_email = emptyToNull(req.body.new_email);
+    const user_id = emptyToNull(req.body.user_id);
+    const new_user_name = emptyToNull(req.body.new_user_name);
+    const new_password = emptyToNull(req.body.new_password);
+
+    pool.query(UPDATE_USER_QUERY, [user_id, new_user_name, new_password, new_email], (err, dbRes) => {
         if (err) {
             console.log(err);
             res.send("error!");

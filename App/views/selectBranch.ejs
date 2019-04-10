@@ -1,26 +1,41 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <a href="/">Home</a> <a href="/login">Login</a> <a href="/register">Register</a> <a href="/reservation">Reservation</a>
+<% include customerTemplate/afterLoginHeader %>
+
+<p>Please choose a <%= restaurant_name%> branch</p>
+<form method="post" action="makeReservation">
+	<table id="branches-display" style="border-spacing: 10px;">
+	<thead>
+	<tr>
+		<th>Branch</th>
+		<th>Name</th>
+		<th>Address</th>
+	</tr>
+	</thead>
+	<tbody>
+		<% for(const {id, name, address} of data) { %>
+		<tr>
+			<td>
+				<input id="branch-id" type="radio" name="branch_id" value="<%=id%>"/>
+			</td>
+			<td><%=name%></td>
+			<td><%=address%></td>
+		</tr>
+		<% } %>
+	</tbody>
+	</table>
 	<br>
+	<label for="reservation-pax">Booking for: </label>
+	<input id="reservation-pax" type="number" name="reservation_pax" value="2" required/>
+<br>
+	<br>
+	<label for="reservation-datetime">Choose a booking date & time: </label>
+	<input id="reservation-datetime" type="datetime-local" step="900" name="reservation_datetime"/>
+	<br>
+	<br>
+	<label for="duration">Duration (mins): </label>
+	<input id="duration" type="number" name="duration_mins" value="60" min="30" step="15" required/>
+	<br>
+	<br>
+	<button type="submit">Done</button>
+</form>
 	
-    <p>Please choose a branch for <%= data[0].name%>:</p>
-	<form method="post" action="makeReservation">
-		Num of Pax: <input type="number" name="num"></input>
-		<br>
-		<tbody>
-			<% for(var i=0; i<data.length; i++) { %>
-			<tr>
-				<td><input type="radio" name="branch" value="<%= data[i].id%>"><%= data[i].address%></input></td>
-			</tr>
-			<% } %>
-		</tbody>
-		<br>
-		<button type="submit">Next</button>
-	</form>
-  </body>
-</html>
+<% include customerTemplate/footer %>

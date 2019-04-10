@@ -7,21 +7,9 @@ var flash = require('connect-flash');
 var session = require('express-session');
 require("dotenv").load();
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-
-var loginRouter = require('./routes/login');
-var registerRouter = require('./routes/register');
 var restaurantsRouter = require('./routes/restaurants');
 var adminRouter = require('./routes/admin');
-var aboutRouter = require('./routes/about');
-
-var customersRouter = require('./routes/customers');
-
-var reservationRouter = require('./routes/reservation');
-//var selectRestaurantRouter = require('./routes/selectRestaurant');
-//var selectBranchRouter = require('./routes/selectBranch');
-//var makeReservation = require('./routes/makeReservation');
+var customerRouter = require('./routes/customer');
 
 var app = express();
 
@@ -37,21 +25,9 @@ app.use(session({secret: 'keyboard cat'}));
 app.use(flash());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-
-app.use('/login', loginRouter);
-app.use('/register', registerRouter);
+app.use('/', customerRouter);
 app.use('/restaurants', restaurantsRouter);
 app.use('/admin', adminRouter);
-app.use('/about', aboutRouter);
-
-app.use('/reservation', reservationRouter);
-//app.use('/selectRestaurant', selectRestaurantRouter);
-//app.use('/selectBranch', selectBranchRouter);
-//app.use('/makeReservation', makeReservation);
-
-app.use('/customers', customersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

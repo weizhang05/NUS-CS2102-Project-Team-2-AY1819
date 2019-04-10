@@ -71,6 +71,7 @@ router.post('/:itemId/delete', (req, res, next) => {
   const { itemId } = req.params;
   pool.query(DELETE_RESTAURANT_CUISINE, [itemId], (err, _) => {
     if (err) {
+      console.log(err);
       res.send("error!");
     } else {
       redirect(req, res);

@@ -1,0 +1,16 @@
+<% include customerTemplate/afterLoginHeader %>
+	
+<p>Please choose a cuisine:</p>
+<form method="post" action="selectRestaurant">
+	<tbody>
+		<% for(var i=0; i<data.length; i++) { %>
+		<tr>
+			<td><input type="radio" name="cuisine" value="<%= data[i].id%>"><%= data[i].name%></input></td>
+		</tr>
+		<% } %>
+	</tbody>
+	<br>
+	<button type="submit">Next</button>
+</form>
+
+<% include customerTemplate/footer %>
