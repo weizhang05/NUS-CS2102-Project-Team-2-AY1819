@@ -1,9 +1,48 @@
 <% include customerTemplate/afterLoginHeader %>
 
+<head>
+    <script src="/scripts/ratings-management.js" defer></script>
+</head>
+
+
+<body>
+<br>
+<h2 id="branches-rating">View Ratings by Branch</h2>
+<p>
+    <label for="search-branches-rating">Search Branches:</label>
+    <input type="text" id="search-branches-rating-input" name="search_branches"/>
+</p>
+<p>There are <span id="branches-count"><%= branches_rating.length %></span> matching branches.</p>
+<table id="branches-rating-display" style="border-spacing: 10px;" class="table table-bordered">
+    <thead>
+    <tr>
+        <th>Branch Name</th>
+        <th>Restaurant Name</th>
+        <th>Average Rating</th>
+        <th>Number of Ratings</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% for (const {branch_name, restaurant_name, average_rating, number_of_ratings} of branches_rating) { %>
+        <tr>
+            <td><%= branch_name %></td>
+            <td><%= restaurant_name %></td>
+            <td><%= average_rating %></td>
+            <td><%= number_of_ratings %></td>
+        </tr>
+    <% } %>
+    </tbody>
+</table>
+<br>
+
+<h2>View Ratings by Restaurant</h2>
+
+
 <h2>Rate Branch</h2>
 <form action="/rate" method="POST">
     <p>
     </p>
 </form>
+</body>
 
 <% include customerTemplate/footer %>

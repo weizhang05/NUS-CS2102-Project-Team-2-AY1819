@@ -75,6 +75,13 @@ ON b.restaurant_id = r.id
 WHERE b.restaurant_id = $1
 `;
 
+const GET_ALL_BRANCHES_RATINGS_QUERY =
+`select branch.name as branch_name, restaurant.restaurant_name, coalesce(avg(cast(rating as Float)), 0) as average_rating, coalesce(count(rating), 0) as number_of_ratings
+from (branch left outer join rating on rating.branch_id = branch.id) join restaurant on branch.restaurant_id = restaurant.id
+group by branch.name, restaurant.restaurant_name
+order by average_rating desc;
+`
+
 
 
 // Index
@@ -262,8 +269,14 @@ router.post('/customer/makeReservation', function(req, res, next) {
 });
 
 router.get('/customer/rating', function(req, res, next) {
-	res.render('rating');
-
+    pool.query(GET_ALL_BRANCHES_RATINGS_QUERY, (err, data) => {
+        if (err) {
+            console.log("error with making booking");
+            console.log(err);
+        } else {
+            res.render('rating', { branches_rating: data.rows });
+        }
+    });
 });
 
 // Logout
