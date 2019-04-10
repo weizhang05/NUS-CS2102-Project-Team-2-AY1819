@@ -112,7 +112,7 @@ const renderEditRestaurants = (req, res, next) => {
   Render Edit Reservations Page
  */
 const renderEditReservations = (req, res, next) => {
-    pool.query(RESERVATION_INFO_QUERY, (err, dbRes) => {
+    pool.query(queries.RESERVATION_INFO_QUERY, (err, dbRes) => {
         if (err) {
             res.send("error!");
         } else {
