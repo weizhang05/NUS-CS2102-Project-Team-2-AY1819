@@ -76,14 +76,14 @@ WHERE b.restaurant_id = $1
 `;
 
 const GET_ALL_BRANCHES_RATINGS_QUERY = `
-SELECT branch.name as branch_name, restaurant.restaurant_name, COALESCE(avg(cast(rating as Float)), 0) as average_rating, COALESCE(count(rating), 0) as number_of_ratings
+SELECT branch.name as branch_name, restaurant.restaurant_name, COALESCE(avg(cast(rating_value as Float)), 0) as average_rating, COALESCE(count(rating_value), 0) as number_of_ratings
 FROM (branch left outer join rating on rating.branch_id = branch.id) join restaurant on branch.restaurant_id = restaurant.id
 GROUP BY branch.name, restaurant.restaurant_name
 ORDER BY average_rating desc, restaurant_name asc, branch_name asc;
 `
 
 const GET_ALL_RESTAURANT_RATINGS_QUERY = `
-WITH restaurant_rating_total as (SELECT restaurant.restaurant_name, COALESCE(sum(cast(rating as Float)), 0) as sum_rating, COALESCE(count(rating), 0) as number_of_ratings
+WITH restaurant_rating_total as (SELECT restaurant.restaurant_name, COALESCE(sum(cast(rating_value as Float)), 0) as sum_rating, COALESCE(count(rating_value), 0) as number_of_ratings
 FROM (branch left outer join rating on rating.branch_id = branch.id) join restaurant on branch.restaurant_id = restaurant.id
 GROUP BY restaurant.restaurant_name
 ORDER BY sum_rating desc, restaurant_name asc
@@ -91,6 +91,14 @@ ORDER BY sum_rating desc, restaurant_name asc
 
 SELECT restaurant_name, case when number_of_ratings > 0 then (sum_rating / number_of_ratings) else 0 end as average_rating, number_of_ratings
 FROM restaurant_rating_total;
+`
+
+const ADD_BRANCH_RATING_QUERY = `
+
+INSERT into rating(customer_id, branch_id, rating_value)
+VALUES($1, (SELECT id FROM branch where branch.name = $2), $3)
+ON CONFLICT ON CONSTRAINT rating_customer_id_branch_id_key
+DO UPDATE SET rating_value = $3 WHERE rating.customer_id = $1 AND rating.branch_id = (SELECT id FROM branch where branch.name = $2);
 `
 
 
@@ -278,6 +286,7 @@ router.post('/customer/makeReservation', function(req, res, next) {
 	});
 });
 
+// Display view/submit rating
 router.get('/customer/rating', function(req, res, next) {
     pool.query(GET_ALL_BRANCHES_RATINGS_QUERY, (err, branchesRatingRes) => {
         if (err) {
@@ -290,12 +299,32 @@ router.get('/customer/rating', function(req, res, next) {
                     console.log(err);
                 } else {
                     res.render('rating', { branchesRatings: branchesRatingRes.rows,
-                                           restaurantRatings: restaurantRatingRes.rows});
+                                           restaurantRatings: restaurantRatingRes.rows,
+						                    message: req.flash('info')});
                 }
             });
         }
     });
 });
+
+// Submit a rating
+router.post('/customer/rate-branch', function(req, res, next) {
+	const customerId = req.cookies.customer[0].id;
+	const branchName = req.body.branch_name;
+	const ratingInput = req.body.ratingInput;
+	console.log(customerId);
+	console.log(branchName);
+	console.log(ratingInput);
+	req.flash('info', 'Successfully rated!');
+	pool.query(ADD_BRANCH_RATING_QUERY, [customerId, branchName, ratingInput], (err, dbRes) => {
+		if (err) {
+			res.send("error adding new rating!");
+		} else {
+			res.redirect('/customer/rating');
+		}
+	});
+});
+
 
 // Logout
 router.get('/customer/logout', function(req, res, next) {

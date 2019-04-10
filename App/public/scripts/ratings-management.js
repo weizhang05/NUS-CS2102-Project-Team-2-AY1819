@@ -41,3 +41,8 @@ restaurants_search.addEventListener('input', function(event) {
     }
     restaurants_count.textContent = matches;
 });
+
+function closeAlert() {
+    var x = document.getElementById("success-alert");
+    x.remove();
+}
