@@ -11,7 +11,7 @@ DROP TABLE IF EXISTS customer cascade;
 DROP TABLE IF EXISTS admins cascade;
 DROP TABLE IF EXISTS booking cascade;
 DROP TABLE IF EXISTS menu_item_override cascade;
-DROP TABLE IF EXISTS operating_override cascade;
+DROP TABLE IF EXISTS operating_hours_override cascade;
 
 CREATE TABLE restaurant (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -152,6 +152,7 @@ RETURNS trigger AS
 $$
 BEGIN
 IF EXISTS (SELECT * FROM opening_hours_template T WHERE
+  T.restaurant_id = NEW.restaurant_id AND (
   (
     -- condition: range of given existing row does not have sat midnight in interior
     --            and range of new row does not have sat midnight in interior
@@ -204,6 +205,7 @@ IF EXISTS (SELECT * FROM opening_hours_template T WHERE
     ((T.end_day < T.start_day) OR (T.end_day = T.start_day AND T.end_time < T.start_time))
     AND
     ((NEW.end_day < NEW.start_day) OR (NEW.end_day = NEW.start_day AND NEW.end_time < NEW.start_time))
+  )
   )
 )
 THEN
@@ -243,6 +245,8 @@ RETURNS trigger AS
 $$
 BEGIN
 IF EXISTS (SELECT * FROM opening_hours T WHERE
+  T.branch_id = NEW.branch_id
+  AND (
   (
     -- condition: range of given existing row does not have sat midnight in interior
     --            and range of new row does not have sat midnight in interior
@@ -296,6 +300,7 @@ IF EXISTS (SELECT * FROM opening_hours T WHERE
     AND
     ((NEW.end_day < NEW.start_day) OR (NEW.end_day = NEW.start_day AND NEW.end_time < NEW.start_time))
   )
+  )
 )
 THEN
   RETURN NULL;
@@ -310,6 +315,7 @@ CREATE TRIGGER no_overlaps_opening_hours BEFORE INSERT
 ON opening_hours
 FOR ROW
 EXECUTE PROCEDURE null_if_overlap_opening_hours();
+
 -- ensure duration >= 1hr
 -- ensure start time > now
 -- ensure booking start < booking end
@@ -378,3 +384,37 @@ BEFORE INSERT OR UPDATE
 ON menu_item
 FOR EACH ROW
 EXECUTE PROCEDURE validate_menu_item();
+
+CREATE FUNCTION max_in_interval(branch_id uuid, during tsrange)
+RETURNS integer AS
+$$
+DECLARE
+  current_occupancy integer := 0;
+  max_occupancy integer := 0;
+  current_row record;
+BEGIN
+  FOR current_row IN (
+    SELECT T.ts AS ts, T.d_pax AS d_pax
+    FROM (
+      SELECT lower(B.throughout) AS ts, B.pax AS d_pax
+      FROM booking B
+      WHERE B.branch_id = max_in_interval.branch_id
+      AND B.throughout && max_in_interval.during
+      UNION
+      SELECT upper(B.throughout) AS ts, -B.pax AS d_pax
+      FROM booking B
+      WHERE B.branch_id = max_in_interval.branch_id
+      AND B.throughout && max_in_interval.during
+    ) T
+    ORDER BY T.ts, T.d_pax ASC
+  ) LOOP
+    current_occupancy := current_occupancy + current_row.d_pax;
+    IF current_occupancy > max_occupancy THEN
+      max_occupancy := current_occupancy;
+    END IF;
+  END LOOP;
+  RETURN max_occupancy;
+END;
+$$
+LANGUAGE plpgsql;
+
