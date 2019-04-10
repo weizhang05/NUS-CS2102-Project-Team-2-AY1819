@@ -69,10 +69,10 @@ VALUES($1, $2, $3, tsrange($4, $5, '[)'))
 `;
 
 const GET_RESTAURANT_BRANCHES_QUERY = `
-SELECT b.id id, restaurant_name, b.name, address, plus_code 
+SELECT b.id id, restaurant_name, b.name, address, plus_code, oh.start_time AS start, oh.end_time AS end
 FROM branch b join restaurant r
-ON b.restaurant_id = r.id
-WHERE b.restaurant_id = $1
+ON b.restaurant_id = r.id, opening_hours oh
+WHERE b.restaurant_id = $1 AND oh.branch_id = b.id
 `;
 
 const GET_ALL_BRANCHES_RATINGS_QUERY = `
@@ -181,11 +181,10 @@ router.post('/customer/login', function(req, res, next) {
 
 // List reservation
 router.get('/customer/reservation', function(req, res, next) {
-	console.log(req.cookies);
 	let customerCookie = req.cookies.customer[0];
 	var getCuisineQuery = "SELECT bk.id AS id, br.name AS name, br.address AS address, bk.pax AS num, bk.throughout AS time FROM booking bk, branch br WHERE bk.branch_id = br.id AND bk.customer_id = '"+customerCookie["id"]+"'";
 	pool.query(getCuisineQuery, (err, data) => {
-		res.render('reservation', { title: 'Reservation', data: data.rows });
+		res.render('reservation', { title: 'Reservation', data: data });
 	});
 });
 
@@ -236,6 +235,7 @@ router.get('/customer/makeReservation', function(req, res, next) {
 });
 
 router.post('/customer/makeReservation', function(req, res, next) {
+	console.log(req.body);
 	const {branch_id, reservation_pax, reservation_datetime, duration_mins} = req.body;
 
 	const start_time = new Date(reservation_datetime);
@@ -254,10 +254,7 @@ router.post('/customer/makeReservation', function(req, res, next) {
 		end_time,
 		reservation_pax
 	];
-
-	console.log("AVAILABLE DATA");
-  console.log(availability_data);
-
+	
 	pool.query(CHECK_BRANCH_AVAILABILITY_QUERY, availability_data, (err, data) => {
 	  if (err) {
       console.log("error with avail query");
@@ -266,6 +263,7 @@ router.post('/customer/makeReservation', function(req, res, next) {
 	  	const hasAvailability = data.rowCount === 1;
 		console.log(data);
       if(hasAvailability){
+		  console.log("ATTEMPTING TO INSERT");
       	const customerId = req.cookies.customer[0].id;
         const make_booking_data = [customerId, branch_id, reservation_pax, start_time, end_time];
         console.log(make_booking_data);
@@ -275,13 +273,33 @@ router.post('/customer/makeReservation', function(req, res, next) {
             console.log("error with making booking");
             console.log(err);
           } else {
+			  console.log("SUCCESS");
             res.render('makeReservation', { title: 'Booking is done!', data: data.rows });
 					}
         });
-      } else {
-        // TODO: show an error screen for no availability
-        console.log("no availability");
-			}
+      } 
+		else {
+			console.log("no availability");
+			const getRestaurantId = "SELECT DISTINCT restaurant_id AS id FROM branch WHERE id = '"+branch_id+"'"
+			pool.query(getRestaurantId, (err, branchesData) => {
+				if (err) {
+					console.log(err);
+				}
+				else {
+					rId = branchesData.rows[0].id;
+
+					pool.query(GET_RESTAURANT_BRANCHES_QUERY, [rId], (err, branchesData) => {
+						if (err) {
+							console.log(err);
+						} 
+						else {
+							rname = branchesData.rows[0].restaurant_name;
+							res.render('selectBranch', { title: 'Select Branch', restaurant_name: rname, data: branchesData.rows });
+						}
+					});
+				}
+			});
+		}
 		}
 	});
 });
@@ -322,6 +340,32 @@ router.post('/customer/rate-branch', function(req, res, next) {
 		} else {
 			res.redirect('/customer/rating');
 		}
+  });
+});
+
+// Delete reservation
+router.get('/customer/deleteReservation', function(req, res, next) {
+	res.redirect('reservation');
+});
+router.post('/customer/deleteReservation', function(req, res, next) {
+	console.log(req.body);
+	const bookingId = req.body.id;
+	const num = req.body.num;
+	const branchName = req.body.branchName
+	
+	var updateBranchCapacityQuery = "UPDATE branch SET capacity = (capacity + "+num+") where name = '"+branchName+"'";
+	pool.query(updateBranchCapacityQuery, (err, data) => {
+	});
+	
+	var deleteReservationQuery = "DELETE FROM booking WHERE id = '"+bookingId+"'";
+	pool.query(deleteReservationQuery, (err, data) => {\
+	});
+	
+	let customerCookie = req.cookies.customer[0];
+	var getCuisineQuery = "SELECT bk.id AS id, br.name AS name, br.address AS address, bk.pax AS num, bk.throughout AS time FROM booking bk, branch br WHERE bk.branch_id = br.id AND bk.customer_id = '"+customerCookie["id"]+"'";
+	pool.query(getCuisineQuery, (err, data) => {
+		res.render('reservation', { title: 'Reservation', data: data });
+
 	});
 });
 

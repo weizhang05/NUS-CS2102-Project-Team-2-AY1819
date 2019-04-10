@@ -1,11 +1,15 @@
 <% include customerTemplate/beforeLoginHeader %>
+
+<div id="mainBody">
 	
-<form method="post" action="register">
-	Name: <input name="name" id="name" type="text"><br>
-	Email: <input name="email" id="email" type="email"><br>
-	Password: <input name="password" id="password" type="password"><br>
-	Confirm Password: <input name="confirmPassword" id="confirmPassword" type="password"><br>
-	<button type="submit">Register</button>
-</form>
+	<form method="post" action="register">
+		Name: <input name="name" id="name" type="text"><br>
+		Email: <input name="email" id="email" type="email"><br>
+		Password: <input name="password" id="password" type="password"><br>
+		Confirm Password: <input name="confirmPassword" id="confirmPassword" type="password"><br>
+		<button type="submit">Register</button>
+	</form>
+
+</div>
 	
 <% include customerTemplate/footer %>
