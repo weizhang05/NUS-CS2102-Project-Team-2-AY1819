@@ -135,29 +135,30 @@ router.post('/:branchId/new', (req, res, next) => {
 });
 
 router.get('/:branchId/edit', (req, res, next) => {
+  const { branchId } = req.params;
   const restaurant_id = req.cookies.restaurants;
   pool.query(BRANCH_QUERY, [req.params.branchId, restaurant_id], (err, dbRes) => {
     if (err) {
       res.send("error!");
     } else {
       const { id, name, address, plus_code, capacity } = dbRes.rows[0];
-      pool.query(OPEN_HOURS_QUERY, [req.params.branchId], (err, dbHoursRes) => {
+      pool.query(OPEN_HOURS_QUERY, [branchId], (err, dbHoursRes) => {
         if (err) {
           res.send("error!");
         } else {
           const hours = dbHoursRes.rows;
-          pool.query(OPERATING_HOURS_OVERRIDE_QUERY, [req.params.branchId], (err, dbHoursOverrideRes) => {
+          pool.query(OPERATING_HOURS_OVERRIDE_QUERY, [branchId], (err, dbHoursOverrideRes) => {
             if (err) {
               res.send("error!");
             } else {
               const hours_override = dbHoursOverrideRes.rows;
-              pool.query(MENU_ITEM_OVERRIDE_QUERY, [req.params.branchId], (err, dbMenuItemOverrideRes) => {
+              pool.query(MENU_ITEM_OVERRIDE_QUERY, [branchId], (err, dbMenuItemOverrideRes) => {
                 if (err) {
                   res.send("error!")
                 } else {
                   const menu_override = dbMenuItemOverrideRes.rows;
                   res.render('restaurants-branch-edit', {
-                    branchId: req.params.branchId,
+                    branchId,
                     restaurant_id,
                     name,
                     address,
@@ -214,12 +215,13 @@ router.post('/:branchId/delete', (req, res, next) => {
 
 // note: hoursId is ignored
 router.post('/:branchId/hours/:hoursId/new', (req, res, next) => {
-  const { branchId: branch_id, start_day, start_time, end_day, end_time } = req.body;
-  pool.query(NEW_OPEN_HOURS, [branch_id, start_day, start_time, end_day, end_time], (err, dbRes) => {
+  const { branchId } = req.params;
+  const { start_day, start_time, end_day, end_time } = req.body;
+  pool.query(NEW_OPEN_HOURS, [branchId, start_day, start_time, end_day, end_time], (err, dbRes) => {
     if (err) {
       res.send("error!");
     } else {
-      res.redirect(`/restaurants/branch/${branch_id}/edit`);
+      res.redirect(`/restaurants/branch/${branchId}/edit`);
     }
   });
 });

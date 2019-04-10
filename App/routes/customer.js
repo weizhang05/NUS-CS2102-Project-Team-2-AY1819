@@ -168,6 +168,7 @@ const CUISINE_QUERY = `
 SELECT id, name
 FROM cuisine;
 `;
+// current limitation in query: connected opening hours as separate entries in db are not considered as a continuous range
 const CHOOSE_LOCATION_QUERY = `
 SELECT R.id AS restaurant_id, R.restaurant_name AS restaurant_name, B.id AS branch_id, B.name AS branch_name, B.address AS address
 FROM branch B
@@ -176,6 +177,7 @@ JOIN restaurant_cuisine RC ON (R.id = RC.restaurant_id)
 WHERE TRUE
 AND (RC.cuisine_id = ANY ($1) OR $1 IS NULL)
 AND (R.restaurant_name LIKE $2 OR B.name LIKE $2 OR $2 IS NULL)
+AND (valid_new_booking(B.id, $4, $3) OR ($3 IS NULL AND $4 IS NULL))
 LIMIT 50;
 `;
 router.get('/customer/chooseLocation', (req, res) => {
@@ -185,19 +187,25 @@ router.get('/customer/chooseLocation', (req, res) => {
 			selectedCuisines.push(req.query[key]);
 		}
 	}
-	const nameSubstring = req.query.filter_name;
+	const { filter_name, filter_booking, filter_pax, filter_start, filter_end } = req.query;
 	pool.query(CUISINE_QUERY, (err, dbCuisineRes) => {
 		const cuisines = dbCuisineRes.rows;
 		pool.query(CHOOSE_LOCATION_QUERY,
 		[
 			selectedCuisines.length > 0 ? selectedCuisines : null,
-			nameSubstring ? '%' + nameSubstring + '%' : null,
+			filter_name ? '%' + filter_name + '%' : null,
+			filter_booking ? filter_pax : null,
+			filter_booking ? `[${filter_start},${filter_end}]` : null
 		],
 		(err, dbLocationRes) => {
 			const branches = dbLocationRes.rows;
 			res.render('chooseLocation', {
 				selectedCuisines,
-				nameSubstring,
+				filter_name,
+				filter_booking,
+				filter_pax,
+				filter_start,
+				filter_end,
 				cuisines,
 				branches
 			});

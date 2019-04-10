@@ -418,3 +418,92 @@ END;
 $$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION valid_new_booking(branch_id uuid, during tsrange, pax integer)
+RETURNS boolean AS
+$$
+DECLARE
+  low_ts timestamp := lower(during);
+  up_ts timestamp := upper(during);
+  low_ts_time time := low_ts::time;
+  up_ts_time time := low_ts::time;
+  low_ts_day integer := EXTRACT(DOW FROM low_ts);
+  up_ts_day integer := EXTRACT(DOW FROM up_ts);
+BEGIN
+  IF (
+    pax + max_in_interval(valid_new_booking.branch_id, during) <= (SELECT B.capacity FROM branch B WHERE B.id = valid_new_booking.branch_id)
+    AND (
+      (
+        EXISTS (SELECT * FROM operating_hours_override O WHERE O.branch_id = valid_new_booking.branch_id AND O.override_date = low_ts::date AND O.override_date = up_ts::date AND O.start_time <= low_ts_time AND O.end_time >= up_ts_time)
+      )
+      OR
+      (
+        NOT EXISTS (SELECT * FROM operating_hours_override O WHERE O.branch_id = valid_new_booking.branch_id AND (O.override_date = low_ts::date OR O.override_date = up_ts::date))
+        AND EXISTS (
+          SELECT *
+          FROM opening_hours O
+          WHERE O.branch_id = valid_new_booking.branch_id
+          AND (
+            (
+              (O.start_day < O.end_day OR (O.start_day = O.end_day AND O.start_time <= O.end_time))
+              AND
+              (O.start_day < low_ts_day OR (O.start_day = low_ts_day AND O.start_time <= low_ts_time))
+              AND
+              (up_ts_day < O.end_day OR (up_ts_day = O.end_day AND up_ts_time <= O.end_time))
+            )
+            OR
+            (
+              (O.end_day < O.start_day OR (O.end_day = O.start_day AND O.end_time < O.start_time))
+              AND
+              (
+                (
+                  (O.start_day < low_ts_day OR (O.start_day = low_ts_day AND O.start_time <= low_ts_time))
+                  AND
+                  (low_ts_day < up_ts_day OR (low_ts_day = up_ts_day AND low_ts_time < up_ts_time))
+                )
+                OR
+                (
+                  (O.start_day < low_ts_day OR (O.start_day = low_ts_day AND O.start_time <= low_ts_time))
+                  AND
+                  (up_ts_day < O.end_day OR (up_ts_day = O.end_day AND up_ts_time <= O.end_time))
+                )
+                OR
+                (
+                  (low_ts_day < up_ts_day OR (low_ts_day = up_ts_day AND low_ts_time < up_ts_time))
+                  AND
+                  (up_ts_day < O.end_day OR (up_ts_day = O.end_day AND up_ts_time <= O.end_time))
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+  THEN
+    RETURN TRUE;
+  ELSE
+    RETURN FALSE;
+  END IF;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE FUNCTION validate_new_booking_trigger_fn()
+RETURNS trigger AS
+$$
+BEGIN
+  IF valid_new_booking(NEW.branch_id, NEW.throughout, NEW.pax)
+  THEN
+    RETURN NEW;
+  ELSE
+    RETURN NULL;
+  END IF;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER validate_booking
+BEFORE INSERT OR UPDATE
+ON booking
+FOR ROW
+EXECUTE PROCEDURE validate_new_booking_trigger_fn();
