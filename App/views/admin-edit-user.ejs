@@ -16,13 +16,15 @@
     <tr>
       <th>Id</th>
       <th>Name</th>
+      <th>Email</th>
     </tr>
   </thead>
   <tbody>
-  <% for (const { id, name } of users) { %>
+  <% for (const { id, name, email } of users) { %>
     <tr>
       <td><%= id%></td>
       <td><%= name%></td>
+      <td><%= email%></td>
     </tr>
   <%} %>
   </tbody>
@@ -36,8 +38,16 @@
     <input type="text" id="user-id" name="user_id" placeholder="7ebc4635-aad7-427f-ab11-d9b52ab6c2503">
   </p>
   <p>
-    <label for="edit-user-name">New User Name:</label>
+    <label for="edit-user-name">New User Name (optional):</label>
     <input type="text" id="edit-user-name" name="new_user_name" placeholder="JohnSmith">
+  </p>
+  <p>
+    <label for="edit-email">New Email (optional):</label>
+    <input type="text" id="edit-password" name="new_email" placeholder="a@a.com">
+  </p>
+  <p>
+    <label for="edit-password">New Password (optional):</label>
+    <input type="password" id="edit-password" name="new_password" placeholder="">
   </p>
   <button type="submit">Save Changes</button>
 </form>

@@ -1,17 +1,17 @@
 CREATE EXTENSION "pgcrypto";
 CREATE EXTENSION "btree_gist";
 
-DROP TABLE restaurant cascade;
-DROP TABLE restaurant_cuisine cascade;
-DROP TABLE cuisine cascade;
-DROP TABLE menu_item cascade;
-DROP TABLE branch cascade;
-DROP TABLE opening_hours;
-DROP TABLE customer cascade;
-DROP TABLE admins cascade;
-DROP TABLE booking cascade;
-DROP TABLE menu_item_override cascade;
-DROP TABLE operating_override cascade;
+DROP TABLE IF EXISTS restaurant cascade;
+DROP TABLE IF EXISTS restaurant_cuisine cascade;
+DROP TABLE IF EXISTS cuisine cascade;
+DROP TABLE IF EXISTS menu_item cascade;
+DROP TABLE IF EXISTS branch cascade;
+DROP TABLE IF EXISTS opening_hours;
+DROP TABLE IF EXISTS customer cascade;
+DROP TABLE IF EXISTS admins cascade;
+DROP TABLE IF EXISTS booking cascade;
+DROP TABLE IF EXISTS menu_item_override cascade;
+DROP TABLE IF EXISTS operating_override cascade;
 
 CREATE TABLE restaurant (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -95,6 +95,7 @@ CREATE TABLE booking (
   -- no longer exists
   customer_id uuid REFERENCES customer NOT NULL,
   branch_id uuid REFERENCES branch,
+  pax integer NOT NULL,
   throughout tsrange NOT NULL,
   -- TODO: determine if this exclusion contraint does what I think it
   --   does and actually 
@@ -122,6 +123,30 @@ CREATE TABLE operating_override (
   UNIQUE (branch_id, override_date)
 );
 
+-- ensure duration >= 1hr
+-- ensure start time > now
+-- ensure booking start < booking end
+CREATE OR REPLACE FUNCTION booking_duration_check()
+RETURNS trigger AS
+$$
+BEGIN
+  IF upper(NEW.throughout) - lower(NEW.throughout) < '1 hour'::interval
+    OR isempty(NEW.throughout)
+    OR lower(NEW.throughout) < current_timestamp
+  THEN
+    RETURN NULL;
+  END IF;
+  RETURN NEW;
+END
+$$
+language plpgsql;
+
+CREATE TRIGGER booking_duration_check
+BEFORE INSERT OR UPDATE
+ON booking
+FOR EACH ROW
+EXECUTE PROCEDURE booking_duration_check();
+
 -- trigger for cleaning up cuisines
 -- restauranters directly add restaurant_cuisine & indirectly, cuisines
 -- use trigger to clean up cuisines when resturant_cuisines are deleted
@@ -146,3 +171,23 @@ CREATE TRIGGER cleanup_cuisine
 AFTER DELETE ON restaurant_cuisine
 FOR EACH ROW
 EXECUTE PROCEDURE cleanup_cuisine();
+
+-- menu item price must be >= 0
+CREATE OR REPLACE FUNCTION validate_menu_item()
+RETURNS trigger AS
+$$
+BEGIN
+  IF NEW.cents < 0
+  THEN
+    RETURN NULL;
+  END IF;
+  RETURN NEW;
+END;
+$$
+language plpgsql;
+
+CREATE TRIGGER validate_menu_item
+BEFORE INSERT OR UPDATE
+ON menu_item
+FOR EACH ROW
+EXECUTE PROCEDURE validate_menu_item();
