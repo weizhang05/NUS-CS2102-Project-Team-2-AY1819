@@ -30,6 +30,31 @@ $(document).ready(function () {
         console.log("present");
         $('#success-alert').removeClass( "alert-success" ).addClass( "alert-danger" );
     }
+
+    /*
+    For EDIT
+     */
+
+    var temp = $('#user-id :selected').text();
+    console.log(temp);
+    var userName = $("td:contains('" + temp + "')").parent().find("td").eq(1).text();
+    var email = $("td:contains('" + temp + "')").parent().find("td").eq(2).text();
+    console.log(userName);
+    console.log(email);
+    $("#edit-user-name").val(userName);
+    $("#edit-email").val(userName);
+
+    $('#user-id').on('change', function() {
+        var temp = $('#user-id :selected').text();
+        console.log(temp);
+        var userName = $("td:contains('" + temp + "')").parent().find("td").eq(1).text();
+        var email = $("td:contains('" + temp + "')").parent().find("td").eq(2).text();
+        console.log(userName);
+        console.log(email);
+        $("#edit-user-name").val(userName);
+        $("#edit-email").val(email);
+    })
+
 });
 
 user_search.addEventListener('input', function(event) {

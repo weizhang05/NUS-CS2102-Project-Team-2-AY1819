@@ -22,11 +22,16 @@
   </div>
 <% } %>
 
+<nav class="navbar navbar-light bg-light">
+  <a href="#existing-customers">Existing Customers</a> <a href="#add-customer">Add Customer</a>
+  <a href="#edit-customer">Edit Customer</a> <a href="#delete-customer">Delete Customer</a>
+</nav>
+<br>
 
-<h2>Existing Customers</h2>
+<h2 id="existing-customers">Existing Customers</h2>
 <p>
   <label for="search-users">Search Users:</label>
-  <input type="text" id="search-users-input" name="search_users"/>
+  <input type="text" id="search-users-input" name="search_users" class="form-control"/>
 </p>
 <p>There are <span id="user-count"><%= users.length %></span> matching users.</p>
 <table id="users-display" style="border-spacing: 10px;" class="table table-bordered">
@@ -49,7 +54,28 @@
 </table>
 <br>
 <br>
-<h2>Edit Customer</h2>
+
+<h2 id="add-customer">Add Customer</h2>
+<form action="/admin/add_user" method="POST">
+  <p>
+    <label for="add-user-name">Customer Name:</label>
+    <input type="text" id="add-user-name" name="user_name" placeholder="JohnSmith" class="form-control">
+  </p>
+  <p>
+    <label for="add-user-email">Email:</label>
+    <input type="text" id="add-email" name="email" placeholder="a@a.com" class="form-control">
+  </p>
+  <p>
+    <label for="add-user-password">Password:</label>
+    <input type="password" id="add-password" name="password" placeholder="" class="form-control">
+  </p>
+  <button type="submit" class="btn btn-primary">Add Customer</button>
+</form>
+<br>
+<br>
+
+
+<h2 id="edit-customer">Edit Customer</h2>
 <form action="/admin/edit_user" method="POST">
   <p>
     <label for="user-id">Customer Id:</label>
@@ -75,7 +101,8 @@
 </form>
 <br>
 <br>
-<h2>Delete Customer</h2>
+
+<h2 id="delete-customer">Delete Customer</h2>
 <form action="/admin/delete_user" method="POST">
   <p>
     <label for="user-id">Customer Id:</label>

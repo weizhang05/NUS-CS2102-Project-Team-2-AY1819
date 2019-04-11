@@ -148,12 +148,31 @@ function emptyToNull(str) {
     return (str === "") ? null : str;
 }
 
+router.post('/add_user', (req, res, next) => {
+    const user_name = emptyToNull(req.body.user_name);
+    const email = emptyToNull(req.body.email);
+    const password = emptyToNull(req.body.password);
+
+    pool.query(queries.ADD_USER_QUERY, [user_name, email, password], (err, dbRes) => {
+        if (err) {
+            req.flash('info', 'Update failed! Please ensure you are keying in valid values for input.');
+            res.redirect('/admin/edit-users')
+            // console.log(err);
+            // res.send("error!");
+        } else {
+            req.flash('info', 'Successfully updated!');
+            res.redirect('/admin/edit-users')
+        }
+    });
+
+})
+
 router.post('/edit_user', (req, res, next) => {
     const new_email = emptyToNull(req.body.new_email);
     const user_id = emptyToNull(req.body.user_id);
     const new_user_name = emptyToNull(req.body.new_user_name);
     const new_password = emptyToNull(req.body.new_password);
-    req.flash('info', 'Successfully updated!');
+
     if (new_email != null && new_user_name == null && new_password == null) {
         pool.query(queries.UPDATE_USER_QUERY_EMAIL, [user_id, new_email], (err, dbRes) => {
             if (err) {
@@ -162,6 +181,7 @@ router.post('/edit_user', (req, res, next) => {
                 // console.log(err);
                 // res.send("error!");
             } else {
+                req.flash('info', 'Successfully updated!');
                 res.redirect('/admin/edit-users')
             }
         });
@@ -173,6 +193,7 @@ router.post('/edit_user', (req, res, next) => {
                 // console.log(err);
                 // res.send("error!");
             } else {
+                req.flash('info', 'Successfully updated!');
                 res.redirect('/admin/edit-users')
             }
         });
@@ -184,6 +205,7 @@ router.post('/edit_user', (req, res, next) => {
                 // console.log(err);
                 // res.send("error!");
             } else {
+                req.flash('info', 'Successfully updated!');
                 res.redirect('/admin/edit-users')
             }
         });
@@ -195,6 +217,7 @@ router.post('/edit_user', (req, res, next) => {
                 // console.log(err);
                 // res.send("error!");
             } else {
+                req.flash('info', 'Successfully updated!');
                 res.redirect('/admin/edit-users')
             }
         });
@@ -206,6 +229,7 @@ router.post('/edit_user', (req, res, next) => {
                 // console.log(err);
                 // res.send("error!");
             } else {
+                req.flash('info', 'Successfully updated!');
                 res.redirect('/admin/edit-users')
             }
         });
@@ -217,6 +241,7 @@ router.post('/edit_user', (req, res, next) => {
                 // console.log(err);
                 // res.send("error!");
             } else {
+                req.flash('info', 'Successfully updated!');
                 res.redirect('/admin/edit-users')
             }
         });
@@ -228,6 +253,7 @@ router.post('/edit_user', (req, res, next) => {
                 // console.log(err);
                 // res.send("error!");
             } else {
+                req.flash('info', 'Successfully updated!');
                 res.redirect('/admin/edit-users')
             }
         });

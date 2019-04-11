@@ -23,6 +23,11 @@ DELETE FROM customer
 WHERE id = $1;
 `;
 
+const ADD_USER_QUERY = `
+INSERT INTO customer(name, email, password, non_user)
+VALUES($1, $2, $3, false);
+`
+
 const UPDATE_USER_QUERY_NAME = `
 UPDATE customer
       SET name = $2
@@ -176,6 +181,7 @@ module.exports = {
     DELETE_CUSTOMER_QUERY,
     EXISTING_ADMIN_QUERY,
     UPDATE_RESTAURANT_ACCNAME_QUERY,
+    ADD_USER_QUERY,
     UPDATE_USER_QUERY_ALL,
     UPDATE_USER_QUERY_PASSWORD_EMAIL,
     UPDATE_USER_QUERY_PASSWORD,
