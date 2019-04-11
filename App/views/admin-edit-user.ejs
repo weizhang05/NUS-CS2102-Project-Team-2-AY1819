@@ -13,6 +13,12 @@
 <h1 style="color: #ffffff; background: #ffcc00; text-align: center">Edit Customers Page</h1>
 <p style="color: #ffffff; background: #ffcc00; text-align: center; margin-top: -8px"><a href="/admin/dashboard">Dashboard</a></p>
 
+<nav class="navbar navbar-light bg-light">
+  <a href="#existing-customers">Existing Customers</a> <a href="#add-customer">Add Customer</a>
+  <a href="#edit-customer">Edit Customer</a> <a href="#delete-customer">Delete Customer</a>
+</nav>
+<br>
+
 <% if (message != '') { %>
   <div id = "success-alert" class="alert alert-success alert-dismissible fade show" role="alert">
     <%= message %>
@@ -21,12 +27,6 @@
     </button>
   </div>
 <% } %>
-
-<nav class="navbar navbar-light bg-light">
-  <a href="#existing-customers">Existing Customers</a> <a href="#add-customer">Add Customer</a>
-  <a href="#edit-customer">Edit Customer</a> <a href="#delete-customer">Delete Customer</a>
-</nav>
-<br>
 
 <h2 id="existing-customers">Existing Customers</h2>
 <p>

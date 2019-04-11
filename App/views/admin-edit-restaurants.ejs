@@ -12,6 +12,14 @@
     <h1 style="color: #ffffff; background: #ffcc00; text-align: center">Edit Restaurants, Branches and Cuisines Page</h1>
     <p style="color: #ffffff; background: #ffcc00; text-align: center; margin-top: -8px"><a href="/admin/dashboard">Dashboard</a></p>
 
+    <nav class="navbar navbar-light bg-light">
+        <a href="#existing-restaurants">List of Restaurants</a> <a href="#restaurant-edit">Edit Restaurant</a>
+        <a href="#restaurant-delete">Delete Restaurant</a> <a href="#cuisine-add">Add Cuisine</a>
+        <a href="#cuisine-delete">Delete Cuisine</a><a href="#existing-branches">Existing Branches</a>
+    </nav>
+
+    <br>
+
 <% if (message != '') { %>
     <div id = "success-alert" class="alert alert-success alert-dismissible fade show" role="alert">
         <%= message %>
@@ -21,12 +29,6 @@
     </div>
 <% } %>
 
-<nav class="navbar navbar-light bg-light">
-    <a href="#existing-restaurants">List of Restaurants</a> <a href="#restaurant-edit">Edit Restaurant</a>
-        <a href="#restaurant-delete">Delete Restaurant</a> <a href="#cuisine-add">Add Cuisine</a>
-        <a href="#cuisine-delete">Delete Cuisine</a><a href="#existing-branches">Existing Branches</a>
-</nav>
-<br>
 <h2 id="existing-restaurants">Existing Restaurants</h2>
 <p>
     <label for="search-restaurants">Search Restaurants:</label>

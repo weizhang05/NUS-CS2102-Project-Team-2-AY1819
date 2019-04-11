@@ -10,6 +10,13 @@ $(document).ready(function () {
     /*
     For DELETE
      */
+
+    var temp = $('#delete-reservation-id :selected').text();
+    var customerName = $("td:contains('" + temp + "')").parent().find("td").eq(1).text();
+    var branchName = $("td:contains('" + temp + "')").parent().find("td").eq(2).text();
+    $("#delete-reservation-customer-name").val(customerName);
+    $("#delete-reservation-branch-name").val(branchName);
+
     $('#delete-reservation-id').on('change', function() {
         var temp = $('#delete-reservation-id :selected').text();
         var customerName = $("td:contains('" + temp + "')").parent().find("td").eq(1).text();
@@ -17,6 +24,10 @@ $(document).ready(function () {
         $("#delete-reservation-customer-name").val(customerName);
         $("#delete-reservation-branch-name").val(branchName);
     });
+
+    var temp = $('.branch-id :selected').text();
+    var branchName = $("td:contains('" + temp + "')").parent().find("td").eq(2).text();
+    $("#branch-name").val(branchName);
 
     $('.branch-id').on('change', function() {
         var temp = $('.branch-id :selected').text();
@@ -27,6 +38,11 @@ $(document).ready(function () {
     /*
     For EDIT
      */
+
+    var temp = $('#edit-reservation-id :selected').text();
+    var currentTiming = $("td:contains('" + temp + "')").parent().find("td").eq(3).text();
+    $("#edit-reservation-timing").val(currentTiming);
+
     $('#edit-reservation-id').on('change', function() {
         var temp = $('#edit-reservation-id :selected').text();
         var currentTiming = $("td:contains('" + temp + "')").parent().find("td").eq(3).text();

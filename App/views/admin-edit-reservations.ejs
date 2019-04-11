@@ -9,6 +9,15 @@
     <script src="/scripts/admin_edit_reservations.js" defer></script>
 </head>
 
+<h1 style="color: #ffffff; background: #ffcc00; text-align: center">Edit Bookings Page</h1>
+<p style="color: #ffffff; background: #ffcc00; text-align: center; margin-top: -8px"><a href="/admin/dashboard">Dashboard</a></p>
+
+<nav class="navbar navbar-light bg-light">
+    <a href="#existing-bookings">Existing Bookings</a>
+    <a href="#edit-booking">Edit Booking</a> <a href="#delete-booking">Delete Booking</a>
+</nav>
+<br>
+
 <% if (message != '') { %>
     <div id = "success-alert" class="alert alert-success alert-dismissible fade show" role="alert">
         <%= message %>
@@ -18,11 +27,7 @@
     </div>
 <% } %>
 
-
-<h1 style="color: #ffffff; background: #ffcc00; text-align: center">Edit Bookings Page</h1>
-<p style="color: #ffffff; background: #ffcc00; text-align: center; margin-top: -8px"><a href="/admin/dashboard">Dashboard</a></p>
-
-<h2>Existing Bookings</h2>
+<h2 id="existing-bookings">Existing Bookings</h2>
 <p>
     <label for="search-reservations-input">Search Bookings:</label>
     <input type="text" id="search-reservations-input" name="search_reservations" class="form-control"/>
@@ -51,7 +56,7 @@
 <br>
 <br>
 
-<h2>Edit Booking</h2>
+<h2 id="edit-booking">Edit Booking</h2>
 <p style="color: red; padding-bottom: -8px;">Note: bookings have to be at least longer than an hour!</p>
 <form action="/admin/edit_reservation" method="POST">
     <p>
@@ -71,7 +76,7 @@
 <br>
 <br>
 
-<h2>Delete Booking</h2>
+<h2 id="delete-booking">Delete Booking</h2>
 <form action="/admin/delete_reservation" method="POST">
     <p>
         <label for="delete-reservation-id">Booking Id:</label>
