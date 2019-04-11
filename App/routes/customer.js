@@ -248,6 +248,7 @@ router.post('/customer/makeReservation', function(req, res, next) {
 			if (err) {
 				console.log("error with making booking");
 				console.log(err);
+				res.redirect('chooseLocation', { flash: 'Could not make reservation' });
 			} else {
 		console.log("SUCCESS");
 				res.render('makeReservation', { title: 'Booking is done!', data: data.rows });
