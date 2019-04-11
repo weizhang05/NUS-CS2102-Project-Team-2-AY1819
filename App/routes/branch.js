@@ -47,8 +47,43 @@ INSERT INTO opening_hours (branch_id, start_day, start_time, end_day, end_time)
 VALUES ($1, $2, $3, $4, $5);
 `;
 
+// pseudo-authentication; correct auth out of scope of project:
+// assume query is not invoked for those who are not authorized to
+// invoke query for given branch_id
 const DELETE_OPEN_HOURS = `
 DELETE FROM opening_hours
+WHERE id = $1 AND branch_id = $2;
+`;
+
+const NEW_OPERATING_HOURS_OVERRIDE = `
+INSERT INTO operating_hours_override (branch_id, override_date, start_time, end_time)
+VALUES ($1, $2, $3, $4);
+`;
+
+const OPERATING_HOURS_OVERRIDE_QUERY = `
+SELECT id, override_date, start_time, end_time
+FROM operating_hours_override
+WHERE branch_id = $1
+`;
+
+const DELETE_OPERATING_HOURS_OVERRIDE = `
+DELETE FROM operating_hours_override
+WHERE id = $1 AND branch_id = $2;
+`
+
+const NEW_MENU_ITEM_OVERRIDE = `
+INSERT INTO menu_item_override (branch_id, name, cents)
+VALUES ($1, $2, $3);
+`;
+
+const MENU_ITEM_OVERRIDE_QUERY = `
+SELECT id, name, cents
+FROM menu_item_override
+WHERE branch_id = $1
+`;
+
+const DELETE_MENU_ITEM_OVERRIDE = `
+DELETE FROM menu_item_override
 WHERE id = $1 AND branch_id = $2;
 `;
 
@@ -100,26 +135,43 @@ router.post('/:branchId/new', (req, res, next) => {
 });
 
 router.get('/:branchId/edit', (req, res, next) => {
+  const { branchId } = req.params;
   const restaurant_id = req.cookies.restaurants;
   pool.query(BRANCH_QUERY, [req.params.branchId, restaurant_id], (err, dbRes) => {
     if (err) {
       res.send("error!");
     } else {
       const { id, name, address, plus_code, capacity } = dbRes.rows[0];
-      pool.query(OPEN_HOURS_QUERY, [req.params.branchId], (err, dbHoursRes) => {
+      pool.query(OPEN_HOURS_QUERY, [branchId], (err, dbHoursRes) => {
         if (err) {
           res.send("error!");
         } else {
           const hours = dbHoursRes.rows;
-          res.render('restaurants-branch-edit', {
-            branchId: req.params.branchId,
-            restaurant_id,
-            name,
-            address,
-            plus_code,
-            capacity,
-            hours,
-            intToDayStr
+          pool.query(OPERATING_HOURS_OVERRIDE_QUERY, [branchId], (err, dbHoursOverrideRes) => {
+            if (err) {
+              res.send("error!");
+            } else {
+              const hours_override = dbHoursOverrideRes.rows;
+              pool.query(MENU_ITEM_OVERRIDE_QUERY, [branchId], (err, dbMenuItemOverrideRes) => {
+                if (err) {
+                  res.send("error!")
+                } else {
+                  const menu_override = dbMenuItemOverrideRes.rows;
+                  res.render('restaurants-branch-edit', {
+                    branchId,
+                    restaurant_id,
+                    name,
+                    address,
+                    plus_code,
+                    capacity,
+                    hours,
+                    intToDayStr,
+                    hours_override,
+                    menu_override,
+                  });
+                }
+              });
+            }
           });
         }
       });
@@ -163,9 +215,34 @@ router.post('/:branchId/delete', (req, res, next) => {
 
 // note: hoursId is ignored
 router.post('/:branchId/hours/:hoursId/new', (req, res, next) => {
-  const restaurant_id = req.cookies.restaurants;
-  const { branch_id, start_day, start_time, end_day, end_time } = req.body;
-  pool.query(NEW_OPEN_HOURS, [branch_id, start_day, start_time, end_day, end_time], (err, dbRes) => {
+  const { branchId } = req.params;
+  const { start_day, start_time, end_day, end_time } = req.body;
+  pool.query(NEW_OPEN_HOURS, [branchId, start_day, start_time, end_day, end_time], (err, dbRes) => {
+    if (err) {
+      res.send("error!");
+    } else {
+      res.redirect(`/restaurants/branch/${branchId}/edit`);
+    }
+  });
+});
+
+router.post('/:branchId/hours/:hoursId/delete', (req, res, next) => {
+  const { branchId, hoursId } = req.params;
+  pool.query(DELETE_OPEN_HOURS, [hoursId, branchId], (err, dbRes) => {
+    if (err) {
+      res.send("error!");
+    } else {
+      res.redirect(`/restaurants/branch/${branchId}/edit`);
+    }
+  });
+});
+
+// note: hoursId is ignored
+router.post('/:branchId/hours-override/:hoursId/new', (req, res, next) => {
+  const { branchId: branch_id } = req.params;
+  const { override_date, start_time, end_time } = req.body;
+  console.log(override_date);
+  pool.query(NEW_OPERATING_HOURS_OVERRIDE, [branch_id, override_date, start_time, end_time], (err, dbRes) => {
     if (err) {
       res.send("error!");
     } else {
@@ -174,10 +251,43 @@ router.post('/:branchId/hours/:hoursId/new', (req, res, next) => {
   });
 });
 
-router.post('/:branchId/hours/:hoursId/delete', (req, res, next) => {
-  const restaurant_id = req.cookies.restaurants;
+router.post('/:branchId/hours-override/:hoursId/delete', (req, res, next) => {
   const { branchId, hoursId } = req.params;
-  pool.query(DELETE_OPEN_HOURS, [hoursId, branchId], (err, dbRes) => {
+  pool.query(DELETE_OPERATING_HOURS_OVERRIDE, [hoursId, branchId], (err, dbRes) => {
+    if (err) {
+      res.send("error!");
+    } else {
+      res.redirect(`/restaurants/branch/${branchId}/edit`);
+    }
+  });
+});
+
+
+// note: itemId is ignored.
+router.post('/:branchId/menu-override/:itemId/new', (req, res, next) => {
+  const { branchId } = req.params;
+  console.log(req.body);
+  const { name, price, disable } = req.body;
+  const dotted_price = price.includes('.') ? price : price + '.';
+  // Note: no validation provided.
+  const [ dollars, cents ] = dotted_price.split('.');
+  const cents_padded = cents.padEnd(2, '0').slice(0, 2);
+  const value_in_cents = disable === 'on' ? "-1" : dollars + cents_padded;
+  console.log(value_in_cents);
+  pool.query(NEW_MENU_ITEM_OVERRIDE, [branchId, name, value_in_cents], (err, dbRes) => {
+    if (err) {
+      res.send("error!");
+    } else {
+      res.redirect(`/restaurants/branch/${branchId}/edit`);
+    }
+  });
+});
+
+// note: itemId is ignored.
+router.post('/:branchId/menu-override/:itemId/delete', (req, res, next) => {
+  const { branchId } = req.params;
+  const { itemId } = req.params;
+  pool.query(DELETE_MENU_ITEM_OVERRIDE, [itemId, branchId], (err, dbRes) => {
     if (err) {
       res.send("error!");
     } else {

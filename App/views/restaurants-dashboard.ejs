@@ -38,7 +38,7 @@
             <td><a href="/restaurants/branch/<%= id.replace(/-/g,'') %>/edit">Edit</a></td>
             <td>
               <form action="/restaurants/branch/<%= id.replace(/-/g,'') %>/delete" method="POST">
-                <button>Delete!</button>
+                <button type="submit">Delete!</button>
               </form>
             </td>
           </tr>
@@ -59,7 +59,7 @@
         <td><%= name %></td>
         <td>
           <form action="/restaurants/cuisine/<%= id.replace(/-/g,'') %>/delete" method="POST">
-            <button>Delete!</button>
+            <button type="submit">Delete!</button>
           </form>
         </td>
       </tr>
@@ -75,6 +75,12 @@
       <button type="submit">Add</button>
     </form>
     <h2>Menu</h2>
+    <p>
+      Note: the menu is shared across all branches, but branches can
+      override menu items with custom prices,
+      exclusive items, and also exclude items from the restaurant menu.
+    </p>
+    <h3>Current Menu</h3>
     <table>
       <thead>
         <tr>
@@ -90,7 +96,7 @@
             <td><%= cents.toString().slice(0, -2) + "." + cents.toString().slice(-2) %></td>
             <td>
               <form action="/restaurants/menu/<%= id.replace(/-/g,'') %>/delete" method="POST">
-                <button>Delete!</button>
+                <button type="submit">Delete!</button>
               </form>
             </td>
           </tr>
@@ -104,8 +110,79 @@
         <input type="text" id="new-menu-item-name" name="name">
       </p>
       <p>
-        <label for="new-menu-item-name">Menu item price: </label>
-        <input type="number" id="new-menu-item-name" name="price" min="0" step="0.01">
+        <label for="new-menu-item-price">Menu item price: </label>
+        <input type="number" id="new-menu-item-price" name="price" min="0" step="0.01">
+      </p>
+      <button type="submit">Add</button>
+    </form>
+    <h2>Operating Hours Template</h2>
+    <p>
+      Note: when a branch is created, it is created with the open hours
+      specified in this template. The template is used only for this
+      purpose: it does not affect the operating hours of the branch.
+    </p>
+    <h3>Current Operating Hours</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Start day</th>
+          <th>Start time</th>
+          <th>End day</th>
+          <th>End time</th>
+          <th>Delete?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (const { id, restaurant_id, start_day, start_time, end_day, end_time } of hours) { %>
+          <tr>
+            <td><%= intToDayStr(start_day) %></td>
+            <td><%= start_time.slice(0, -3) %></td>
+            <td><%= intToDayStr(end_day) %></td>
+            <td><%= end_time.slice(0, -3) %></td>
+            <td>
+              <form action="/restaurants/hours/<%= id.replace(/-/g,'') %>/delete" method="POST">
+                <button type="submit">Delete!</button>
+              </form>
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+    <h3>Add Operating Hours to Template</h3>
+    <form action="/restaurants/hours/new/new" method="POST">
+      <p>
+        <label for="new-hours-start-day">Start day of week: </label>
+        <select id="new-hours-start-day" name="start_day" required>
+          <option value="">Please choose a day</option>
+          <option value="0">Sunday</option>
+          <option value="1">Monday</option>
+          <option value="2">Tuesday</option>
+          <option value="3">Wednesday</option>
+          <option value="4">Thursday</option>
+          <option value="5">Friday</option>
+          <option value="6">Saturday</option>
+        </select>
+      </p>
+      <p>
+        <label for="new-hours-start-time">Start time of day: </label>
+        <input type="time" id="new-hours-start-time" name="start_time" required>
+      </p>
+      <p>
+        <label for="new-hours-end-day">End day of week: </label>
+        <select id="new-hours-end-day" name="end_day" required>
+          <option value="">Please choose a day</option>
+          <option value="0">Sunday</option>
+          <option value="1">Monday</option>
+          <option value="2">Tuesday</option>
+          <option value="3">Wednesday</option>
+          <option value="4">Thursday</option>
+          <option value="5">Friday</option>
+          <option value="6">Saturday</option>
+        </select>
+      </p>
+      <p>
+        <label for="new-hours-end-time">End time of day: </label>
+        <input type="time" id="new-hours-end-time" name="end_time" required>
       </p>
       <button type="submit">Add</button>
     </form>
