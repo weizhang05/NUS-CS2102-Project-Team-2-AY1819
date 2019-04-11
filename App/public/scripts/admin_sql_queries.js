@@ -14,7 +14,7 @@ WHERE id = $1;
 `;
 
 const CUSTOMER_INFO_QUERY = `
-SELECT id, name
+SELECT id, name, email
 FROM customer
 `;
 
