@@ -3,6 +3,8 @@
 <head>
   <title>Edit Users</title>
   <link rel='stylesheet' href='/stylesheets/style.css'/>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <script src="/scripts/admin_edit_users.js" defer></script>
 </head>
 <h2>Existing Users</h2>
@@ -11,7 +13,7 @@
   <input type="text" id="search-users-input" name="search_users"/>
 </p>
 <p>There are <span id="user-count"><%= users.length %></span> matching users.</p>
-<table id="users-display" style="border-spacing: 10px;">
+<table id="users-display" style="border-spacing: 10px;" class="table table-bordered">
   <thead>
     <tr>
       <th>Id</th>
@@ -35,7 +37,11 @@
 <form action="/admin/edit_user" method="POST">
   <p>
     <label for="user-id">User Id:</label>
-    <input type="text" id="user-id" name="user_id" placeholder="7ebc4635-aad7-427f-ab11-d9b52ab6c2503">
+    <select id="user-id" name="user_id" class="form-control">
+      <% for (const {id} of users) { %>
+        <option><%= id %></option>
+      <% } %>
+    </select>
   </p>
   <p>
     <label for="edit-user-name">New User Name (optional):</label>

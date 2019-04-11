@@ -149,14 +149,70 @@ router.post('/edit_user', (req, res, next) => {
     const new_user_name = emptyToNull(req.body.new_user_name);
     const new_password = emptyToNull(req.body.new_password);
 
-    pool.query(UPDATE_USER_QUERY, [user_id, new_user_name, new_password, new_email], (err, dbRes) => {
-        if (err) {
-            console.log(err);
-            res.send("error!");
-        } else {
-            res.redirect('/admin/edit-users')
-        }
-    });
+    if (new_email != null && new_user_name == null && new_password == null) {
+        pool.query(queries.UPDATE_USER_QUERY_EMAIL, [user_id, new_email], (err, dbRes) => {
+            if (err) {
+                console.log(err);
+                res.send("error!");
+            } else {
+                res.redirect('/admin/edit-users')
+            }
+        });
+    } else if (new_email == null && new_user_name != null && new_password == null) {
+        pool.query(queries.UPDATE_USER_QUERY_NAME, [user_id, new_user_name], (err, dbRes) => {
+            if (err) {
+                console.log(err);
+                res.send("error!");
+            } else {
+                res.redirect('/admin/edit-users')
+            }
+        });
+    } else if (new_email == null && new_user_name == null && new_password != null) {
+        pool.query(queries.UPDATE_USER_QUERY_PASSWORD, [user_id, new_password], (err, dbRes) => {
+            if (err) {
+                console.log(err);
+                res.send("error!");
+            } else {
+                res.redirect('/admin/edit-users')
+            }
+        });
+    } else if (new_email != null && new_user_name != null && new_password == null) {
+        pool.query(queries.UPDATE_USER_QUERY_NAME_EMAIL, [user_id, new_user_name, new_email], (err, dbRes) => {
+            if (err) {
+                console.log(err);
+                res.send("error!");
+            } else {
+                res.redirect('/admin/edit-users')
+            }
+        });
+    } else if (new_email != null && new_user_name == null && new_password != null) {
+        pool.query(queries.UPDATE_USER_QUERY_PASSWORD_EMAIL, [user_id, new_email, new_password], (err, dbRes) => {
+            if (err) {
+                console.log(err);
+                res.send("error!");
+            } else {
+                res.redirect('/admin/edit-users')
+            }
+        });
+    } else if (new_email == null && new_user_name != null && new_password != null) {
+        pool.query(queries.UPDATE_USER_QUERY_NAME_PASSWORD, [user_id, new_user_name, new_password], (err, dbRes) => {
+            if (err) {
+                console.log(err);
+                res.send("error!");
+            } else {
+                res.redirect('/admin/edit-users')
+            }
+        });
+    } else {
+        pool.query(queries.UPDATE_USER_QUERY_ALL, [user_id, new_user_name, new_email, new_password], (err, dbRes) => {
+            if (err) {
+                console.log(err);
+                res.send("error!");
+            } else {
+                res.redirect('/admin/edit-users')
+            }
+        });
+    }
 });
 
 /*

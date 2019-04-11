@@ -23,11 +23,47 @@ DELETE FROM customer
 WHERE id = $1;
 `;
 
-const UPDATE_USER_QUERY = `
+const UPDATE_USER_QUERY_NAME = `
 UPDATE customer
-      SET name = $1
-      WHERE id = $2;
+      SET name = $2
+      WHERE id = $1;
 `;
+
+const UPDATE_USER_QUERY_EMAIL = `
+UPDATE customer
+      SET email = $2
+      WHERE id = $1;
+`;
+
+const UPDATE_USER_QUERY_NAME_EMAIL = `
+UPDATE customer
+        SET email = $3, name = $2
+        WHERE id = $1
+`
+
+const UPDATE_USER_QUERY_NAME_PASSWORD = `
+UPDATE customer
+        SET password = $3, name = $2
+        WHERE id = $1
+`
+
+const UPDATE_USER_QUERY_PASSWORD = `
+UPDATE customer
+      SET password = $2
+      WHERE id = $1;
+`;
+
+const UPDATE_USER_QUERY_PASSWORD_EMAIL = `
+UPDATE customer
+        SET password = $3, email = $2
+        WHERE id = $1
+`
+
+const UPDATE_USER_QUERY_ALL = `
+UPDATE customer
+        SET password = $4, email = $3, name = $2
+        WHERE id = $1
+`
 
 const RESTAURANT_INFO_QUERY = `
 SELECT id, account_name, restaurant_name
@@ -140,6 +176,12 @@ module.exports = {
     DELETE_CUSTOMER_QUERY,
     EXISTING_ADMIN_QUERY,
     UPDATE_RESTAURANT_ACCNAME_QUERY,
-    UPDATE_USER_QUERY,
+    UPDATE_USER_QUERY_ALL,
+    UPDATE_USER_QUERY_PASSWORD_EMAIL,
+    UPDATE_USER_QUERY_PASSWORD,
+    UPDATE_USER_QUERY_NAME_PASSWORD,
+    UPDATE_USER_QUERY_NAME_EMAIL,
+    UPDATE_USER_QUERY_EMAIL,
+    UPDATE_USER_QUERY_NAME,
     UPDATE_RESTAURANT_ALL_QUERY
 };
