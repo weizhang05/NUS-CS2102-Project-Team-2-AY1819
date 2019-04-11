@@ -328,13 +328,16 @@ router.post('/delete_branch', (req, res, next) => {
 });
 
 // Add Menu Item
-router.post('/delete_branch', (req, res, next) => {
-    const { branch_id } = req.body;
-    req.flash('info', 'Successfully deleted!');
-    pool.query(queries.BRANCH_DELETE_QUERY, [branch_id], (err, dbRes) => {
+router.post('/new_menu_item', (req, res, next) => {
+    const { restaurant_id, menu_item_name, menu_item_cents } = req.body;
+    // console.log(req.body);
+    pool.query(queries.NEW_MENU_ITEM,
+        [restaurant_id, menu_item_name, menu_item_cents], (err, _) => {
         if (err) {
+            console.log(err);
             res.send("error!");
         } else {
+            req.flash('info', 'Successfully added!');
             res.redirect('/admin/edit-restaurants')
         }
     });

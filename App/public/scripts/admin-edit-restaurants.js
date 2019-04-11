@@ -9,14 +9,20 @@ $(document).ready(function () {
     $('.restaurant-id-cuisine').on('change', function() {
         var temp = $('.restaurant-id-cuisine :selected').text();
         var restaurantName = $("td:contains('" + temp + "')").parent().find("td").eq(2).text();
-        $("#restaurant-name").val(restaurantName);
-    })
+        $("#restaurant-name-cuisine").val(restaurantName);
+    });
 
     $('.branch-id').on('change', function() {
         var temp = $('.branch-id :selected').text();
         var branchName = $("td:contains('" + temp + "')").parent().find("td").eq(2).text();
         $("#branch-name").val(branchName);
-    })
+    });
+
+    $('.restaurant-id-menu').on('change', function() {
+        var temp = $('.restaurant-id-menu :selected').text();
+        var restaurantName = $("td:contains('" + temp + "')").parent().find("td").eq(2).text();
+        $("#restaurant-name-menu").val(restaurantName);
+    });
 });
 
 const restaurant_search = document.getElementById("search-restaurants-input");

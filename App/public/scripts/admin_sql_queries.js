@@ -173,6 +173,11 @@ DELETE FROM menu_item
 where id = $1
 `;
 
+const NEW_MENU_ITEM = `
+INSERT INTO menu_item (restaurant_id, name, cents)
+VALUES ($1, $2, $3);
+`;
+
 module.exports = {
     STATS_POPULAR_BOOKING_TIME,
     STATS_RESTAURANT_CUISINE_COUNT,
@@ -200,5 +205,6 @@ module.exports = {
     UPDATE_USER_QUERY_NAME,
     UPDATE_RESTAURANT_ALL_QUERY,
     MENU_ITEM_QUERY,
-    DELETE_MENU_ITEM_QUERY
+    DELETE_MENU_ITEM_QUERY,
+    NEW_MENU_ITEM
 };
