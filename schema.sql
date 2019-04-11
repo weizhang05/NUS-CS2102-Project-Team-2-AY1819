@@ -365,26 +365,6 @@ AFTER DELETE ON restaurant_cuisine
 FOR EACH ROW
 EXECUTE PROCEDURE cleanup_cuisine();
 
--- menu item price must be >= 0
-CREATE OR REPLACE FUNCTION validate_menu_item()
-RETURNS trigger AS
-$$
-BEGIN
-  IF NEW.cents < 0
-  THEN
-    RETURN NULL;
-  END IF;
-  RETURN NEW;
-END;
-$$
-language plpgsql;
-
-CREATE TRIGGER validate_menu_item
-BEFORE INSERT OR UPDATE
-ON menu_item
-FOR EACH ROW
-EXECUTE PROCEDURE validate_menu_item();
-
 CREATE FUNCTION max_in_interval(branch_id uuid, during tsrange)
 RETURNS integer AS
 $$

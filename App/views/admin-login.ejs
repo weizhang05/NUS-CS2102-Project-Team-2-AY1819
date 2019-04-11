@@ -2,18 +2,32 @@
 <html>
 <head>
   <title>Admin Login</title>
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <link rel='stylesheet' href='/stylesheets/style.css'/>
+  <link rel='stylesheet' href='/stylesheets/admin.css'/>
 </head>
-<h1> Admin Login</h1>
-<div id="admin-login-form">
-  <form action="/admin" method="POST">
-    <p>
-      <label for="account-name">Account name: </label>
-      <input type="text" id="account-name" name="account_name" placeholder="e.g. admin">
-    </p>
-    <button type="submit">Login</button>
-  </form>
-</div>
+
+<div class="wrapper fadeInDown">
+  <div id="formContent">
+    <div id="admin-login-form">
+      <br>
+      <h1> Admin Login</h1>
+      <form action="/admin" method="POST">
+        <p>
+          <label for="account-name">Account name: </label>
+          <input type="text" id="account-name" name="account_name" placeholder="e.g. admin">
+        </p>
+        <button class="btn btn-primary" type="submit">Login</button>
+      </form>
+      <br>
+      <a href="/" class="btn btn-secondary" >Back to Homepage</a>
+      <br>
+    </div>
+    <br>
+  </div>
+  </div>
 <body>
 </body>
 </html>
