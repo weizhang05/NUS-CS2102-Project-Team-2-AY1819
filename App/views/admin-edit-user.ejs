@@ -1,13 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Edit Users</title>
+  <title>Edit Customers</title>
   <link rel='stylesheet' href='/stylesheets/style.css'/>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <script src="/scripts/admin_edit_users.js" defer></script>
 </head>
-<h2>Existing Users</h2>
+<body>
+<% if (message != '') { %>
+  <div id = "success-alert" class="alert alert-success alert-dismissible fade show" role="alert">
+    <%= message %>
+    <button type="button" class="close" data-dismiss="alert" onclick="closeAlert()" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+<% } %>
+
+
+<h1 style="color: #ffffff; background: #ffcc00; text-align: center">Edit Customers Page</h1>
+<p style="color: #ffffff; background: #ffcc00; text-align: center; margin-top: -8px"><a href="/admin/dashboard">Dashboard</a></p>
+
+
+<h2>Existing Customers</h2>
 <p>
   <label for="search-users">Search Users:</label>
   <input type="text" id="search-users-input" name="search_users"/>
@@ -33,10 +49,10 @@
 </table>
 <br>
 <br>
-<h2>Edit User</h2>
+<h2>Edit Customer</h2>
 <form action="/admin/edit_user" method="POST">
   <p>
-    <label for="user-id">User Id:</label>
+    <label for="user-id">Customer Id:</label>
     <select id="user-id" name="user_id" class="form-control">
       <% for (const {id} of users) { %>
         <option><%= id %></option>
@@ -44,29 +60,37 @@
     </select>
   </p>
   <p>
-    <label for="edit-user-name">New User Name (optional):</label>
-    <input type="text" id="edit-user-name" name="new_user_name" placeholder="JohnSmith">
+    <label for="edit-user-name">New Customer Name (optional):</label>
+    <input type="text" id="edit-user-name" name="new_user_name" placeholder="JohnSmith" class="form-control">
   </p>
   <p>
     <label for="edit-email">New Email (optional):</label>
-    <input type="text" id="edit-password" name="new_email" placeholder="a@a.com">
+    <input type="text" id="edit-email" name="new_email" placeholder="a@a.com" class="form-control">
   </p>
   <p>
     <label for="edit-password">New Password (optional):</label>
-    <input type="password" id="edit-password" name="new_password" placeholder="">
+    <input type="password" id="edit-password" name="new_password" placeholder="" class="form-control">
   </p>
-  <button type="submit">Save Changes</button>
+  <button type="submit" class="btn btn-primary">Save Changes</button>
 </form>
 <br>
 <br>
-<h2>Delete User</h2>
+<h2>Delete Customer</h2>
 <form action="/admin/delete_user" method="POST">
   <p>
-    <label for="user-id">User Id:</label>
-    <input type="text" id="user-id" name="user_id" placeholder="7ebc4635-aad7-427f-ab11-d9b52ab6c2503">
+    <label for="user-id">Customer Id:</label>
+    <select id="delete-user-id" name="user_id" class="form-control">
+      <% for (const {id} of users) { %>
+        <option><%= id %></option>
+      <% } %>
+    </select>
   </p>
-  <button type="submit">Delete</button>
+  <p>
+    <label for = "user-name">Customer Name: </label>
+    <input type="text" id="user-name" placeholder="Customer's Name" readonly="readonly" class="form-control">
+  </p>
+  <button type="submit" class="btn btn-danger">Delete</button>
 </form>
-<body>
+
 </body>
 </html>

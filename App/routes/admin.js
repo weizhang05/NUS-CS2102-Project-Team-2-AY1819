@@ -69,7 +69,8 @@ const renderEditUser = (req, res, next) => {
         if (err) {
             res.send("error!");
         } else {
-            res.render('admin-edit-user', {users: dbRes.rows})
+            res.render('admin-edit-user', {users: dbRes.rows,
+                                            message: req.flash('info')})
         }
     });
 };
@@ -130,6 +131,7 @@ router.get('/edit-users', (req, res, next) => {
 
 router.post('/delete_user', (req, res, next) => {
     const { user_id } = req.body;
+    req.flash('info', 'Successfully updated!');
     pool.query(queries.DELETE_CUSTOMER_QUERY, [user_id], (err, dbRes) => {
         if (err) {
             res.send("error!");
@@ -148,7 +150,7 @@ router.post('/edit_user', (req, res, next) => {
     const user_id = emptyToNull(req.body.user_id);
     const new_user_name = emptyToNull(req.body.new_user_name);
     const new_password = emptyToNull(req.body.new_password);
-
+    req.flash('info', 'Successfully updated!');
     if (new_email != null && new_user_name == null && new_password == null) {
         pool.query(queries.UPDATE_USER_QUERY_EMAIL, [user_id, new_email], (err, dbRes) => {
             if (err) {
