@@ -267,6 +267,22 @@ router.get('/edit-restaurants', (req, res, next) => {
     renderEditRestaurants(req, res, next);
 });
 
+router.post('/add_restaurant', (req, res, next) => {
+    const add_restaurant_account_name = emptyToNull(req.body.add_restaurant_account_name);
+    const add_restaurant_name = emptyToNull(req.body.add_restaurant_name);
+    pool.query(queries.ADD_RESTAURANT_QUERY, [add_restaurant_account_name, add_restaurant_name], (err, dbRes) => {
+        if (err) {
+            req.flash('info', 'Update failed! Please ensure you are keying in valid values for input.');
+            res.redirect('/admin/edit-restaurants')
+            // console.log(err);
+            // res.send("error!");
+        } else {
+            req.flash('info', 'Successfully updated!');
+            res.redirect('/admin/edit-restaurants')
+        }
+    });
+})
+
 // Edit Restaurant details
 router.post('/edit_restaurant', (req, res, next) => {
     const { restaurant_id, new_restaurant_account_name, new_restaurant_name } = req.body;
@@ -366,6 +382,27 @@ router.post('/delete_reservation', (req, res, next) => {
         }
     });
 });
+
+// Edit Branch
+router.post('/edit_branch', (req, res, next) => {
+    const edit_branch_id = emptyToNull(req.body.edit_branch_id);
+    const edit_branch_name = emptyToNull(req.body.edit_branch_name);
+    const edit_branch_address = emptyToNull(req.body.edit_branch_address);
+    const edit_branch_capacity = emptyToNull(req.body.edit_branch_capacity);
+
+    pool.query(queries.UPDATE_BRANCH_QUERY, [edit_branch_id, edit_branch_name, edit_branch_address, edit_branch_capacity], (err, dbRes) => {
+        if (err) {
+            req.flash('info', 'Update failed! Please ensure you are keying in valid values for input.');
+            res.redirect('/admin/edit-restaurants')
+            // res.send("error!");
+        } else {
+            req.flash('info', 'Successfully deleted!');
+            res.redirect('/admin/edit-restaurants')
+        }
+    });
+
+
+})
 
 // Delete Branch
 router.post('/delete_branch', (req, res, next) => {

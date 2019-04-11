@@ -13,9 +13,12 @@
     <p style="color: #ffffff; background: #ffcc00; text-align: center; margin-top: -8px"><a href="/admin/dashboard">Dashboard</a></p>
 
     <nav class="navbar navbar-light bg-light">
-        <a href="#existing-restaurants">List of Restaurants</a> <a href="#restaurant-edit">Edit Restaurant</a>
+        <a href="#existing-restaurants">List of Restaurants</a>
+        <a href="#restaurant-add">Add Restaurant</a>
+        <a href="#restaurant-edit">Edit Restaurant</a>
         <a href="#restaurant-delete">Delete Restaurant</a> <a href="#cuisine-add">Add Cuisine</a>
         <a href="#cuisine-delete">Delete Cuisine</a><a href="#existing-branches">Existing Branches</a>
+        <a href="#branch-delete">Delete Branch</a>
     </nav>
 
     <br>
@@ -56,6 +59,25 @@
 <br>
 <br>
 
+<h2 id="restaurant-add">Add Restaurant</h2>
+    <form action="/admin/add_restaurant" method="POST">
+        <div class="form-group">
+            <p>
+                <label for="add-restaurant-account-name">New Restaurant Account Name:</label>
+                <input type="text" id="add-restaurant-account-name" name="add_restaurant_account_name"
+                       placeholder="New Restaurant Account Name" class="form-control">
+            </p>
+            <p>
+                <label for="add-restaurant-name">New Restaurant Name:</label>
+                <input type="text" id="add-restaurant-name" name="add_restaurant_name" placeholder="New Restaurant Name"
+                       class="form-control">
+            </p>
+            <button type="submit" class="btn btn-primary">Add Restaurant</button>
+        </div>
+    </form>
+    <br>
+    <br>
+
 <h2 id="restaurant-edit">Edit Restaurant</h2>
 <form action="/admin/edit_restaurant" method="POST">
     <div class="form-group">
@@ -82,15 +104,21 @@
 </form>
 <br>
 <br>
+
 <h2 id="restaurant-delete">Delete Restaurant</h2>
 <form action="/admin/delete_restaurant" method="POST">
     <p>
-        <label for="restaurant-id">Restaurant Id:</label>
-        <select id = id="restaurant-id" name="restaurant_id" class="form-control">
+        <label for="delete-restaurant-id">Restaurant Id:</label>
+        <select id="delete-restaurant-id" name="restaurant_id" class="form-control">
             <% for (const { id } of restaurants) { %>
                 <option><%= id%></option>
             <%} %>
         </select>
+    </p>
+    <p>
+        <label for="delete-restaurant-name">Restaurant Name:</label>
+        <input type="text" id="delete-restaurant-name" name="delete_restaurant_name" placeholder="Wing Hut" readonly
+               class="form-control">
     </p>
     <button type="submit" class="btn btn-danger">Delete</button>
 </form>
@@ -101,7 +129,7 @@
     <form action="/admin/cuisine/new/new" method="POST">
         <p>
             <label for="restaurant-id">Restaurant Id:</label>
-            <select class="restaurant-id-cuisine" id="restaurant-id" name="restaurant_id" class="form-control">
+            <select class="restaurant-id-cuisine form-control" id="restaurant-id" name="restaurant_id">
                 <% for (const { id } of restaurants) { %>
                     <option><%= id%></option>
                 <%} %>
@@ -109,7 +137,7 @@
         </p>
         <p>
             <label for = "restaurant-name">Restaurant Name: </label>
-            <input type="text" id="restaurant-name" placeholder="My Restaurant" class="form-control" readonly
+            <input type="text" id="restaurant-name" placeholder="My Restaurant" readonly
                    class="form-control">
         </p>
         <p>
@@ -176,19 +204,47 @@
     </table>
     <br>
     <br>
-    <h2 id="branch-">Delete Branch</h2>
-    <form action="/admin/delete_branch" method="POST">
+
+    <h2 id="branch-edit">Edit Branch</h2>
+    <form action="/admin/edit_branch" method="POST">
         <p>
-            <label for="branch-id">Branch Id:</label>
-            <select class="branch-id" id="branch-id" name="branch_id" class="form-control">
+            <label for="edit-branch-id">Branch Id:</label>
+            <select class="branch-id form-control" id="edit-branch-id" name="edit_branch_id">
                 <% for (const { id } of branches) { %>
                     <option><%= id%></option>
                 <%} %>
             </select>
         </p>
         <p>
-            <label for = "branch-name">Branch Name: </label>
-            <input type="text" id="branch-name" placeholder="My Branch" readonly="readonly" class="form-control">
+            <label for = "edit-branch-name">Branch Name: </label>
+            <input type="text" id="edit-branch-name" placeholder="My Branch" name="edit_branch_name" class="form-control">
+        </p>
+        <p>
+            <label for = "edit-branch-address">Branch Address: </label>
+            <input type="text" id="edit-branch-address" placeholder="My Branch" name="edit_branch_address" class="form-control">
+        </p>
+        <p>
+            <label for = "edit-branch-capacity">Branch Capacity: </label>
+            <input type="number" id="edit-branch-capacity" placeholder="Branch Capacity" name="edit_branch_capacity" class="form-control">
+        </p>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
+    <br>
+    <br>
+
+    <h2 id="branch-delete">Delete Branch</h2>
+    <form action="/admin/delete_branch" method="POST">
+        <p>
+            <label for="delete-branch-id">Branch Id:</label>
+            <select class="branch-id form-control" id="delete-branch-id" name="branch_id">
+                <% for (const { id } of branches) { %>
+                    <option><%= id%></option>
+                <%} %>
+            </select>
+        </p>
+        <p>
+            <label for = "delete-branch-name">Branch Name: </label>
+            <input type="text" id="delete-branch-name" placeholder="My Branch" readonly="readonly" class="form-control">
         </p>
         <button type="submit" class="btn btn-danger">Delete</button>
     </form>

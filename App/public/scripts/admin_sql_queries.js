@@ -82,6 +82,12 @@ FROM restaurant_cuisine rc join cuisine c on rc.cuisine_id = c.id
 ORDER BY r.restaurant_name ASC;
 `;
 
+const ADD_RESTAURANT_QUERY = `
+INSERT INTO restaurant(account_name, restaurant_name)
+VALUES($1, $2);
+`
+
+
 const UPDATE_RESTAURANT_RESTNAME_QUERY = `
 UPDATE restaurant
       SET restaurant_name = $1
@@ -120,7 +126,13 @@ UPDATE booking
 const DELETE_RESERVATION_QUERY = `
 DELETE FROM booking
 where id = $1;
-`;
+`
+
+const UPDATE_BRANCH_QUERY = `
+UPDATE branch
+    SET name = $2, address = $3, capacity = $4
+    where id = $1;
+`
 
 const BRANCHES_INFO_QUERY = `
 SELECT b.id, r.restaurant_name, b.name, b.address, b.plus_code, b.capacity
@@ -169,11 +181,13 @@ module.exports = {
     STATS_MOST_BOOKED_RESTAURANT,
     BRANCH_DELETE_QUERY,
     BRANCHES_INFO_QUERY,
+    UPDATE_BRANCH_QUERY,
     DELETE_RESERVATION_QUERY,
     UPDATE_RESERVATION_QUERY,
     DELETE_RESTAURANT_QUERY,
     RESERVATION_INFO_QUERY,
     RESTAURANT_INFO_QUERY,
+    ADD_RESTAURANT_QUERY,
     UPDATE_RESTAURANT_RESTNAME_QUERY,
     ADMIN_INFO_QUERY,
     CUISINES_INFO_QUERY,

@@ -6,6 +6,11 @@ function closeAlert() {
 }
 
 $(document).ready(function () {
+
+    /*
+    For CUISINE
+     */
+
     var temp = $('.restaurant-id-cuisine :selected').text();
     var restaurantName = $("td:contains('" + temp + "')").parent().find("td").eq(2).text();
     $("#restaurant-name").val(restaurantName);
@@ -16,14 +21,74 @@ $(document).ready(function () {
         $("#restaurant-name").val(restaurantName);
     });
 
-    var temp = $('.branch-id :selected').text();
-    var branchName = $("td:contains('" + temp + "')").parent().find("td").eq(2).text();
-    $("#branch-name").val(branchName);
+    /*
+    For EDIT BRANCH
+     */
 
-    $('.branch-id').on('change', function() {
-        var temp = $('.branch-id :selected').text();
+    var temp = $('#edit-branch-id :selected').text();
+    var branchName = $("td:contains('" + temp + "')").parent().find("td").eq(2).text();
+    var branchAddress = $("td:contains('" + temp + "')").parent().find("td").eq(3).text();
+    var branchCapacity = $("td:contains('" + temp + "')").parent().find("td").eq(5).text();
+    $("#edit-branch-name").val(branchName);
+    $("#edit-branch-address").val(branchAddress);
+    $("#edit-branch-capacity").val(branchCapacity);
+
+
+    $('#edit-branch-id').on('change', function() {
+        var temp = $('#edit-branch-id :selected').text();
         var branchName = $("td:contains('" + temp + "')").parent().find("td").eq(2).text();
-        $("#branch-name").val(branchName);
+        var branchAddress = $("td:contains('" + temp + "')").parent().find("td").eq(3).text();
+        var branchCapacity = $("td:contains('" + temp + "')").parent().find("td").eq(5).text();
+        $("#edit-branch-name").val(branchName);
+        $("#edit-branch-address").val(branchAddress);
+        $("#edit-branch-capacity").val(branchCapacity);
+    });
+
+
+    /*
+    For DELETE BRANCH
+     */
+
+    var temp = $('#delete-branch-id :selected').text();
+    var branchName = $("td:contains('" + temp + "')").parent().find("td").eq(2).text();
+    $("#delete-branch-name").val(branchName);
+
+    $('#delete-branch-id').on('change', function() {
+        var temp = $('#delete-branch-id :selected').text();
+        var branchName = $("td:contains('" + temp + "')").parent().find("td").eq(2).text();
+        $("#delete-branch-name").val(branchName);
+    });
+
+    /*
+    For EDIT RESTAURANT
+     */
+
+    var temp = $('#restaurant-id :selected').text();
+    var restaurantAccountName = $("td:contains('" + temp + "')").parent().find("td").eq(1).text();
+    var restaurantName = $("td:contains('" + temp + "')").parent().find("td").eq(2).text();
+    $("#edit-restaurant-account-name").val(restaurantAccountName);
+    $("#edit-restaurant-name").val(restaurantName);
+
+    $('#restaurant-id').on('change', function() {
+        var temp = $('#restaurant-id :selected').text();
+        var restaurantAccountName = $("td:contains('" + temp + "')").parent().find("td").eq(1).text();
+        var restaurantName = $("td:contains('" + temp + "')").parent().find("td").eq(2).text();
+        $("#edit-restaurant-account-name").val(restaurantAccountName);
+        $("#edit-restaurant-name").val(restaurantName);
+    });
+
+    /*
+    For DELETE RESTAURANT
+     */
+
+    var temp = $('#delete-restaurant-id :selected').text();
+    var restaurantName = $("td:contains('" + temp + "')").parent().find("td").eq(2).text();
+    $("#delete-restaurant-name").val(restaurantName);
+
+    $('#delete-restaurant-id').on('change', function() {
+        var temp = $('#delete-restaurant-id :selected').text();
+        var restaurantName = $("td:contains('" + temp + "')").parent().find("td").eq(2).text();
+        $("#delete-restaurant-name").val(restaurantName);
     });
 
     var infoMessage = $('#success-alert').text();
