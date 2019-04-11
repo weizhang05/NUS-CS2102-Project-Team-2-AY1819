@@ -123,8 +123,7 @@ router.post('/customer/login', function(req, res, next) {
 		if(data["rowCount"] === 1){
 			res.cookie("customer", data["rows"]);
 			console.log("Login success!");
-			goIndex(req, res)
-			
+			res.render('customerIndexAfterLogin', { title: 'CS2102 Restaurant' });
 		}
 		else{
 			 console.log("Login failed!");
