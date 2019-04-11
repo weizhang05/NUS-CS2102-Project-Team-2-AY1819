@@ -27,3 +27,25 @@ $(document).ready(function () {
         $("#edit-reservation-timing").val(currentTiming);
     });
 });
+
+const reservation_search = document.getElementById("search-reservations-input");
+const reservation_display = document.getElementById("reservations-display");
+const reservation_count = document.getElementById("reservations-count");
+
+reservation_search.addEventListener('input', function(event) {
+    const search_txt = reservation_search.value.toLowerCase();
+    const tbody = reservation_display.tBodies[0];
+    let matches = 0;
+    for (const row of tbody.rows) {
+        let found = false;
+        for (const cell of row.cells) {
+            if (cell.textContent.toLowerCase().search(search_txt) >= 0) {
+                found = true;
+                matches += 1;
+                break;
+            }
+        }
+        row.style.display = found ? "" : "none";
+    }
+    reservation_count.textContent = matches;
+});

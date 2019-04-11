@@ -12,8 +12,13 @@
 <h1 style="color: #ffffff; background: #ffcc00; text-align: center">Edit Bookings Page</h1>
 <p style="color: #ffffff; background: #ffcc00; text-align: center; margin-top: -8px"><a href="/admin/dashboard">Dashboard</a></p>
 
-<h2>Existing Reservations</h2>
-<table id="reservation-display" style="border-spacing: 10px;" class="table table-bordered">
+<h2>Existing Bookings</h2>
+<p>
+    <label for="search-reservations-input">Search Bookings:</label>
+    <input type="text" id="search-reservations-input" name="search_reservations" class="form-control"/>
+</p>
+<p>There are <span id="reservations-count"><%= reservations.length %></span> matching bookings.</p>
+<table id="reservations-display" style="border-spacing: 10px;" class="table table-bordered">
     <thead>
     <tr>
         <th>Booking Id</th>
@@ -34,8 +39,10 @@
     </tbody>
 </table>
 <br>
+<br>
 
-<h2>Edit Reservation</h2>
+<h2>Edit Booking</h2>
+<p style="color: red; padding-bottom: -8px;">Note: bookings have to be at least longer than an hour!</p>
 <form action="/admin/edit_reservation" method="POST">
     <p>
         <label for="edit-reservation-id">Reservation Id:</label>
@@ -52,9 +59,9 @@
     <button type="submit" class="btn btn-primary">Save Changes</button>
 </form>
 <br>
+<br>
 
-
-<h2>Delete Reservation</h2>
+<h2>Delete Booking</h2>
 <form action="/admin/delete_reservation" method="POST">
     <p>
         <label for="delete-reservation-id">Reservation Id:</label>
