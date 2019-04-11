@@ -117,7 +117,8 @@ const renderEditReservations = (req, res, next) => {
         if (err) {
             res.send("error!");
         } else {
-            res.render('admin-edit-reservations', {reservations: dbRes.rows});
+            res.render('admin-edit-reservations', {reservations: dbRes.rows,
+                                                   message: req.flash('info')});
         }
     });
 };
@@ -131,11 +132,13 @@ router.get('/edit-users', (req, res, next) => {
 
 router.post('/delete_user', (req, res, next) => {
     const { user_id } = req.body;
-    req.flash('info', 'Successfully updated!');
     pool.query(queries.DELETE_CUSTOMER_QUERY, [user_id], (err, dbRes) => {
         if (err) {
-            res.send("error!");
+            // req.flash('info', 'Update failed! Please ensure you are keying in valid values for input.');
+            // res.redirect('/admin/edit-users')
+            // res.send("error!");
         } else {
+            req.flash('info', 'Successfully updated!');
             res.redirect('/admin/edit-users')
         }
     });
@@ -285,11 +288,14 @@ router.get('/edit-bookings', (req, res, next) => {
 
 router.post('/edit_reservation', (req, res, next) => {
     const { reservation_timing, reservation_id } = req.body;
-    req.flash('info', 'Successfully updated!');
+
     pool.query(queries.UPDATE_RESERVATION_QUERY, [reservation_timing, reservation_id], (err, dbRes) => {
         if (err) {
-            res.send("error!");
+            req.flash('info', 'Update failed! Please ensure you are keying in valid values for input.');
+            res.redirect('/admin/edit-bookings')
+            // res.send("error!");
         } else {
+            req.flash('info', 'Successfully updated!');
             res.redirect('/admin/edit-bookings')
         }
     });

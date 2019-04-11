@@ -1,5 +1,11 @@
 console.log("in reservations");
 
+function closeAlert() {
+    var x = document.getElementById("success-alert");
+    x.remove();
+}
+
+
 $(document).ready(function () {
     /*
     For DELETE
@@ -26,6 +32,12 @@ $(document).ready(function () {
         var currentTiming = $("td:contains('" + temp + "')").parent().find("td").eq(3).text();
         $("#edit-reservation-timing").val(currentTiming);
     });
+
+    var infoMessage = $('#success-alert').text();
+    if (infoMessage.includes("ensure")) {
+        console.log("present");
+        $('#success-alert').removeClass( "alert-success" ).addClass( "alert-danger" );
+    }
 });
 
 const reservation_search = document.getElementById("search-reservations-input");

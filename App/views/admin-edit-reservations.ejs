@@ -9,6 +9,16 @@
     <script src="/scripts/admin_edit_reservations.js" defer></script>
 </head>
 
+<% if (message != '') { %>
+    <div id = "success-alert" class="alert alert-success alert-dismissible fade show" role="alert">
+        <%= message %>
+        <button type="button" class="close" data-dismiss="alert" onclick="closeAlert()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+<% } %>
+
+
 <h1 style="color: #ffffff; background: #ffcc00; text-align: center">Edit Bookings Page</h1>
 <p style="color: #ffffff; background: #ffcc00; text-align: center; margin-top: -8px"><a href="/admin/dashboard">Dashboard</a></p>
 
@@ -45,7 +55,7 @@
 <p style="color: red; padding-bottom: -8px;">Note: bookings have to be at least longer than an hour!</p>
 <form action="/admin/edit_reservation" method="POST">
     <p>
-        <label for="edit-reservation-id">Reservation Id:</label>
+        <label for="edit-reservation-id">Booking Id:</label>
         <select id="edit-reservation-id" name="reservation_id" class="form-control">
             <% for (const { id } of reservations) { %>
                 <option><%= id%></option>
@@ -53,7 +63,7 @@
         </select>
     </p>
     <p>
-        <label for="edit-reservation-timing">New Reservation Timing:</label>
+        <label for="edit-reservation-timing">New Booking Timing:</label>
         <input type="text" id="edit-reservation-timing" name="reservation_timing" placeholder="Edit timing here" class="form-control">
     </p>
     <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -64,7 +74,7 @@
 <h2>Delete Booking</h2>
 <form action="/admin/delete_reservation" method="POST">
     <p>
-        <label for="delete-reservation-id">Reservation Id:</label>
+        <label for="delete-reservation-id">Booking Id:</label>
         <select id="delete-reservation-id" name="reservation_id" class="form-control">
             <% for (const { id } of reservations) { %>
                 <option><%= id%></option>
