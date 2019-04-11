@@ -10,6 +10,13 @@ function closeAlert() {
 }
 
 $(document).ready(function () {
+
+    var temp = $('#delete-user-id :selected').text();
+    console.log(temp);
+    var userName = $("td:contains('" + temp + "')").parent().find("td").eq(1).text();
+    console.log(userName);
+    $("#user-name").val(userName);
+
     $('#delete-user-id').on('change', function() {
         var temp = $('#delete-user-id :selected').text();
         console.log(temp);
