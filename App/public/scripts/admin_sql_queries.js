@@ -128,6 +128,11 @@ DELETE FROM booking
 where id = $1;
 `
 
+const ADD_BRANCH_QUERY = `
+INSERT INTO branch(restaurant_id, name, address, plus_code, capacity)
+VALUES($1, $2, $3, $4, $5);
+`
+
 const UPDATE_BRANCH_QUERY = `
 UPDATE branch
     SET name = $2, address = $3, capacity = $4
@@ -181,6 +186,7 @@ module.exports = {
     STATS_MOST_BOOKED_RESTAURANT,
     BRANCH_DELETE_QUERY,
     BRANCHES_INFO_QUERY,
+    ADD_BRANCH_QUERY,
     UPDATE_BRANCH_QUERY,
     DELETE_RESERVATION_QUERY,
     UPDATE_RESERVATION_QUERY,

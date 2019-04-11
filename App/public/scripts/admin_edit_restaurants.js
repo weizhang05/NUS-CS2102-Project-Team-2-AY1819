@@ -22,6 +22,20 @@ $(document).ready(function () {
     });
 
     /*
+    For ADD BRANCH
+     */
+
+    var temp = $('#add-branch-restaurant-id :selected').text();
+    var restaurantName = $("td:contains('" + temp + "')").parent().find("td").eq(2).text();
+    $("#add-branch-restaurant-name").val(restaurantName);
+
+    $('#add-branch-restaurant-id').on('change', function() {
+        var temp = $('#add-branch-restaurant-id :selected').text();
+        var restaurantName = $("td:contains('" + temp + "')").parent().find("td").eq(2).text();
+        $("#add-branch-restaurant-name").val(restaurantName);
+    });
+
+    /*
     For EDIT BRANCH
      */
 

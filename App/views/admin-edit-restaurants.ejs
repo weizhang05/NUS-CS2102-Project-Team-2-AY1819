@@ -12,12 +12,14 @@
     <h1 style="color: #ffffff; background: #ffcc00; text-align: center">Edit Restaurants, Branches and Cuisines Page</h1>
     <p style="color: #ffffff; background: #ffcc00; text-align: center; margin-top: -8px"><a href="/admin/dashboard">Dashboard</a></p>
 
-    <nav class="navbar navbar-light bg-light">
+    <nav class="navbar navbar-light" style="background-color: #e3f2fd;">
         <a href="#existing-restaurants">List of Restaurants</a>
         <a href="#restaurant-add">Add Restaurant</a>
         <a href="#restaurant-edit">Edit Restaurant</a>
         <a href="#restaurant-delete">Delete Restaurant</a> <a href="#cuisine-add">Add Cuisine</a>
         <a href="#cuisine-delete">Delete Cuisine</a><a href="#existing-branches">Existing Branches</a>
+        <a href="#branch-add">Add Branch</a>
+        <a href="#branch-edit">Edit Branches</a>
         <a href="#branch-delete">Delete Branch</a>
     </nav>
 
@@ -202,6 +204,41 @@
         <%} %>
         </tbody>
     </table>
+    <br>
+    <br>
+
+    <h2 id="branch-add">Add Branch</h2>
+    <form action="/admin/add_branch" method="POST">
+        <p>
+            <label for="add-branch-restaurant-id">Restaurant Id:</label>
+            <select class="add-branch-restaurant-id form-control" id="add-branch-restaurant-id" name="add_branch_restaurant_id">
+                <% for (const { id } of restaurants) { %>
+                    <option><%= id%></option>
+                <%} %>
+            </select>
+        </p>
+        <p>
+            <label for = "add-branch-restaurant-name">Restaurant Name: </label>
+            <input type="text" id="add-branch-restaurant-name" name="add_branch_restaurant_name" readonly class="form-control">
+        </p>
+        <p>
+            <label for = "add-branch-name">Branch Name: </label>
+            <input type="text" id="add-branch-name" placeholder="Branch Name" name="add_branch_name" class="form-control">
+        </p>
+        <p>
+            <label for = "add-branch-address">Branch Address: </label>
+            <input type="text" id="add-branch-address" placeholder="Branch Address" name="add_branch_address" class="form-control">
+        </p>
+        <p>
+            <label for = "add-branch-pluscode">Branch Pluscode (optional): </label>
+            <input type="text" id="add-branch-pluscode" placeholder="Branch Pluscode" name="add_branch_pluscode" class="form-control">
+        </p>
+        <p>
+            <label for = "add-branch-capacity">Branch Capacity: </label>
+            <input type="number" id="add-branch-capacity" placeholder="Branch Capacity" name="add_branch_capacity" class="form-control">
+        </p>
+        <button type="submit" class="btn btn-primary">Add Branch</button>
+    </form>
     <br>
     <br>
 

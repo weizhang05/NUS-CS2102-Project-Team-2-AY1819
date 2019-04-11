@@ -383,6 +383,29 @@ router.post('/delete_reservation', (req, res, next) => {
     });
 });
 
+// Add Branch
+router.post('/add_branch', (req, res, next) => {
+    const add_branch_restaurant_id = emptyToNull(req.body.add_branch_restaurant_id);
+    const add_branch_name = emptyToNull(req.body.add_branch_name);
+    const add_branch_address = emptyToNull(req.body.add_branch_address);
+    const add_branch_pluscode = emptyToNull(req.body.add_branch_pluscode);
+    const add_branch_capacity = emptyToNull(req.body.add_branch_capacity);
+
+    pool.query(queries.ADD_BRANCH_QUERY, [add_branch_restaurant_id, add_branch_name, add_branch_address, add_branch_pluscode, add_branch_capacity], (err, dbRes) => {
+        if (err) {
+            req.flash('info', 'Update failed! Please ensure you are keying in valid values for input.');
+            res.redirect('/admin/edit-restaurants')
+            // res.send("error!");
+        } else {
+            req.flash('info', 'Successfully updated!');
+            res.redirect('/admin/edit-restaurants')
+        }
+    });
+
+
+});
+
+
 // Edit Branch
 router.post('/edit_branch', (req, res, next) => {
     const edit_branch_id = emptyToNull(req.body.edit_branch_id);
@@ -402,7 +425,7 @@ router.post('/edit_branch', (req, res, next) => {
     });
 
 
-})
+});
 
 // Delete Branch
 router.post('/delete_branch', (req, res, next) => {
