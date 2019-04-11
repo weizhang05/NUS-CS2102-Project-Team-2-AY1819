@@ -134,8 +134,8 @@ router.post('/delete_user', (req, res, next) => {
     const { user_id } = req.body;
     pool.query(queries.DELETE_CUSTOMER_QUERY, [user_id], (err, dbRes) => {
         if (err) {
-            // req.flash('info', 'Update failed! Please ensure you are keying in valid values for input.');
-            // res.redirect('/admin/edit-users')
+            req.flash('info', 'Update failed! Please ensure you are keying in valid values for input.');
+            res.redirect('/admin/edit-users')
             // res.send("error!");
         } else {
             req.flash('info', 'Successfully updated!');
@@ -157,8 +157,10 @@ router.post('/edit_user', (req, res, next) => {
     if (new_email != null && new_user_name == null && new_password == null) {
         pool.query(queries.UPDATE_USER_QUERY_EMAIL, [user_id, new_email], (err, dbRes) => {
             if (err) {
-                console.log(err);
-                res.send("error!");
+                req.flash('info', 'Update failed! Please ensure you are keying in valid values for input.');
+                res.redirect('/admin/edit-users')
+                // console.log(err);
+                // res.send("error!");
             } else {
                 res.redirect('/admin/edit-users')
             }
@@ -166,8 +168,10 @@ router.post('/edit_user', (req, res, next) => {
     } else if (new_email == null && new_user_name != null && new_password == null) {
         pool.query(queries.UPDATE_USER_QUERY_NAME, [user_id, new_user_name], (err, dbRes) => {
             if (err) {
-                console.log(err);
-                res.send("error!");
+                req.flash('info', 'Update failed! Please ensure you are keying in valid values for input.');
+                res.redirect('/admin/edit-users')
+                // console.log(err);
+                // res.send("error!");
             } else {
                 res.redirect('/admin/edit-users')
             }
@@ -175,8 +179,10 @@ router.post('/edit_user', (req, res, next) => {
     } else if (new_email == null && new_user_name == null && new_password != null) {
         pool.query(queries.UPDATE_USER_QUERY_PASSWORD, [user_id, new_password], (err, dbRes) => {
             if (err) {
-                console.log(err);
-                res.send("error!");
+                req.flash('info', 'Update failed! Please ensure you are keying in valid values for input.');
+                res.redirect('/admin/edit-users')
+                // console.log(err);
+                // res.send("error!");
             } else {
                 res.redirect('/admin/edit-users')
             }
@@ -184,8 +190,10 @@ router.post('/edit_user', (req, res, next) => {
     } else if (new_email != null && new_user_name != null && new_password == null) {
         pool.query(queries.UPDATE_USER_QUERY_NAME_EMAIL, [user_id, new_user_name, new_email], (err, dbRes) => {
             if (err) {
-                console.log(err);
-                res.send("error!");
+                req.flash('info', 'Update failed! Please ensure you are keying in valid values for input.');
+                res.redirect('/admin/edit-users')
+                // console.log(err);
+                // res.send("error!");
             } else {
                 res.redirect('/admin/edit-users')
             }
@@ -193,8 +201,10 @@ router.post('/edit_user', (req, res, next) => {
     } else if (new_email != null && new_user_name == null && new_password != null) {
         pool.query(queries.UPDATE_USER_QUERY_PASSWORD_EMAIL, [user_id, new_email, new_password], (err, dbRes) => {
             if (err) {
-                console.log(err);
-                res.send("error!");
+                req.flash('info', 'Update failed! Please ensure you are keying in valid values for input.');
+                res.redirect('/admin/edit-users')
+                // console.log(err);
+                // res.send("error!");
             } else {
                 res.redirect('/admin/edit-users')
             }
@@ -202,8 +212,10 @@ router.post('/edit_user', (req, res, next) => {
     } else if (new_email == null && new_user_name != null && new_password != null) {
         pool.query(queries.UPDATE_USER_QUERY_NAME_PASSWORD, [user_id, new_user_name, new_password], (err, dbRes) => {
             if (err) {
-                console.log(err);
-                res.send("error!");
+                req.flash('info', 'Update failed! Please ensure you are keying in valid values for input.');
+                res.redirect('/admin/edit-users')
+                // console.log(err);
+                // res.send("error!");
             } else {
                 res.redirect('/admin/edit-users')
             }
@@ -211,8 +223,10 @@ router.post('/edit_user', (req, res, next) => {
     } else {
         pool.query(queries.UPDATE_USER_QUERY_ALL, [user_id, new_user_name, new_email, new_password], (err, dbRes) => {
             if (err) {
-                console.log(err);
-                res.send("error!");
+                req.flash('info', 'Update failed! Please ensure you are keying in valid values for input.');
+                res.redirect('/admin/edit-users')
+                // console.log(err);
+                // res.send("error!");
             } else {
                 res.redirect('/admin/edit-users')
             }
@@ -234,22 +248,28 @@ router.post('/edit_restaurant', (req, res, next) => {
     // console.log(new_restaurant_account_name);
     // console.log(new_restaurant_name);
     if (new_restaurant_account_name === '') {
-        req.flash('info', 'Successfully updated!');
+
         pool.query(queries.UPDATE_RESTAURANT_RESTNAME_QUERY, [new_restaurant_name, restaurant_id], (err, dbRes) => {
             if (err) {
-                console.log(err);
-                res.send("error!");
+                req.flash('info', 'Update failed! Please ensure you are keying in valid values for input.');
+                res.redirect('/admin/edit-restaurants')
+                // console.log(err);
+                // res.send("error!");
             } else {
+                req.flash('info', 'Successfully updated!');
                 res.redirect('/admin/edit-restaurants')
             }
         });
     } else if (new_restaurant_name === '') {
-        req.flash('info', 'Successfully updated!');
+
         pool.query(queries.UPDATE_RESTAURANT_ACCNAME_QUERY, [new_restaurant_account_name, restaurant_id], (err, dbRes) => {
             if (err) {
-                console.log(err);
-                res.send("error!");
+                req.flash('info', 'Update failed! Please ensure you are keying in valid values for input.');
+                res.redirect('/admin/edit-restaurants')
+                // console.log(err);
+                // res.send("error!");
             } else {
+                req.flash('info', 'Successfully updated!');
                 res.redirect('/admin/edit-restaurants')
             }
         });
@@ -257,8 +277,10 @@ router.post('/edit_restaurant', (req, res, next) => {
         req.flash('info', 'Successfully updated!');
         pool.query(queries.UPDATE_RESTAURANT_ALL_QUERY, [new_restaurant_account_name, new_restaurant_name, restaurant_id], (err, dbRes) => {
             if (err) {
-                console.log(err);
-                res.send("error!");
+                req.flash('info', 'Update failed! Please ensure you are keying in valid values for input.');
+                res.redirect('/admin/edit-restaurants')
+                // console.log(err);
+                // res.send("error!");
             } else {
                 res.redirect('/admin/edit-restaurants');
             }
@@ -269,11 +291,14 @@ router.post('/edit_restaurant', (req, res, next) => {
 // Delete Restaurant
 router.post('/delete_restaurant', (req, res, next) => {
     const { restaurant_id } = req.body;
-    req.flash('info', 'Successfully deleted!');
+
     pool.query(queries.DELETE_RESTAURANT_QUERY, [restaurant_id], (err, dbRes) => {
         if (err) {
-            res.send("error!");
+            req.flash('info', 'Update failed! Please ensure you are keying in valid values for input.');
+            res.redirect('/admin/edit-restaurants')
+            // res.send("error!");
         } else {
+            req.flash('info', 'Successfully deleted!');
             res.redirect('/admin/edit-restaurants')
         }
     });
@@ -303,11 +328,14 @@ router.post('/edit_reservation', (req, res, next) => {
 
 router.post('/delete_reservation', (req, res, next) => {
     const { reservation_id } = req.body;
-    req.flash('info', 'Successfully deleted!');
+
     pool.query(queries.DELETE_RESERVATION_QUERY, [reservation_id], (err, dbRes) => {
         if (err) {
-            res.send("error!");
+            req.flash('info', 'Update failed! Please ensure you are keying in valid values for input.');
+            res.redirect('/admin/edit-bookings')
+            // res.send("error!");
         } else {
+            req.flash('info', 'Successfully deleted!');
             res.redirect('/admin/edit-bookings')
         }
     });
@@ -316,11 +344,14 @@ router.post('/delete_reservation', (req, res, next) => {
 // Delete Branch
 router.post('/delete_branch', (req, res, next) => {
     const { branch_id } = req.body;
-    req.flash('info', 'Successfully deleted!');
+
     pool.query(queries.BRANCH_DELETE_QUERY, [branch_id], (err, dbRes) => {
         if (err) {
-            res.send("error!");
+            req.flash('info', 'Update failed! Please ensure you are keying in valid values for input.');
+            res.redirect('/admin/edit-restaurants')
+            // res.send("error!");
         } else {
+            req.flash('info', 'Successfully deleted!');
             res.redirect('/admin/edit-restaurants')
         }
     });

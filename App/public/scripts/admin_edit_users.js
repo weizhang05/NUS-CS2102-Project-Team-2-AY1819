@@ -17,6 +17,12 @@ $(document).ready(function () {
         console.log(userName);
         $("#user-name").val(userName);
     })
+
+    var infoMessage = $('#success-alert').text();
+    if (infoMessage.includes("ensure")) {
+        console.log("present");
+        $('#success-alert').removeClass( "alert-success" ).addClass( "alert-danger" );
+    }
 });
 
 user_search.addEventListener('input', function(event) {

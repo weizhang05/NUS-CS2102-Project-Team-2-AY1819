@@ -6,17 +6,31 @@ function closeAlert() {
 }
 
 $(document).ready(function () {
+    var temp = $('.restaurant-id-cuisine :selected').text();
+    var restaurantName = $("td:contains('" + temp + "')").parent().find("td").eq(2).text();
+    $("#restaurant-name").val(restaurantName);
+
     $('.restaurant-id-cuisine').on('change', function() {
         var temp = $('.restaurant-id-cuisine :selected').text();
         var restaurantName = $("td:contains('" + temp + "')").parent().find("td").eq(2).text();
         $("#restaurant-name").val(restaurantName);
-    })
+    });
+
+    var temp = $('.branch-id :selected').text();
+    var branchName = $("td:contains('" + temp + "')").parent().find("td").eq(2).text();
+    $("#branch-name").val(branchName);
 
     $('.branch-id').on('change', function() {
         var temp = $('.branch-id :selected').text();
         var branchName = $("td:contains('" + temp + "')").parent().find("td").eq(2).text();
         $("#branch-name").val(branchName);
-    })
+    });
+
+    var infoMessage = $('#success-alert').text();
+    if (infoMessage.includes("ensure")) {
+        console.log("present");
+        $('#success-alert').removeClass( "alert-success" ).addClass( "alert-danger" );
+    }
 });
 
 const restaurant_search = document.getElementById("search-restaurants-input");
