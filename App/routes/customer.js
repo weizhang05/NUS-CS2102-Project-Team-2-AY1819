@@ -69,12 +69,37 @@ VALUES($1, $2, $3, tsrange($4, $5, '[)'))
 `;
 
 const GET_RESTAURANT_BRANCHES_QUERY = `
-SELECT b.id id, restaurant_name, b.name, address, plus_code 
+SELECT b.id id, restaurant_name, b.name, address, plus_code, oh.start_time AS start, oh.end_time AS end
 FROM branch b join restaurant r
-ON b.restaurant_id = r.id
-WHERE b.restaurant_id = $1
+ON b.restaurant_id = r.id, opening_hours oh
+WHERE b.restaurant_id = $1 AND oh.branch_id = b.id
 `;
 
+const GET_ALL_BRANCHES_RATINGS_QUERY = `
+SELECT branch.name as branch_name, restaurant.restaurant_name, COALESCE(avg(cast(rating_value as Float)), 0) as average_rating, COALESCE(count(rating_value), 0) as number_of_ratings
+FROM (branch left outer join rating on rating.branch_id = branch.id) join restaurant on branch.restaurant_id = restaurant.id
+GROUP BY branch.name, restaurant.restaurant_name
+ORDER BY average_rating desc, restaurant_name asc, branch_name asc;
+`
+
+const GET_ALL_RESTAURANT_RATINGS_QUERY = `
+WITH restaurant_rating_total as (SELECT restaurant.restaurant_name, COALESCE(sum(cast(rating_value as Float)), 0) as sum_rating, COALESCE(count(rating_value), 0) as number_of_ratings
+FROM (branch left outer join rating on rating.branch_id = branch.id) join restaurant on branch.restaurant_id = restaurant.id
+GROUP BY restaurant.restaurant_name
+ORDER BY sum_rating desc, restaurant_name asc
+)
+
+SELECT restaurant_name, case when number_of_ratings > 0 then (sum_rating / number_of_ratings) else 0 end as average_rating, number_of_ratings
+FROM restaurant_rating_total;
+`
+
+const ADD_BRANCH_RATING_QUERY = `
+
+INSERT into rating(customer_id, branch_id, rating_value)
+VALUES($1, (SELECT id FROM branch where branch.name = $2), $3)
+ON CONFLICT ON CONSTRAINT rating_customer_id_branch_id_key
+DO UPDATE SET rating_value = $3 WHERE rating.customer_id = $1 AND rating.branch_id = (SELECT id FROM branch where branch.name = $2);
+`
 
 
 // Index
@@ -156,11 +181,10 @@ router.post('/customer/login', function(req, res, next) {
 
 // List reservation
 router.get('/customer/reservation', function(req, res, next) {
-	console.log(req.cookies);
 	let customerCookie = req.cookies.customer[0];
 	var getCuisineQuery = "SELECT bk.id AS id, br.name AS name, br.address AS address, bk.pax AS num, bk.throughout AS time FROM booking bk, branch br WHERE bk.branch_id = br.id AND bk.customer_id = '"+customerCookie["id"]+"'";
 	pool.query(getCuisineQuery, (err, data) => {
-		res.render('reservation', { title: 'Reservation', data: data.rows });
+		res.render('reservation', { title: 'Reservation', data: data });
 	});
 });
 
@@ -260,6 +284,7 @@ router.get('/customer/makeReservation', function(req, res, next) {
 });
 
 router.post('/customer/makeReservation', function(req, res, next) {
+	console.log(req.body);
 	const {branch_id, reservation_pax, reservation_datetime, duration_mins} = req.body;
 
 	const start_time = new Date(reservation_datetime);
@@ -278,10 +303,7 @@ router.post('/customer/makeReservation', function(req, res, next) {
 		end_time,
 		reservation_pax
 	];
-
-	console.log("AVAILABLE DATA");
-  console.log(availability_data);
-
+	
 	pool.query(CHECK_BRANCH_AVAILABILITY_QUERY, availability_data, (err, data) => {
 	  if (err) {
       console.log("error with avail query");
@@ -290,6 +312,7 @@ router.post('/customer/makeReservation', function(req, res, next) {
 	  	const hasAvailability = data.rowCount === 1;
 		console.log(data);
       if(hasAvailability){
+		  console.log("ATTEMPTING TO INSERT");
       	const customerId = req.cookies.customer[0].id;
         const make_booking_data = [customerId, branch_id, reservation_pax, start_time, end_time];
         console.log(make_booking_data);
@@ -299,16 +322,102 @@ router.post('/customer/makeReservation', function(req, res, next) {
             console.log("error with making booking");
             console.log(err);
           } else {
+			  console.log("SUCCESS");
             res.render('makeReservation', { title: 'Booking is done!', data: data.rows });
 					}
         });
-      } else {
-        // TODO: show an error screen for no availability
-        console.log("no availability");
-			}
+      } 
+		else {
+			console.log("no availability");
+			const getRestaurantId = "SELECT DISTINCT restaurant_id AS id FROM branch WHERE id = '"+branch_id+"'"
+			pool.query(getRestaurantId, (err, branchesData) => {
+				if (err) {
+					console.log(err);
+				}
+				else {
+					rId = branchesData.rows[0].id;
+
+					pool.query(GET_RESTAURANT_BRANCHES_QUERY, [rId], (err, branchesData) => {
+						if (err) {
+							console.log(err);
+						} 
+						else {
+							rname = branchesData.rows[0].restaurant_name;
+							res.render('selectBranch', { title: 'Select Branch', restaurant_name: rname, data: branchesData.rows });
+						}
+					});
+				}
+			});
+		}
 		}
 	});
 });
+
+// Display view/submit rating
+router.get('/customer/rating', function(req, res, next) {
+    pool.query(GET_ALL_BRANCHES_RATINGS_QUERY, (err, branchesRatingRes) => {
+        if (err) {
+            console.log("error with retrieving branches ratings");
+            console.log(err);
+        } else {
+            pool.query(GET_ALL_RESTAURANT_RATINGS_QUERY, (err, restaurantRatingRes) => {
+                if (err) {
+                    console.log("error with retrieving restaurant ratings");
+                    console.log(err);
+                } else {
+                    res.render('rating', { branchesRatings: branchesRatingRes.rows,
+                                           restaurantRatings: restaurantRatingRes.rows,
+						                    message: req.flash('info')});
+                }
+            });
+        }
+    });
+});
+
+// Submit a rating
+router.post('/customer/rate-branch', function(req, res, next) {
+	const customerId = req.cookies.customer[0].id;
+	const branchName = req.body.branch_name;
+	const ratingInput = req.body.ratingInput;
+	console.log(customerId);
+	console.log(branchName);
+	console.log(ratingInput);
+	req.flash('info', 'Successfully rated!');
+	pool.query(ADD_BRANCH_RATING_QUERY, [customerId, branchName, ratingInput], (err, dbRes) => {
+		if (err) {
+			res.send("error adding new rating!");
+		} else {
+			res.redirect('/customer/rating');
+		}
+  });
+});
+
+// Delete reservation
+router.get('/customer/deleteReservation', function(req, res, next) {
+	res.redirect('reservation');
+});
+router.post('/customer/deleteReservation', function(req, res, next) {
+	console.log(req.body);
+	const bookingId = req.body.id;
+	const num = req.body.num;
+	const branchName = req.body.branchName
+	
+	var updateBranchCapacityQuery = "UPDATE branch SET capacity = (capacity + "+num+") where name = '"+branchName+"'";
+	pool.query(updateBranchCapacityQuery, (err, data) => {
+	});
+	
+	var deleteReservationQuery = "DELETE FROM booking WHERE id = '"+bookingId+"'";
+	pool.query(deleteReservationQuery, (err, data) => {
+	});
+	
+	let customerCookie = req.cookies.customer[0];
+	var getCuisineQuery = "SELECT bk.id AS id, br.name AS name, br.address AS address, bk.pax AS num, bk.throughout AS time FROM booking bk, branch br WHERE bk.branch_id = br.id AND bk.customer_id = '"+customerCookie["id"]+"'";
+	pool.query(getCuisineQuery, (err, data) => {
+		res.render('reservation', { title: 'Reservation', data: data });
+
+	});
+});
+
 
 // Logout
 router.get('/customer/logout', function(req, res, next) {
