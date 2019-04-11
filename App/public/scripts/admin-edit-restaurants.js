@@ -58,3 +58,22 @@ cuisine_search.addEventListener('input', function(event) {
     row.style.display = found ? "" : "none";
   }
 });
+
+const menu_items_search = document.getElementById("search-menu-items-input");
+const menu_items_display = document.getElementById("menu-items-display");
+
+menu_items_search.addEventListener('input', function(event) {
+    const search_txt = menu_items_search.value.toLowerCase();
+    const tbody = menu_items_display.tBodies[0];
+    for (const row of tbody.rows) {
+        let found = false;
+        for (const cell of row.cells) {
+            if (cell.textContent.toLowerCase().search(search_txt) >= 0) {
+                found = true;
+                break;
+            }
+        }
+        row.style.display = found ? "" : "none";
+    }
+});
+

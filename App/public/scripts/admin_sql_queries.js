@@ -158,6 +158,21 @@ group by lower(throughout)::time, branch_name
 order by branch_name, booking_count desc;
 `
 
+const MENU_ITEM_QUERY = `
+SELECT mi.id item_id, 
+    mi.name item_name,
+    mi.cents cents,
+    r.restaurant_name restaurant_name, 
+    r.id restaurant_id
+FROM menu_item mi join restaurant r on r.id = mi.restaurant_id
+ORDER BY r.restaurant_name, mi.name ASC;
+`;
+
+const DELETE_MENU_ITEM_QUERY = `
+DELETE FROM menu_item
+where id = $1
+`;
+
 module.exports = {
     STATS_POPULAR_BOOKING_TIME,
     STATS_RESTAURANT_CUISINE_COUNT,
@@ -183,5 +198,7 @@ module.exports = {
     UPDATE_USER_QUERY_NAME_EMAIL,
     UPDATE_USER_QUERY_EMAIL,
     UPDATE_USER_QUERY_NAME,
-    UPDATE_RESTAURANT_ALL_QUERY
+    UPDATE_RESTAURANT_ALL_QUERY,
+    MENU_ITEM_QUERY,
+    DELETE_MENU_ITEM_QUERY
 };

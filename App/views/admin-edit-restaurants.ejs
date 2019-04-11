@@ -190,6 +190,40 @@
         </p>
         <button type="submit" class="btn btn-danger">Delete</button>
     </form>
+    <br>
+    <br>
+    <h2 id="cuisine-delete">Delete Menu Item</h2>
+    <p>
+        <label for="search-menu-items-input">Search Menu Items:</label>
+        <input type="text" id="search-menu-items-input" name="search_menu_items" class="form-control"/>
+    </p>
+    <table id ="menu-items-display" class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Item Name</th>
+            <th>Price ($)</th>
+            <th>Restaurant Name</th>
+            <th>Restaurant Id</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% for (const {item_id, restaurant_name, item_name, cents, restaurant_id } of menu_items) { %>
+        <tr>
+            <td><%= item_name%></td>
+            <td><%= (cents/100.0).toFixed(2)%></td>
+            <td><%= restaurant_name%></td>
+            <td><%= restaurant_id%></td>
+            <td>
+                <form action="/admin/delete_menu_item/<%= item_id.replace(/-/g,'') %>" method="POST">
+                    <button type="submit" class="btn btn-danger">Delete!</button>
+                </form>
+            </td>
+        </tr>
+        <%} %>
+        </tbody>
+    </table>
+    <br>
+    <hr>
 </body>
 
 

@@ -84,23 +84,30 @@ const renderEditRestaurants = (req, res, next) => {
             res.send("error!");
         } else {
             pool.query(queries.CUISINES_INFO_QUERY, (err, cuisineRes) => {
-              if (err) {
-                  console.log(err);
-                  res.send("error!");
-              } else {
-                  pool.query(queries.BRANCHES_INFO_QUERY, (err, branchesRes) => {
-                      if(err) {
-                          console.log(err);
-                          res.send("error!");
-                      } else {
-                          // console.log(restaurantRes);
-                          res.render('admin-edit-restaurants', {
-                              restaurants: restaurantRes.rows,
-                              restaurant_cuisines: cuisineRes.rows,
-                              message: req.flash('info'),
-                              branches: branchesRes.rows
-                          });
-                      }
+                if (err) {
+                    console.log(err);
+                    res.send("error!");
+                } else {
+                    pool.query(queries.BRANCHES_INFO_QUERY, (err, branchesRes) => {
+                        if(err) {
+                            console.log(err);
+                            res.send("error!");
+                        } else {
+                            pool.query(queries.MENU_ITEM_QUERY, (err, menuRes) => {
+                                if (err) {
+                                    console.log(err);
+                                    res.send("error!");
+                                } else {
+                                    res.render('admin-edit-restaurants', {
+                                        restaurants: restaurantRes.rows,
+                                        restaurant_cuisines: cuisineRes.rows,
+                                        message: req.flash('info'),
+                                        branches: branchesRes.rows,
+                                        menu_items: menuRes.rows
+                                    });
+                                }
+                            });
+                        }
                   })
 
               }
@@ -312,6 +319,33 @@ router.post('/delete_branch', (req, res, next) => {
     const { branch_id } = req.body;
     req.flash('info', 'Successfully deleted!');
     pool.query(queries.BRANCH_DELETE_QUERY, [branch_id], (err, dbRes) => {
+        if (err) {
+            res.send("error!");
+        } else {
+            res.redirect('/admin/edit-restaurants')
+        }
+    });
+});
+
+// Add Menu Item
+router.post('/delete_branch', (req, res, next) => {
+    const { branch_id } = req.body;
+    req.flash('info', 'Successfully deleted!');
+    pool.query(queries.BRANCH_DELETE_QUERY, [branch_id], (err, dbRes) => {
+        if (err) {
+            res.send("error!");
+        } else {
+            res.redirect('/admin/edit-restaurants')
+        }
+    });
+});
+
+// Delete Menu Item
+router.post('/delete_menu_item/:itemId', (req, res, next) => {
+    const { itemId } = req.params;
+    console.log(itemId);
+    req.flash('info', 'Successfully deleted menu item!');
+    pool.query(queries.DELETE_MENU_ITEM_QUERY, [itemId], (err, dbRes) => {
         if (err) {
             res.send("error!");
         } else {
