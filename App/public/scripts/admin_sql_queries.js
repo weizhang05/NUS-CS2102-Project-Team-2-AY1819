@@ -101,9 +101,9 @@ where id = $1;
 `;
 
 const RESERVATION_INFO_QUERY = `
-SELECT b.id, b.customer_id, c.name, b.branch_id, b.throughout
-FROM booking b, customer c
-WHERE b.customer_id = c.id;
+SELECT b.id, b.customer_id, c.name, br.name as branch_name, b.throughout
+FROM booking b, customer c, branch br
+WHERE b.customer_id = c.id AND b.branch_id = br.id;
 `;
 
 const UPDATE_RESERVATION_QUERY = `
