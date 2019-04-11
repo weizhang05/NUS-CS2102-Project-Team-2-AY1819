@@ -18,10 +18,13 @@ $(document).ready(function () {
         $("#branch-name").val(branchName);
     });
 
-    $('.restaurant-id-menu').on('change', function() {
-        var temp = $('.restaurant-id-menu :selected').text();
-        var restaurantName = $("td:contains('" + temp + "')").parent().find("td").eq(2).text();
-        $("#restaurant-name-menu").val(restaurantName);
+    $('.branch-id-menu').on('change', function() {
+        const temp = $('.branch-id-menu :selected').text();
+        const dataTableRow = $("td:contains('" + temp + "')").parent();
+        const restaurantName = dataTableRow.find("td").eq(1).text();
+        const branchName = dataTableRow.find("td").eq(2).text();
+        $("#restaurant-name-menu-override").val(restaurantName);
+        $("#branch-name-menu-override").val(branchName);
     });
 });
 
@@ -83,3 +86,20 @@ menu_items_search.addEventListener('input', function(event) {
     }
 });
 
+const menu_item_override_search = document.getElementById("search-menu-item-overrides-input");
+const menu_item_override_display = document.getElementById("menu-item-overrides-display");
+
+menu_item_override_search.addEventListener('input', function(event) {
+    const search_txt = menu_item_override_search.value.toLowerCase();
+    const tbody = menu_item_override_display.tBodies[0];
+    for (const row of tbody.rows) {
+        let found = false;
+        for (const cell of row.cells) {
+            if (cell.textContent.toLowerCase().search(search_txt) >= 0) {
+                found = true;
+                break;
+            }
+        }
+        row.style.display = found ? "" : "none";
+    }
+});

@@ -98,12 +98,20 @@ const renderEditRestaurants = (req, res, next) => {
                                     console.log(err);
                                     res.send("error!");
                                 } else {
-                                    res.render('admin-edit-restaurants', {
-                                        restaurants: restaurantRes.rows,
-                                        restaurant_cuisines: cuisineRes.rows,
-                                        message: req.flash('info'),
-                                        branches: branchesRes.rows,
-                                        menu_items: menuRes.rows
+                                    pool.query(queries.MENU_ITEM_OVERRIDE_QUERY, (err, mOverrideRes) => {
+                                        if (err) {
+                                            console.log(err);
+                                            res.send("error_override!");
+                                        } else {
+                                            res.render('admin-edit-restaurants', {
+                                                restaurants: restaurantRes.rows,
+                                                restaurant_cuisines: cuisineRes.rows,
+                                                message: req.flash('info'),
+                                                branches: branchesRes.rows,
+                                                menu_items: menuRes.rows,
+                                                menu_item_override: mOverrideRes.rows
+                                            });
+                                        }
                                     });
                                 }
                             });
@@ -347,11 +355,40 @@ router.post('/new_menu_item', (req, res, next) => {
 router.post('/delete_menu_item/:itemId', (req, res, next) => {
     const { itemId } = req.params;
     console.log(itemId);
-    req.flash('info', 'Successfully deleted menu item!');
     pool.query(queries.DELETE_MENU_ITEM_QUERY, [itemId], (err, dbRes) => {
         if (err) {
             res.send("error!");
         } else {
+            req.flash('info', 'Successfully deleted menu item!');
+            res.redirect('/admin/edit-restaurants')
+        }
+    });
+});
+
+// Add Menu Item Override
+router.post('/new_menu_item_override', (req, res, next) => {
+    const {branch_id, menu_item_name, menu_item_cents} = req.body;
+    // console.log(req.body);
+    pool.query(queries.NEW_MENU_ITEM_OVERRIDE,
+        [branch_id, menu_item_name, menu_item_cents], (err, _) => {
+            if (err) {
+                console.log(err);
+                res.send("error!");
+            } else {
+                req.flash('info', 'Successfully added menu item override!');
+                res.redirect('/admin/edit-restaurants')
+            }
+        });
+});
+
+// Delete Menu Item Override
+router.post('/delete_menu_item_override/:itemId', (req, res, next) => {
+    const { itemId } = req.params;
+    pool.query(queries.DELETE_MENU_ITEM_OVERRIDE, [itemId], (err, dbRes) => {
+        if (err) {
+            res.send("error!");
+        } else {
+            req.flash('info', 'Successfully deleted menu item override!');
             res.redirect('/admin/edit-restaurants')
         }
     });
