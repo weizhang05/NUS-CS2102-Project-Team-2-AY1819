@@ -1,0 +1,58 @@
+<% include customerTemplate/afterLoginHeader %>
+
+<h2>Filters</h2>
+<form method="GET" action="chooseLocation">
+	<div>
+		<p>Filter by cuisine:
+			<% for (const cuisine of cuisines) { %>
+					<input type="checkbox" id="<%= cuisine.id %>" name="cuisine-<%= cuisine.id %>" value="<%= cuisine.id %>" <%= selectedCuisines.includes(cuisine.id) ? 'checked' : '' %>>
+					<label for="<%= cuisine.id %>"><%= cuisine.name %></label>
+			<% } %>
+		</p>
+		<p>
+			Filter by name: <input type="text" name="filter_name" value="<%= filter_name || '' %>">
+		</p>
+		<p>
+			<input type="checkbox" name="filter_booking" <%= filter_booking ? 'checked' : '' %>>
+			Show only those with vacancies for
+			<input type="number" name="filter_pax" value="<%= filter_pax || '' %>">
+			from <input type="datetime-local" name="filter_start" value="<%= filter_start || '' %>">
+			to <input type="datetime-local" name="filter_end" value="<%= filter_end || '' %>">
+		</p>
+	</div>
+		<button type="submit">Filter</button>
+</form>
+
+<h2>Choose an available restaurant:</h2>
+<form method="post" action="makeReservation">
+	<table id="branches-display" style="border-spacing: 10px;">
+	<thead>
+	<tr>
+		<th>Select?</th>
+		<th>Name</th>
+		<th>Address</th>
+	</tr>
+	</thead>
+	<tbody>
+		<% for(const { restaurant_name, branch_id, branch_name, address } of branches) { %>
+		<tr>
+			<td>
+				<input id="branch-id" type="radio" name="branch_id" value="<%= branch_id %>"/>
+			</td>
+			<td><%= restaurant_name %>, <%= branch_name %></td>
+			<td><%=address%></td>
+		</tr>
+		<% } %>
+	</tbody>
+	</table>
+	<br>
+	<label for="reservation-pax">Booking for </label>
+	<input id="reservation-pax" type="number" name="reservation_pax" value="<%= filter_pax || '' %>" required> persons
+	from
+	<input id="reservation-datetime" type="datetime-local" name="reservation_start" value="<%= filter_start || '' %>" required>
+	to
+	<input id="reservation-datetime" type="datetime-local" name="reservation_end" value="<%= filter_end || '' %>" required>
+	<button type="submit">Done</button>
+</form>
+	
+<% include customerTemplate/footer %>

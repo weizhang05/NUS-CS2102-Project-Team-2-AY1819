@@ -1,0 +1,116 @@
+<% include customerTemplate/afterLoginHeader %>
+
+<head>
+    <script src="/scripts/ratings-management.js" defer></script>
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<% if (message != '') { %>
+    <br>
+    <div id = "success-alert" class="alert alert-success alert-dismissible fade show" role="alert">
+        <%= message %>
+        <button type="button" class="close" data-dismiss="alert" onclick="closeAlert()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+<% } %>
+<br>
+<nav class="navbar navbar-light bg-light">
+    <a href="#branches-rating">Branches Rating</a>
+    <a href="#restaurants-rating">Restaurant Rating</a>
+    <a href="#rate-branch">Rate Branch</a>
+</nav>
+<body>
+<br>
+<h2 id="branches-rating">View Ratings by Branch</h2>
+<p>
+    <label for="search-branches-rating">Search Branches:</label>
+    <input type="text" id="search-branches-rating-input" name="search_branches"/>
+</p>
+<p>There are <span id="branches-count"><%= branchesRatings.length %></span> matching branches.</p>
+<table id="branches-rating-display" style="border-spacing: 10px;" class="table table-bordered">
+    <thead>
+    <tr>
+        <th>Branch Name</th>
+        <th>Restaurant Name</th>
+        <th>Average Rating</th>
+        <th>Number of Ratings</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% for (const {branch_name, restaurant_name, average_rating, number_of_ratings} of branchesRatings) { %>
+        <tr>
+            <td><%= branch_name %></td>
+            <td><%= restaurant_name %></td>
+            <td><%= average_rating %></td>
+            <td><%= number_of_ratings %></td>
+        </tr>
+    <% } %>
+    </tbody>
+</table>
+<br>
+
+<h2 id="restaurants-rating">View Ratings by Restaurant</h2>
+<p>
+    <label for="search-restaurants-rating">Search Branches:</label>
+    <input type="text" id="search-restaurants-rating-input" name="search_restaurants"/>
+</p>
+<p>There are <span id="restaurants-count"><%= restaurantRatings.length %></span> matching restaurants.</p>
+<table id="restaurants-rating-display" style="border-spacing: 10px;" class="table table-bordered">
+    <thead>
+    <tr>
+        <th>Restaurant Name</th>
+        <th>Average Rating</th>
+        <th>Number of Ratings</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% for (const {restaurant_name, average_rating, number_of_ratings} of restaurantRatings) { %>
+        <tr>
+            <td><%= restaurant_name %></td>
+            <td><%= average_rating %></td>
+            <td><%= number_of_ratings %></td>
+        </tr>
+    <% } %>
+    </tbody>
+</table>
+<br>
+
+<h2 id="rate-branch">Rate Branch</h2>
+<form action="rate-branch" method="POST">
+    <p>
+        <label for="branch-name">Branch Name:</label>
+        <select id = id="branch-name" name="branch_name">
+            <% for (const { branch_name } of branchesRatings) { %>
+                <option><%= branch_name%></option>
+            <%} %>
+        </select>
+    </p>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="ratingInput" id="radio1" value="1">
+        <label class="form-check-label" for="radio1">1</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="ratingInput" id="radio2" value="2">
+        <label class="form-check-label" for="radio2">2</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="ratingInput" id="radio3" value="3">
+        <label class="form-check-label" for="radio3">3</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="ratingInput" id="radio4" value="4">
+        <label class="form-check-label" for="radio4">4</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="ratingInput" id="radio5" value="5">
+        <label class="form-check-label" for="radio5">5</label>
+    </div>
+    <button type="submit">Give Rating!</button>
+</form>
+<br>
+</body>
+
+<% include customerTemplate/footer %>
