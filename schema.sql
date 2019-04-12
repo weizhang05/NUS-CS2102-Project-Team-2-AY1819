@@ -335,6 +335,7 @@ RETURNS trigger AS
 $$
 BEGIN
   IF upper(NEW.throughout) - lower(NEW.throughout) < '1 hour'::interval
+    OR upper(NEW.throughout) - lower(NEW.throughout) > '6 days'::interval
     OR isempty(NEW.throughout)
     OR lower(NEW.throughout) < current_timestamp
   THEN
