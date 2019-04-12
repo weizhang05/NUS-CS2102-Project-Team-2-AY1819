@@ -120,10 +120,86 @@ INSERT INTO booking(customer_id, branch_id, pax, throughout)
 SELECT * FROM item;
 
 -- INSERT MENU ITEM
+WITH r AS(
+SELECT id, 'Carbonara Pasta', 100 from restaurant WHERE restaurant_name = 'Pasta Mania'
+)
+INSERT INTO menu_item(restaurant_id, name, cents)
+SELECT * FROM r;
+WITH r AS(
+SELECT id, 'Bolognese Pasta', 100 from restaurant WHERE restaurant_name = 'Pasta Mania'
+)
+INSERT INTO menu_item(restaurant_id, name, cents)
+SELECT * FROM r;
+WITH r AS(
+SELECT id, 'Pesto Pasta', 100 from restaurant WHERE restaurant_name = 'Pasta Mania'
+)
+INSERT INTO menu_item(restaurant_id, name, cents)
+SELECT * FROM r;
+WITH r AS(
+SELECT id, 'Hawaiian Pizza', 100 from restaurant WHERE restaurant_name = 'Pasta Mania'
+)
+INSERT INTO menu_item(restaurant_id, name, cents)
+SELECT * FROM r;
+WITH r AS(
+SELECT id, 'Chocolate Banana Pizza', 100 from restaurant WHERE restaurant_name = 'Pasta Mania'
+)
+INSERT INTO menu_item(restaurant_id, name, cents)
+SELECT * FROM r;
+
+
 WITH item AS (
-SELECT r.id, 'Mooncakes', 200
-FROM restaurant r
-WHERE r.restaurant_name = 'White Rabbit'
+SELECT r.id, 'Mooncakes', 200 FROM restaurant r WHERE r.restaurant_name = 'White Rabbit'
 )
 INSERT INTO menu_item(restaurant_id, name, cents)
 SELECT * FROM item;
+WITH item AS (
+SELECT r.id, 'Foi Gras', 200 FROM restaurant r WHERE r.restaurant_name = 'White Rabbit'
+)
+INSERT INTO menu_item(restaurant_id, name, cents)
+SELECT * FROM item;
+WITH item AS (
+SELECT r.id, 'Tenderloin', 200 FROM restaurant r WHERE r.restaurant_name = 'White Rabbit'
+)
+INSERT INTO menu_item(restaurant_id, name, cents)
+SELECT * FROM item;
+WITH item AS (
+SELECT r.id, 'Sirloin', 200 FROM restaurant r WHERE r.restaurant_name = 'White Rabbit'
+)
+INSERT INTO menu_item(restaurant_id, name, cents)
+SELECT * FROM item;
+WITH item AS (
+SELECT r.id, 'Wagyu Burger', 200 FROM restaurant r WHERE r.restaurant_name = 'White Rabbit'
+)
+INSERT INTO menu_item(restaurant_id, name, cents)
+SELECT * FROM item;
+WITH item AS (
+SELECT r.id, 'Lobster Bisque', 200 FROM restaurant r WHERE r.restaurant_name = 'White Rabbit'
+)
+INSERT INTO menu_item(restaurant_id, name, cents)
+SELECT * FROM item;
+
+WITH r AS(
+SELECT id, 'Boat Noodle', 100 from restaurant WHERE restaurant_name = 'Bangkok Jam'
+)
+INSERT INTO menu_item(restaurant_id, name, cents)
+SELECT * FROM r;
+WITH r AS(
+SELECT id, 'Mango Sticky Rice', 100 from restaurant WHERE restaurant_name = 'Bangkok Jam'
+)
+INSERT INTO menu_item(restaurant_id, name, cents)
+SELECT * FROM r;
+WITH r AS(
+SELECT id, 'Green Curry', 100 from restaurant WHERE restaurant_name = 'Bangkok Jam'
+)
+INSERT INTO menu_item(restaurant_id, name, cents)
+SELECT * FROM r;
+WITH r AS(
+SELECT id, 'Seafood Tomyum', 100 from restaurant WHERE restaurant_name = 'Bangkok Jam'
+)
+INSERT INTO menu_item(restaurant_id, name, cents)
+SELECT * FROM r;
+WITH r AS(
+SELECT id, 'Basil Pork Rice', 100 from restaurant WHERE restaurant_name = 'Bangkok Jam'
+)
+INSERT INTO menu_item(restaurant_id, name, cents)
+SELECT * FROM r;

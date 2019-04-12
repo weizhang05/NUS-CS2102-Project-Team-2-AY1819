@@ -12,6 +12,7 @@ DROP TABLE IF EXISTS admins cascade;
 DROP TABLE IF EXISTS booking cascade;
 DROP TABLE IF EXISTS menu_item_override cascade;
 DROP TABLE IF EXISTS operating_hours_override cascade;
+DROP TABLE IF EXISTS rating cascade;
 
 CREATE TABLE restaurant (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -146,6 +147,14 @@ CREATE TABLE operating_hours_override (
   start_time time NOT NULL,
   end_time time NOT NULL,
   UNIQUE (branch_id, override_date)
+);
+
+CREATE TABLE rating (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  customer_id uuid NOT NULL REFERENCES customer ON DELETE CASCADE,
+  branch_id uuid NOT NULL REFERENCES branch ON DELETE CASCADE,
+  rating_value integer NOT NULL CONSTRAINT rating_limits CHECK (rating_value >= 1 AND rating_value <= 5),
+  UNIQUE (customer_id, branch_id)
 );
 
 CREATE FUNCTION null_if_overlap_opening_hours_template()
