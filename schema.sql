@@ -122,7 +122,8 @@ CREATE TABLE customer (
 
 CREATE TABLE admins (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  account_name varchar(100) NOT NULL
+  account_name varchar(100) NOT NULL,
+  UNIQUE(account_name)
 );
 
 CREATE TABLE booking (
