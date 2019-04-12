@@ -13,6 +13,13 @@ psql -U <postgres_role>
 ```
 Note: File location are relative, so ensure you are at the right location.
 
+# Modify .env file
+File is located inside the App folder. This is basically the configuration for connection to the database.
+Format: DATABASE_URL=postgres://postgres:<username>@<host_identifier>:<port_number>/<database>
+```
+DATABASE_URL=postgres://postgres:postgres@localhost:5432/cs2102
+```
+
 # Run web server:
 Next, run the following set of commands relative from the home directory
 ```
