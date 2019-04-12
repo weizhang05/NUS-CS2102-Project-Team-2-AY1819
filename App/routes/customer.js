@@ -54,6 +54,18 @@ ON CONFLICT ON CONSTRAINT rating_customer_id_branch_id_key
 DO UPDATE SET rating_value = $3 WHERE rating.customer_id = $1 AND rating.branch_id = (SELECT id FROM branch where branch.name = $2);
 `
 
+const GET_MENU_QUERY = `
+SELECT * FROM menu_item mi
+WHERE mi mi.restaurant_id = ri and
+mi.name not in
+(SELECT name from menu_item_override
+WHERE branch_id = $1 and cents < 0)
+
+INTERSECT
+SELECT * FROM menu_item_override
+WHERE branch_id = $1 and cents > 0
+`
+
 
 // Index
 function goIndex(req, res) {
