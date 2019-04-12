@@ -31,7 +31,7 @@ CREATE TABLE cuisine (
 
 CREATE TABLE restaurant_cuisine (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  restaurant_id uuid REFERENCES restaurant NOT NULL,
+  restaurant_id uuid REFERENCES restaurant ON DELETE CASCADE NOT NULL,
   cuisine_id uuid REFERENCES cuisine NOT NULL,
   UNIQUE(restaurant_id, cuisine_id)
 );
@@ -122,7 +122,8 @@ CREATE TABLE customer (
 
 CREATE TABLE admins (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  account_name varchar(100) NOT NULL
+  account_name varchar(100) NOT NULL,
+  UNIQUE(account_name)
 );
 
 CREATE TABLE booking (
