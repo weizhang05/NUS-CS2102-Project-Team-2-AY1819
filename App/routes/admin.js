@@ -450,7 +450,7 @@ router.post('/new_menu_item', (req, res, next) => {
     const { restaurant_id, menu_item_name, menu_item_cents } = req.body;
     // console.log(req.body);
     pool.query(queries.NEW_MENU_ITEM,
-        [restaurant_id, menu_item_name, menu_item_cents], (err, _) => {
+        [restaurant_id, menu_item_name, parseInt(menu_item_cents)], (err, _) => {
         if (err) {
             console.log(err);
             res.send("error!");
