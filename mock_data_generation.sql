@@ -12,7 +12,7 @@ RETURNING id, 'Pasta Mania @ Tampines', 'Tampines Mall', 100
 INSERT INTO branch(restaurant_id, name, address, capacity)
 SELECT * FROM rows;
 WITH rows AS (
-SELECT id, 'Jurong @ Pasta Mania', 'JEM', 100 FROM restaurant r WHERE restaurant_name = 'Pasta Mania'
+SELECT id, 'Pasta Mania @ Jurong', 'JEM', 100 FROM restaurant r WHERE restaurant_name = 'Pasta Mania'
 )
 INSERT INTO branch(restaurant_id, name, address, capacity)
 SELECT * FROM rows;
@@ -71,7 +71,16 @@ SELECT * FROM rows;
 -- INSERT CUSTOMER
 INSERT INTO customer(name, email, password, non_user)
 VALUES('clyde','clyde@email.com','clyde',false),
-('a','a@a.a','a',false);
+('a','a@a.a','a',false),
+('Joe Biden', 'joe@joe.com', 'joe', 'false'),
+('Kamala Harris', 'kamala@kamala.com', 'kamala', 'false'),
+('Ellie Goulding', 'ellie@ellie.com', 'ellie', 'false'),
+('Kacey Musgraves', 'kacey@kacey.com', 'kacey', 'false'),
+('Chris Martin', 'chris@chris.com', 'chris', 'false'),
+('Jay Chou', 'jay@jay.com', 'jay', 'false'),
+('Roger Federer', 'roger@roger.com', 'roger', 'false'),
+('Cheryl', 'cheryl@cheryl.com', 'cheryl', 'false'),
+('Bernie Sanders', 'bernie@bernie.com', 'bernie', 'false');
 
 -- INSERT ADMIN
 INSERT INTO admins (account_name)
@@ -79,12 +88,60 @@ VALUES ('admin1'), ('admin2');
 
 -- INSERT OPENING HRS
 WITH rest AS (
-SELECT b.id, 0, '08:00'::time, 1, '10:00'::time
+SELECT b.id, 0, '10:00'::time, 0, '22:00'::time
 FROM branch b
-WHERE b.name = 'Pasta Mania @ Tampines' OR b.name = 'Jurong @ Pasta Mania'
+WHERE b.name = 'Pasta Mania @ Tampines' OR b.name = 'Pasta Mania @ Jurong'
 )
 INSERT INTO opening_hours(branch_id, start_day, start_time, end_day, end_time)
-SELECT * FROM rest;	
+SELECT * FROM rest;
+
+WITH rest AS (
+SELECT b.id, 1, '10:00'::time, 1, '22:00'::time
+FROM branch b
+WHERE b.name = 'Pasta Mania @ Tampines' OR b.name = 'Pasta Mania @ Jurong'
+)
+INSERT INTO opening_hours(branch_id, start_day, start_time, end_day, end_time)
+SELECT * FROM rest;
+
+WITH rest AS (
+SELECT b.id, 2, '10:00'::time, 2, '22:00'::time
+FROM branch b
+WHERE b.name = 'Pasta Mania @ Tampines' OR b.name = 'Pasta Mania @ Jurong'
+)
+INSERT INTO opening_hours(branch_id, start_day, start_time, end_day, end_time)
+SELECT * FROM rest;
+
+WITH rest AS (
+SELECT b.id, 3, '10:00'::time, 3, '22:00'::time
+FROM branch b
+WHERE b.name = 'Pasta Mania @ Tampines' OR b.name = 'Pasta Mania @ Jurong'
+)
+INSERT INTO opening_hours(branch_id, start_day, start_time, end_day, end_time)
+SELECT * FROM rest;
+
+WITH rest AS (
+SELECT b.id, 4, '10:00'::time, 4, '22:00'::time
+FROM branch b
+WHERE b.name = 'Pasta Mania @ Tampines' OR b.name = 'Pasta Mania @ Jurong'
+)
+INSERT INTO opening_hours(branch_id, start_day, start_time, end_day, end_time)
+SELECT * FROM rest;
+
+WITH rest AS (
+SELECT b.id, 5, '10:00'::time, 5, '22:00'::time
+FROM branch b
+WHERE b.name = 'Pasta Mania @ Tampines' OR b.name = 'Pasta Mania @ Jurong'
+)
+INSERT INTO opening_hours(branch_id, start_day, start_time, end_day, end_time)
+SELECT * FROM rest;
+
+WITH rest AS (
+SELECT b.id, 6, '10:00'::time, 6, '22:00'::time
+FROM branch b
+WHERE b.name = 'Pasta Mania @ Tampines' OR b.name = 'Pasta Mania @ Jurong'
+)
+INSERT INTO opening_hours(branch_id, start_day, start_time, end_day, end_time)
+SELECT * FROM rest;
 
 WITH rest AS (
 SELECT b.id, 0, '12:00'::time, 1, '12:00'::time
@@ -104,7 +161,7 @@ SELECT * FROM rest;
 
 -- INSERT BOOKING
 WITH item AS (
-SELECT c.id, b.id, 1, tsrange('2019-05-14T16:00:00.000Z', '2019-05-14T17:00:00.000Z','[)')
+SELECT c.id, b.id, 1, tsrange('2019-04-14T16:00:00.000Z', '2019-04-14T17:00:00.000Z','[)')
 FROM customer c, branch b
 WHERE b.name = 'BKJ @ GWC' and c.name = 'a'
 )
@@ -112,7 +169,7 @@ INSERT INTO booking(customer_id, branch_id, pax, throughout)
 SELECT * FROM item;
 
 WITH item AS (
-SELECT c.id, b.id, 1, tsrange('2019-05-14T16:00:00.000Z', '2019-05-14T17:30:00.000Z','[)')
+SELECT c.id, b.id, 1, tsrange('2019-04-14T16:00:00.000Z', '2019-04-14T17:30:00.000Z','[)')
 FROM customer c, branch b
 WHERE b.name = 'White Rabbit @ Harding' and c.name = 'clyde'
 )
