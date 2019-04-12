@@ -54,18 +54,6 @@ ON CONFLICT ON CONSTRAINT rating_customer_id_branch_id_key
 DO UPDATE SET rating_value = $3 WHERE rating.customer_id = $1 AND rating.branch_id = (SELECT id FROM branch where branch.name = $2);
 `
 
-const GET_MENU_QUERY = `
-SELECT * FROM menu_item mi
-WHERE mi.restaurant_id = (SELECT restaurant_id FROM branch WHERE id = $1) and
-mi.name not in
-(SELECT name from menu_item_override
-WHERE branch_id = $1)
-INTERSECT
-SELECT * FROM menu_item_override
-WHERE branch_id = $1 and cents > 0
-`
-
-
 // Index
 function goIndex(req, res) {
   if(req.cookies.customer){
@@ -331,6 +319,14 @@ router.post('/customer/deleteReservation', function(req, res, next) {
 	});
 });
 
+const GET_MENU_QUERY = `
+SELECT * FROM menu_item mi
+WHERE mi.restaurant_id = (SELECT restaurant_id FROM branch WHERE id = $1) and
+mi.name not in
+(SELECT name from menu_item_override
+WHERE branch_id = $1 AND cents < 0)
+`
+
 // List menu item
 router.get('/customer/listMenuItem', function(req, res, next) {
 	if(!req.cookies.customer){
@@ -341,7 +337,8 @@ router.get('/customer/listMenuItem', function(req, res, next) {
 		if (err) {
 			res.redirect('/customer/reservation');
 		} else {
-			res.render('reservation', { title: 'Reservation', data: data });
+			console.log(data.rows);
+			res.render('listMenuItem', { title: 'Reservation', data: data.rows });
 		}
 	});
 });

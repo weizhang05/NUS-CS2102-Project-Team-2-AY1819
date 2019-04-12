@@ -3,6 +3,18 @@
 <div class="container" style="padding-top: 25px;">
 	<div class="row">
 		<div class="col-lg">
+			<table>
+				<tr>
+					<th style="padding-right: 100px;">Name</th>
+					<th>Price</th>
+				</tr>
+				<% for(var i=0; i<data.length; i++) { %>
+				<tr>
+					<td><%= data[i].name%></td>
+					<td><%= data[i].cents%></td>
+				</tr>
+				<% } %>
+			</table>
 		</div>
 	</div>
 	
