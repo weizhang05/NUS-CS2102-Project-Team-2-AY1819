@@ -7,6 +7,7 @@ Ensure you are in the right directory. To know you are in the right directory, y
 Run the following commands to set up the database correctly
 ```
 psql -U <postgres_role>
+CREATE DATABASE restaurant_app;
 \c restaurant_app
 \i schema.sql
 \i mock_data_generation.sql
