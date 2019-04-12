@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Edit Branch</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1>Edit Branch</h1>
+    <form action="/admin/edit-restaurants/branch/<%= branchId %>/edit" method="POST">
+      <p>
+        <label for="edit-branch-name">Branch name: </label>
+        <input type="text" id="edit-branch-name" name="name" value="<%= name %>">
+      </p>
+      <p>
+        <label for="edit-branch-address">Branch address: </label>
+        <input type="text" id="edit-branch-address" name="address" value="<%= address %>">
+      </p>
+      <p>
+        <label for="edit-branch-plus-code">Branch plus code: </label>
+        <input type="text" id="edit-branch-plus-code" name="plus_code" value="<%= plus_code %>">
+      </p>
+      <p>
+        <label for="edit-branch-capacity">Branch capacity: </label>
+        <input type="text" id="edit-branch-capacity" name="capacity" value="<%= capacity %>">
+      </p>
+      <input type="hidden" id="branch-id" name="branch_id" value="<%= branchId %>">
+      <button type="submit">Save Above Changes</button>
+    </form>
+    <h2>Change Operating Hours</h2>
+    <h3>Current Open Hours</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Start day</th>
+          <th>Start time</th>
+          <th>End day</th>
+          <th>End time</th>
+          <th>Delete?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (const { id, branch_id, start_day, start_time, end_day, end_time } of hours) { %>
+          <tr>
+            <td><%= intToDayStr(start_day) %></td>
+            <td><%= start_time.slice(0, -3) %></td>
+            <td><%= intToDayStr(end_day) %></td>
+            <td><%= end_time.slice(0, -3) %></td>
+            <td>
+              <form action="/admin/edit-restaurants/branch/<%= branchId %>/hours/<%= id.replace(/-/g,'') %>/delete" method="POST">
+                <button type="submit">Delete!</button>
+              </form>
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+    <h3>Add Open Hours</h3>
+    <form action="/admin/edit-restaurants/branch/<%= branchId %>/hours/new/new" method="POST">
+      <p>
+        <label for="new-hours-start-day">Start day of week: </label>
+        <select id="new-hours-start-day" name="start_day" required>
+          <option value="">Please choose a day</option>
+          <option value="0">Sunday</option>
+          <option value="1">Monday</option>
+          <option value="2">Tuesday</option>
+          <option value="3">Wednesday</option>
+          <option value="4">Thursday</option>
+          <option value="5">Friday</option>
+          <option value="6">Saturday</option>
+        </select>
+      </p>
+      <p>
+        <label for="new-hours-start-time">Start time of day: </label>
+        <input type="time" id="new-hours-start-time" name="start_time" required>
+      </p>
+      <p>
+        <label for="new-hours-end-day">End day of week: </label>
+        <select id="new-hours-end-day" name="end_day" required>
+          <option value="">Please choose a day</option>
+          <option value="0">Sunday</option>
+          <option value="1">Monday</option>
+          <option value="2">Tuesday</option>
+          <option value="3">Wednesday</option>
+          <option value="4">Thursday</option>
+          <option value="5">Friday</option>
+          <option value="6">Saturday</option>
+        </select>
+      </p>
+      <p>
+        <label for="new-hours-end-time">End time of day: </label>
+        <input type="time" id="new-hours-end-time" name="end_time" required>
+      </p>
+      <input type="hidden" id="branch-id" name="branch_id" value="<%= branchId %>">
+      <button type="submit">Add</button>
+    </form>
+    <h2>Hours Override</h2>
+    <h3>Current Opening Hours Overrides</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Start time</th>
+          <th>End time</th>
+          <th>Delete?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (const { id, branch_id, override_date, start_time, end_time } of hours_override) { %>
+          <tr>
+            <td><%= override_date.getFullYear().toString().padStart(4, '0') %>-<%= override_date.getMonth().toString().padStart(2, '0') %>-<%= override_date.getDate().toString().padStart(2, '0') %></td>
+            <td><%= start_time.slice(0, -3) %></td>
+            <td><%= end_time.slice(0, -3) %></td>
+            <td>
+              <form action="/admin/edit-restaurants/branch/<%= branchId %>/hours-override/<%= id.replace(/-/g,'') %>/delete" method="POST">
+                <button type="submit">Delete!</button>
+              </form>
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+    <h3>Add Opening Hours Overrides</h3>
+    <form action="/admin/edit-restaurants/branch/<%= branchId %>/hours-override/new/new" method="POST">
+      <p>
+        <label for="new-hours-override-date">Date with different hours: </label>
+        <input type="date" id="new-hours-override-date" name="override_date" required>
+      </p>
+      <p>
+        <label for="new-hours-override-start-time">Start time: </label>
+        <input type="time" id="new-hours-override-start-time" name="start_time" required>
+      </p>
+      <p>
+        <label for="new-hours-end-time">End time: </label>
+        <input type="time" id="new-hours-end-time" name="end_time" required>
+      </p>
+      <input type="hidden" id="branch-id" name="branch_id" value="<%= branchId %>">
+      <button type="submit">Add</button>
+    </form>
+    <h2>Menu Item Overrides</h2>
+    <h3>Current Menu Item Overrides</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Price</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (const { id, name, cents } of menu_override) { %>
+          <tr>
+            <td><%= name %></td>
+            <% if (cents < 0) { %>
+              <td>item disabled</td>
+            <% } else { %>
+              <td><%= cents.toString().slice(0, -2) + "." + cents.toString().slice(-2) %></td>
+            <% } %>
+            <td>
+              <form action="/admin/edit-restaurants/branch/<%= branchId %>/menu-override/<%= id.replace(/-/g,'') %>/delete" method="POST">
+                <button type="submit">Delete override!</button>
+              </form>
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+    <h3>Add Menu Item Override
+    <form action="/admin/edit-restaurants/branch/<%= branchId %>/menu-override/new/new" method="POST">
+      <p>
+        <label for="new-menu-item-override-name">Menu item name: </label>
+        <input type="text" id="new-menu-item-override-name" name="name">
+      </p>
+      <p>
+        <label for="new-menu-item-override-price">Menu item price: </label>
+        <input type="number" id="new-menu-item-override-price" name="price" min="0" step="0.01">
+      </p>
+      <p>
+        <input type="checkbox" id="disable-menu-item" name="disable">
+        <label for="disable-menu-item">Check to hide item from menu instead of setting a price</label>
+      </p>
+      <button type="submit">Add</button>
+    </form>
+    </h3>
+    <p><a href="/admin/edit-restaurants">Back to Edit Restaurants</a></p>
+  </body>
+</html>

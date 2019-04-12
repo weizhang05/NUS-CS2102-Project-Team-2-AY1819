@@ -46,3 +46,11 @@ function closeAlert() {
     var x = document.getElementById("success-alert");
     x.remove();
 }
+
+$(document).ready(function () {
+    var infoMessage = $('#success-alert').text();
+    if (infoMessage.includes("ensure")) {
+        console.log("present");
+        $('#success-alert').removeClass( "alert-success" ).addClass( "alert-danger" );
+    }
+});

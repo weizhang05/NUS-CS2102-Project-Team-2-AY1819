@@ -3,7 +3,7 @@
 
 <head>
     <title>Statistics</title>
-    <link rel='stylesheet' href='/stylesheets/style.css'/>
+    <link rel='stylesheet' href='/stylesheets/admin-pages.css'/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -12,7 +12,14 @@
 <h1 style="color: #ffffff; background: #ffcc00; text-align: center">Statistics Page</h1>
 <p style="color: #ffffff; background: #ffcc00; text-align: center; margin-top: -8px"><a href="/admin/dashboard">Dashboard</a></p>
 
-<h2>Restaurant Cuisine Count</h2>
+<nav class="navbar navbar-light" style="background-color: #e3f2fd;">
+    <a href="#restaurant-cuisine-count">Restaurant Cuisine Count</a>
+    <a href="#most-booked-restaurants">Most Booked Restaurants</a>
+    <a href="#most-popular-hours">Most Popular Hours</a>
+</nav>
+<br>
+
+<h2 id="restaurant-cuisine-count">Restaurant Cuisine Count</h2>
 <table id ="cuisine-count-display" style="border-spacing: 10px;" class="table table-bordered">
     <thead>
     <tr>
@@ -30,7 +37,8 @@
     </tbody>
 </table>
 <br>
-<h2>Most Booked Restaurant</h2>
+<br>
+<h2 id="most-booked-restaurants">Most Booked Restaurants</h2>
 <table id ="most-booked-count-display" style="border-spacing: 10px;" class="table table-bordered">
     <thead>
     <tr>
@@ -50,7 +58,7 @@
     </tbody>
 </table>
 <br>
-<h2>Most Popular Hours</h2>
+<h2 id="most-popular-hours">Most Popular Hours</h2>
 <table id ="most-booked-count-display" style="border-spacing: 10px;" class="table table-bordered">
     <thead>
     <tr>

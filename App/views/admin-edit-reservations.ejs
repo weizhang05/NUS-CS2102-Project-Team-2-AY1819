@@ -1,34 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Edit Reservations</title>
-    <link rel='stylesheet' href='/stylesheets/style.css'/>
+    <title>Edit Bookings</title>
+    <link rel='stylesheet' href='/stylesheets/admin-pages.css'/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="/scripts/admin_edit_reservations.js" defer></script>
 </head>
 
-<h1 style="color: #ffffff; background: #ffcc00; text-align: center">Edit Reservations Page</h1>
+<h1 style="color: #ffffff; background: #ffcc00; text-align: center">Edit Bookings Page</h1>
 <p style="color: #ffffff; background: #ffcc00; text-align: center; margin-top: -8px"><a href="/admin/dashboard">Dashboard</a></p>
 
-<h2>Existing Reservations</h2>
-<table style="border-spacing: 10px;">
+<nav class="navbar navbar-light" style="background-color: #e3f2fd;">
+    <a href="#existing-bookings">Existing Bookings</a>
+    <a href="#edit-booking">Edit Booking</a> <a href="#delete-booking">Delete Booking</a>
+</nav>
+<br>
+
+<% if (message != '') { %>
+    <div id = "success-alert" class="alert alert-success alert-dismissible fade show" role="alert">
+        <%= message %>
+        <button type="button" class="close" data-dismiss="alert" onclick="closeAlert()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+<% } %>
+
+<h2 id="existing-bookings">Existing Bookings</h2>
+<p>
+    <label for="search-reservations-input">Search Bookings:</label>
+    <input type="text" id="search-reservations-input" name="search_reservations" class="form-control"/>
+</p>
+<p>There are <span id="reservations-count"><%= reservations.length %></span> matching bookings.</p>
+<table id="reservations-display" style="border-spacing: 10px;" class="table table-bordered">
     <thead>
     <tr>
         <th>Booking Id</th>
-        <th>Customer Id</th>
         <th>Customer Name</th>
-        <th>Branch Id</th>
+        <th>Branch Name</th>
         <th>Timing</th>
     </tr>
     </thead>
     <tbody>
-    <% for (const { id, customer_id, name, branch_id, throughout } of reservations) { %>
+    <% for (const { id, name, branch_name, throughout } of reservations) { %>
         <tr>
             <td><%= id%></td>
-            <td><%= customer_id%></td>
             <td><%= name%></td>
-            <td><%= branch_id%></td>
+            <td><%= branch_name%></td>
             <td><%= throughout%></td>
         </tr>
     <%} %>
@@ -36,26 +55,45 @@
 </table>
 <br>
 <br>
-<h2>Edit Reservation</h2>
+
+<h2 id="edit-booking">Edit Booking</h2>
+<p style="color: red; padding-bottom: -8px;">Note: bookings have to be at least longer than an hour!</p>
 <form action="/admin/edit_reservation" method="POST">
     <p>
-        <label for="reservation-id">Reservation Id:</label>
-        <input type="text" id="reservation-id" name="reservation_id" placeholder="5fe63e0f-e526-4f3c-afb7-677d8f913e22">
+        <label for="edit-reservation-id">Booking Id:</label>
+        <select id="edit-reservation-id" name="reservation_id" class="form-control">
+            <% for (const { id } of reservations) { %>
+                <option><%= id%></option>
+            <%} %>
+        </select>
     </p>
     <p>
-        <label for="edit-reservation-timing">New Reservation Timing:</label>
-        <input type="text" id="edit-reservation-timing" name="reservation_timing" placeholder="[&quot;2010-01-01 16:30:00&quot;,&quot;2010-01-01 18:00:00&quot;)">
+        <label for="edit-reservation-timing">New Booking Timing:</label>
+        <input type="text" id="edit-reservation-timing" name="reservation_timing" placeholder="Edit timing here" class="form-control">
     </p>
-    <button type="submit">Save Changes</button>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
 </form>
 <br>
 <br>
-<h2>Delete Reservation</h2>
+
+<h2 id="delete-booking">Delete Booking</h2>
 <form action="/admin/delete_reservation" method="POST">
     <p>
-        <label for="reservation-id">Reservation Id:</label>
-        <input type="text" id="reservation-id" name="reservation_id" placeholder="7ebc4635-aad7-427f-ab11-d9b52ab6c2503">
+        <label for="delete-reservation-id">Booking Id:</label>
+        <select id="delete-reservation-id" name="reservation_id" class="form-control">
+            <% for (const { id } of reservations) { %>
+                <option><%= id%></option>
+            <%} %>
+        </select>
     </p>
-    <button type="submit">Delete</button>
+    <p>
+        <label for = "delete-reservation-customer-name">Customer Name: </label>
+        <input type="text" id="delete-reservation-customer-name" placeholder="John Smith" readonly="readonly" class="form-control">
+    </p>
+    <p>
+        <label for = "delete-reservation-branch-name">Branch Name: </label>
+        <input type="text" id="delete-reservation-branch-name" placeholder="Pasta Mania @ JEM" readonly="readonly" class="form-control">
+    </p>
+    <button type="submit" class="btn btn-danger">Delete</button>
 </form>
 </html>

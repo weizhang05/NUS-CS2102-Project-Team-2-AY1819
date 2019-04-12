@@ -23,6 +23,11 @@ DELETE FROM customer
 WHERE id = $1;
 `;
 
+const ADD_USER_QUERY = `
+INSERT INTO customer(name, email, password, non_user)
+VALUES($1, $2, $3, false);
+`
+
 const UPDATE_USER_QUERY_NAME = `
 UPDATE customer
       SET name = $2
@@ -77,6 +82,12 @@ FROM restaurant_cuisine rc join cuisine c on rc.cuisine_id = c.id
 ORDER BY r.restaurant_name ASC;
 `;
 
+const ADD_RESTAURANT_QUERY = `
+INSERT INTO restaurant(account_name, restaurant_name)
+VALUES($1, $2);
+`
+
+
 const UPDATE_RESTAURANT_RESTNAME_QUERY = `
 UPDATE restaurant
       SET restaurant_name = $1
@@ -101,9 +112,9 @@ where id = $1;
 `;
 
 const RESERVATION_INFO_QUERY = `
-SELECT b.id, b.customer_id, c.name, b.branch_id, b.throughout
-FROM booking b, customer c
-WHERE b.customer_id = c.id;
+SELECT b.id, c.name, br.name as branch_name, b.throughout
+FROM booking b, customer c, branch br
+WHERE b.customer_id = c.id AND b.branch_id = br.id;
 `;
 
 const UPDATE_RESERVATION_QUERY = `
@@ -115,7 +126,18 @@ UPDATE booking
 const DELETE_RESERVATION_QUERY = `
 DELETE FROM booking
 where id = $1;
-`;
+`
+
+const ADD_BRANCH_QUERY = `
+INSERT INTO branch(restaurant_id, name, address, plus_code, capacity)
+VALUES($1, $2, $3, $4, $5);
+`
+
+const UPDATE_BRANCH_QUERY = `
+UPDATE branch
+    SET name = $2, address = $3, capacity = $4
+    where id = $1;
+`
 
 const BRANCHES_INFO_QUERY = `
 SELECT b.id, r.restaurant_name, b.name, b.address, b.plus_code, b.capacity
@@ -206,11 +228,14 @@ module.exports = {
     STATS_MOST_BOOKED_RESTAURANT,
     BRANCH_DELETE_QUERY,
     BRANCHES_INFO_QUERY,
+    ADD_BRANCH_QUERY,
+    UPDATE_BRANCH_QUERY,
     DELETE_RESERVATION_QUERY,
     UPDATE_RESERVATION_QUERY,
     DELETE_RESTAURANT_QUERY,
     RESERVATION_INFO_QUERY,
     RESTAURANT_INFO_QUERY,
+    ADD_RESTAURANT_QUERY,
     UPDATE_RESTAURANT_RESTNAME_QUERY,
     ADMIN_INFO_QUERY,
     CUISINES_INFO_QUERY,
@@ -218,6 +243,7 @@ module.exports = {
     DELETE_CUSTOMER_QUERY,
     EXISTING_ADMIN_QUERY,
     UPDATE_RESTAURANT_ACCNAME_QUERY,
+    ADD_USER_QUERY,
     UPDATE_USER_QUERY_ALL,
     UPDATE_USER_QUERY_PASSWORD_EMAIL,
     UPDATE_USER_QUERY_PASSWORD,

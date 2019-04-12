@@ -33,6 +33,9 @@ DELETE FROM restaurant_cuisine
 WHERE id = $1 
 `;
 
+function emptyToNull(str) {
+  return (str === "") ? null : str;
+}
 
 function insert_restaurant_cuisine(req, res, restaurant_id, cuisine_id) {
   pool.query(NEW_RESTAURANT_CUISINE, [restaurant_id, cuisine_id], (err, _) => {
@@ -48,7 +51,8 @@ function insert_restaurant_cuisine(req, res, restaurant_id, cuisine_id) {
 
 // note: restaurant_id is ignored if user is not an admin
 router.post('/:restaurant_id/new', (req, res, next) => {
-  const { restaurant_id: r_id, cuisine_name } = req.body;
+  const { restaurant_id: r_id } = req.body;
+  const cuisine_name = emptyToNull(req.body.cuisine_name);
   const restaurant_id = (req.cookies.admin !== undefined) ? r_id : req.cookies.restaurants;
   console.log(req.cookies);
 
@@ -57,9 +61,11 @@ router.post('/:restaurant_id/new', (req, res, next) => {
   // insert restaurant_cuisine
   pool.query(INSERT_OR_RETRIEVE_CUISINE, [cuisine_name], (err, dbRes) => {
     if (err) {
-      console.log(cuisine_name);
-      console.log(err);
-      res.send("error inserting/retriving cuisine");
+      req.flash('info', 'Update failed! Please ensure you are keying in valid values for input.');
+      res.redirect('/admin/edit-restaurants')
+      // console.log(cuisine_name);
+      // console.log(err);
+      // res.send("error inserting/retriving cuisine");
     } else {
       const cuisine_id = dbRes.rows[0].id;
       insert_restaurant_cuisine(req, res, restaurant_id, cuisine_id)
@@ -71,9 +77,12 @@ router.post('/:itemId/delete', (req, res, next) => {
   const { itemId } = req.params;
   pool.query(DELETE_RESTAURANT_CUISINE, [itemId], (err, _) => {
     if (err) {
-      console.log(err);
-      res.send("error!");
+      req.flash('info', 'Update failed! Please ensure you are keying in valid values for input.');
+      res.redirect('/admin/edit-restaurants')
+      // console.log(err);
+      // res.send("error!");
     } else {
+      req.flash('info', 'Successfully added!');
       redirect(req, res);
     }
   });
