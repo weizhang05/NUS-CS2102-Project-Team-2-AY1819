@@ -1,12 +1,5 @@
 <% include customerTemplate/afterLoginHeader %>
 
-<head>
-    <script src="/scripts/ratings-management.js" defer></script>
-    <link rel='stylesheet' href='/stylesheets/style.css'/>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-</head>
-
 <% if (message != '') { %>
     <br>
     <div id = "success-alert" class="alert alert-success alert-dismissible fade show" role="alert">
@@ -111,6 +104,7 @@
     <button type="submit">Give Rating!</button>
 </form>
 <br>
-</body>
+
+<script src="/scripts/ratings-management.js" defer></script>
 
 <% include customerTemplate/footer %>
