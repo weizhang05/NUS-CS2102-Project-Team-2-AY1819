@@ -21,6 +21,8 @@
         <a href="#branch-add">Add Branch</a>
         <a href="#branch-edit">Edit Branches</a>
         <a href="#branch-delete">Delete Branch</a>
+        <a href="#menu-item-add">Add Menu Item</a>
+        <a href="#menu-item-delete">Delete Menu Item</a>
     </nav>
 
     <br>
@@ -130,7 +132,7 @@
     <h2 id="cuisine-add">Add Cuisine</h2>
     <form action="/admin/cuisine/new/new" method="POST">
         <p>
-            <label for="restaurant-id">Restaurant Id:</label>
+            <label for="restaurant-id-cuisine">Restaurant Id:</label>
             <select class="restaurant-id-cuisine form-control" id="restaurant-id" name="restaurant_id">
                 <% for (const { id } of restaurants) { %>
                     <option><%= id%></option>
@@ -138,13 +140,14 @@
             </select>
         </p>
         <p>
-            <label for = "restaurant-name">Restaurant Name: </label>
-            <input type="text" id="restaurant-name" placeholder="My Restaurant" readonly
+            <label for= "restaurant-name">Restaurant Name: </label>
+            <input type="text" id="restaurant-name-cuisine" placeholder="My Restaurant" readonly
                    class="form-control">
         </p>
         <p>
             <label for="cuisine-name">Cuisine Name:</label>
-            <input type="text" id="cuisine-name" name="cuisine_name" placeholder="Western" class="form-control">
+            <input type="text" id="cuisine-name" name="cuisine_name" placeholder="Western" class="form-control"
+                   required>
         </p>
         <button type="submit" class="btn btn-primary">Add</button>
     </form>
@@ -285,7 +288,70 @@
         </p>
         <button type="submit" class="btn btn-danger">Delete</button>
     </form>
-</body>
 
+    <br>
+    <br>
+    <h2 id="menu-item-add">Add Menu Item</h2>
+    <form action="/admin/new_menu_item" method="POST">
+      <p>
+        <label for="restaurant-id">Restaurant Id:</label>
+        <select class="restaurant-id-menu" id="restaurant-id" name="restaurant_id" class="form-control">
+          <% for (const { id } of restaurants) { %>
+          <option><%= id%></option>
+          <%} %>
+        </select>
+      </p>
+      <p>
+        <label for= "restaurant-name">Restaurant Name: </label>
+        <input type="text" id="restaurant-name-menu" placeholder="My Restaurant" class="form-control" readonly
+               class="form-control">
+      </p>
+      <p>
+        <label for="menu-item-name">Item Name:</label>
+        <input type="text" id="menu-item-name" name="menu_item_name" placeholder="Fishcake"
+               class="form-control" required>
+      </p>
+      <p>
+        <label for="menu-item-price">Price (cents):</label>
+        <input type="number" id="menu-item-cents" name="menu_item_cents" placeholder="100"
+               class="form-control" required>
+      </p>
+      <button type="submit" class="btn btn-primary">Add</button>
+    </form>
+    <br>
+    <br>
+    <h2 id="menu-item-delete">Delete Menu Item</h2>
+    <p>
+      <label for="search-menu-items-input">Search Menu Items:</label>
+      <input type="text" id="search-menu-items-input" name="search_menu_items" class="form-control"/>
+    </p>
+    <table id ="menu-items-display" class="table table-bordered">
+      <thead>
+      <tr>
+        <th>Item Name</th>
+        <th>Price ($)</th>
+        <th>Restaurant Name</th>
+        <th>Restaurant Id</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% for (const {item_id, restaurant_name, item_name, cents, restaurant_id } of menu_items) { %>
+      <tr>
+        <td><%= item_name%></td>
+        <td><%= (cents/100.0).toFixed(2)%></td>
+        <td><%= restaurant_name%></td>
+        <td><%= restaurant_id%></td>
+        <td>
+          <form action="/admin/delete_menu_item/<%= item_id.replace(/-/g,'') %>" method="POST">
+            <button type="submit" class="btn btn-danger">Delete!</button>
+          </form>
+        </td>
+      </tr>
+      <%} %>
+      </tbody>
+    </table>
+    <br>
+    <br>
+</body>
 
 </html>

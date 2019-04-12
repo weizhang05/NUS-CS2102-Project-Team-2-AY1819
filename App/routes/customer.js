@@ -110,7 +110,7 @@ router.post('/customer/register', function(req, res, next) {
 
 // Login
 router.get('/customer/login', function(req, res, next) {
-	res.render('login', { title: 'Log In' });
+	res.render('login', { title: 'Log In', loginCheck: 0 });
 });
 
 router.post('/customer/login', function(req, res, next) {
@@ -123,12 +123,12 @@ router.post('/customer/login', function(req, res, next) {
 		if(data["rowCount"] === 1){
 			res.cookie("customer", data["rows"]);
 			console.log("Login success!");
+			res.render('customerIndexAfterLogin', { title: 'CS2102 Restaurant' });
 		}
 		else{
 			 console.log("Login failed!");
+			 res.render('login', { title: 'Reservation', loginCheck: -1 });
 		}
-		
-		res.redirect('/')
 	});
 });
 
@@ -320,7 +320,6 @@ router.post('/customer/deleteReservation', function(req, res, next) {
 
 	});
 });
-
 
 // Logout
 router.get('/customer/logout', function(req, res, next) {
