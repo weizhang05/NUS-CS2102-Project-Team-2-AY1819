@@ -56,11 +56,10 @@ DO UPDATE SET rating_value = $3 WHERE rating.customer_id = $1 AND rating.branch_
 
 const GET_MENU_QUERY = `
 SELECT * FROM menu_item mi
-WHERE mi mi.restaurant_id = ri and
+WHERE mi.restaurant_id = (SELECT restaurant_id FROM branch WHERE id = $1) and
 mi.name not in
 (SELECT name from menu_item_override
-WHERE branch_id = $1 and cents < 0)
-
+WHERE branch_id = $1)
 INTERSECT
 SELECT * FROM menu_item_override
 WHERE branch_id = $1 and cents > 0
