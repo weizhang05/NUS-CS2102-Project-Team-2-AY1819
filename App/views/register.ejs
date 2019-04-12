@@ -1,13 +1,45 @@
 <% include customerTemplate/beforeLoginHeader %>
 
-<div id="mainBody">
-	
+<div id="mainBody" class="container">
+
 	<form method="post" action="register">
-		Name: <input name="name" id="name" type="text"><br>
-		Email: <input name="email" id="email" type="email"><br>
-		Password: <input name="password" id="password" type="password"><br>
-		Confirm Password: <input name="confirmPassword" id="confirmPassword" type="password"><br>
-		<button type="submit">Register</button>
+		<div class="row" style="padding-top:10px;">
+			<div class="col-lg-1">
+				Name:
+			</div>
+			<div class="col-lg-8">
+				<input type="text" name="name" id="name" placeholder="Name">
+			</div>
+		</div>
+		<div class="row" style="padding-top:10px;">
+			<div class="col-lg-1">
+				Email:
+			</div>
+			<div class="col-lg-8">
+				<input type="text" name="email" id="email" placeholder="Email">
+			</div>
+		</div>
+		<div class="row" style="padding-top:10px;">
+			<div class="col-lg-1">
+				Password:
+			</div>
+			<div class="col-lg-8">
+				<input type="password" name="password" id="password" placeholder="Password">
+			</div>
+		</div>
+		<div class="row" style="padding-top:10px;">
+			<div class="col-lg-1">
+				Confirm Password:
+			</div>
+			<div class="col-lg-8">
+				<input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password">
+			</div>
+		</div>
+		<div class="row" style="padding-top: 10px;">
+			<div class="col-lg-3">
+				<button style="width: 100%;"class="btn btn-primary" type="submit" onclick="">Register</button>
+			</div>
+		</div>
 	</form>
 
 </div>

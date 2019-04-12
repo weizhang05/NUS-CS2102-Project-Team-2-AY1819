@@ -169,7 +169,8 @@ as (SELECT br.name as branch_name, r.restaurant_name as restaurant_name
 
 SELECT branch_name, restaurant_name, count(*) as count
 FROM CombinedTable
-GROUP BY branch_name, restaurant_name;
+GROUP BY branch_name, restaurant_name
+order by count desc;
 `
 
 const STATS_POPULAR_BOOKING_TIME = `
@@ -177,7 +178,7 @@ SELECT lower(throughout)::time as time_list, br.name as branch_name, count(*) as
 FROM booking b, branch br
 WHERE b.branch_id = br.id
 group by lower(throughout)::time, branch_name
-order by branch_name, booking_count desc;
+order by booking_count desc, branch_name desc, time_list asc;
 `
 
 const MENU_ITEM_QUERY = `
