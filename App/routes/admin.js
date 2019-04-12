@@ -16,6 +16,7 @@ const queries = require('../public/scripts/admin_sql_queries');
   Login and Dashboard Related
  */
 const renderLogin = (req, res, next) => {
+    res.clearCookie('restaurants');
     res.render('admin-login', {});
 };
 

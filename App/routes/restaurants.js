@@ -84,6 +84,7 @@ const intToDayStr = (i) => {
 
 
 const renderLogin = (req, res, next) => {
+  res.clearCookie('admin');
   res.render('restaurants', {});
 };
 
