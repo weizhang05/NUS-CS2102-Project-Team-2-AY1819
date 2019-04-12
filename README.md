@@ -15,7 +15,7 @@ Note: File location are relative, so ensure you are at the right location.
 
 # Modify .env file
 File is located inside the App folder. This is basically the configuration for connection to the database.
-Format: DATABASE_URL=postgres://postgres:<username>@<host_identifier>:<port_number>/<database>
+Format: DATABASE_URL=postgres://postgres:<username>@<host_identifier>:<port_number>/<database_name>
 ```
 DATABASE_URL=postgres://postgres:postgres@localhost:5432/cs2102
 ```
