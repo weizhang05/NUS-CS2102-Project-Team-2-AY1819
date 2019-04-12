@@ -38,7 +38,7 @@ SELECT id, 'BKJ @ GWC', 'Great World City', 100 FROM restaurant r WHERE restaura
 INSERT INTO branch(restaurant_id, name, address, capacity)
 SELECT * FROM rows;
 WITH rows AS (
-SELECT id, 'BKJ @ Doby Ghout', 'Plaza Singapura', 100 FROM restaurant r WHERE restaurant_name = 'Bangkok Jam'
+SELECT id, 'BKJ @ Dhoby Ghaut', 'Plaza Singapura', 100 FROM restaurant r WHERE restaurant_name = 'Bangkok Jam'
 )
 INSERT INTO branch(restaurant_id, name, address, capacity)
 SELECT * FROM rows;
@@ -144,7 +144,7 @@ INSERT INTO opening_hours(branch_id, start_day, start_time, end_day, end_time)
 SELECT * FROM rest;
 
 WITH rest AS (
-SELECT b.id, 0, '12:00'::time, 1, '12:00'::time
+SELECT b.id, 0, '12:00'::time, 1, '01:00'::time
 FROM branch b
 WHERE b.name = 'White Rabbit @ Harding'
 )
@@ -152,9 +152,105 @@ INSERT INTO opening_hours(branch_id, start_day, start_time, end_day, end_time)
 SELECT * FROM rest;
 
 WITH rest AS (
-SELECT b.id, 0, '08:00'::time, 1, '10:00'::time
+SELECT b.id, 1, '12:00'::time, 2, '01:00'::time
 FROM branch b
-WHERE b.name = 'BKJ @ Bugis' OR b.name = 'BKJ @ GWC' OR b.name = 'BKJ @ Doby Ghout'
+WHERE b.name = 'White Rabbit @ Harding'
+)
+INSERT INTO opening_hours(branch_id, start_day, start_time, end_day, end_time)
+SELECT * FROM rest;
+
+WITH rest AS (
+SELECT b.id, 2, '12:00'::time, 3, '01:00'::time
+FROM branch b
+WHERE b.name = 'White Rabbit @ Harding'
+)
+INSERT INTO opening_hours(branch_id, start_day, start_time, end_day, end_time)
+SELECT * FROM rest;
+
+WITH rest AS (
+SELECT b.id, 3, '12:00'::time, 4, '01:00'::time
+FROM branch b
+WHERE b.name = 'White Rabbit @ Harding'
+)
+INSERT INTO opening_hours(branch_id, start_day, start_time, end_day, end_time)
+SELECT * FROM rest;
+
+WITH rest AS (
+SELECT b.id, 4, '12:00'::time, 5, '01:00'::time
+FROM branch b
+WHERE b.name = 'White Rabbit @ Harding'
+)
+INSERT INTO opening_hours(branch_id, start_day, start_time, end_day, end_time)
+SELECT * FROM rest;
+
+WITH rest AS (
+SELECT b.id, 5, '12:00'::time, 6, '01:00'::time
+FROM branch b
+WHERE b.name = 'White Rabbit @ Harding'
+)
+INSERT INTO opening_hours(branch_id, start_day, start_time, end_day, end_time)
+SELECT * FROM rest;
+
+WITH rest AS (
+SELECT b.id, 6, '12:00'::time, 0, '01:00'::time
+FROM branch b
+WHERE b.name = 'White Rabbit @ Harding'
+)
+INSERT INTO opening_hours(branch_id, start_day, start_time, end_day, end_time)
+SELECT * FROM rest;
+
+WITH rest AS (
+SELECT b.id, 0, '09:00'::time, 0, '21:00'::time
+FROM branch b
+WHERE b.name = 'BKJ @ Bugis' OR b.name = 'BKJ @ GWC' OR b.name = 'BKJ @ Dhoby Ghaut'
+)
+INSERT INTO opening_hours(branch_id, start_day, start_time, end_day, end_time)
+SELECT * FROM rest;
+
+WITH rest AS (
+SELECT b.id, 1, '09:00'::time, 1, '21:00'::time
+FROM branch b
+WHERE b.name = 'BKJ @ Bugis' OR b.name = 'BKJ @ GWC' OR b.name = 'BKJ @ Dhoby Ghaut'
+)
+INSERT INTO opening_hours(branch_id, start_day, start_time, end_day, end_time)
+SELECT * FROM rest;
+
+WITH rest AS (
+SELECT b.id, 2, '09:00'::time, 2, '21:00'::time
+FROM branch b
+WHERE b.name = 'BKJ @ Bugis' OR b.name = 'BKJ @ GWC' OR b.name = 'BKJ @ Dhoby Ghaut'
+)
+INSERT INTO opening_hours(branch_id, start_day, start_time, end_day, end_time)
+SELECT * FROM rest;
+
+WITH rest AS (
+SELECT b.id, 3, '09:00'::time, 3, '21:00'::time
+FROM branch b
+WHERE b.name = 'BKJ @ Bugis' OR b.name = 'BKJ @ GWC' OR b.name = 'BKJ @ Dhoby Ghaut'
+)
+INSERT INTO opening_hours(branch_id, start_day, start_time, end_day, end_time)
+SELECT * FROM rest;
+
+WITH rest AS (
+SELECT b.id, 4, '09:00'::time, 4, '21:00'::time
+FROM branch b
+WHERE b.name = 'BKJ @ Bugis' OR b.name = 'BKJ @ GWC' OR b.name = 'BKJ @ Dhoby Ghaut'
+)
+INSERT INTO opening_hours(branch_id, start_day, start_time, end_day, end_time)
+SELECT * FROM rest;
+
+WITH rest AS (
+SELECT b.id, 5, '09:00'::time, 5, '21:00'::time
+FROM branch b
+WHERE b.name = 'BKJ @ Bugis' OR b.name = 'BKJ @ GWC' OR b.name = 'BKJ @ Dhoby Ghaut'
+)
+INSERT INTO opening_hours(branch_id, start_day, start_time, end_day, end_time)
+SELECT * FROM rest;
+
+WITH rest AS (
+SELECT b.id, 6, '09:00'::time, 6, '23:00'::time
+FROM branch b
+WHERE b.name = 'BKJ @ Bugis' OR b.name = 'BKJ @ GWC' OR b.name = 'BKJ @ Dhoby Ghaut'
 )
 INSERT INTO opening_hours(branch_id, start_day, start_time, end_day, end_time)
 SELECT * FROM rest;
@@ -169,9 +265,81 @@ INSERT INTO booking(customer_id, branch_id, pax, throughout)
 SELECT * FROM item;
 
 WITH item AS (
+SELECT c.id, b.id, 3, tsrange('2019-04-17T19:00:00.000Z', '2019-04-17T20:00:00.000Z','[)')
+FROM customer c, branch b
+WHERE b.name = 'White Rabbit @ Harding' and c.name = 'Cheryl'
+)
+INSERT INTO booking(customer_id, branch_id, pax, throughout)
+SELECT * FROM item;
+
+WITH item AS (
+SELECT c.id, b.id, 1, tsrange('2019-04-17T19:00:00.000Z', '2019-04-17T20:00:00.000Z','[)')
+FROM customer c, branch b
+WHERE b.name = 'White Rabbit @ Harding' and c.name = 'Kamala Harris'
+)
+INSERT INTO booking(customer_id, branch_id, pax, throughout)
+SELECT * FROM item;
+
+WITH item AS (
+SELECT c.id, b.id, 2, tsrange('2019-04-17T19:00:00.000Z', '2019-04-17T20:00:00.000Z','[)')
+FROM customer c, branch b
+WHERE b.name = 'White Rabbit @ Harding' and c.name = 'Kacey Musgraves'
+)
+INSERT INTO booking(customer_id, branch_id, pax, throughout)
+SELECT * FROM item;
+
+WITH item AS (
 SELECT c.id, b.id, 1, tsrange('2019-04-14T16:00:00.000Z', '2019-04-14T17:30:00.000Z','[)')
 FROM customer c, branch b
 WHERE b.name = 'White Rabbit @ Harding' and c.name = 'clyde'
+)
+INSERT INTO booking(customer_id, branch_id, pax, throughout)
+SELECT * FROM item;
+
+WITH item AS (
+SELECT c.id, b.id, 1, tsrange('2019-04-14T16:00:00.000Z', '2019-04-14T17:30:00.000Z','[)')
+FROM customer c, branch b
+WHERE b.name = 'BKJ @ Bugis' and c.name = 'Bernie Sanders'
+)
+INSERT INTO booking(customer_id, branch_id, pax, throughout)
+SELECT * FROM item;
+
+WITH item AS (
+SELECT c.id, b.id, 1, tsrange('2019-04-24T15:00:00.000Z', '2019-04-24T16:30:00.000Z','[)')
+FROM customer c, branch b
+WHERE b.name = 'BKJ @ Dhoby Ghaut' and c.name = 'Bernie Sanders'
+)
+INSERT INTO booking(customer_id, branch_id, pax, throughout)
+SELECT * FROM item;
+
+WITH item AS (
+SELECT c.id, b.id, 1, tsrange('2019-04-24T10:00:00.000Z', '2019-04-24T12:30:00.000Z','[)')
+FROM customer c, branch b
+WHERE b.name = 'Pasta Mania @ Jurong' and c.name = 'Jay Chou'
+)
+INSERT INTO booking(customer_id, branch_id, pax, throughout)
+SELECT * FROM item;
+
+WITH item AS (
+SELECT c.id, b.id, 1, tsrange('2019-04-24T11:00:00.000Z', '2019-04-24T12:30:00.000Z','[)')
+FROM customer c, branch b
+WHERE b.name = 'Pasta Mania @ Jurong' and c.name = 'Chris Martin'
+)
+INSERT INTO booking(customer_id, branch_id, pax, throughout)
+SELECT * FROM item;
+
+WITH item AS (
+SELECT c.id, b.id, 1, tsrange('2019-04-24T11:00:00.000Z', '2019-04-24T12:30:00.000Z','[)')
+FROM customer c, branch b
+WHERE b.name = 'Pasta Mania @ Tampines' and c.name = 'Roger Federer'
+)
+INSERT INTO booking(customer_id, branch_id, pax, throughout)
+SELECT * FROM item;
+
+WITH item AS (
+SELECT c.id, b.id, 1, tsrange('2019-04-28T11:00:00.000Z', '2019-04-28T12:30:00.000Z','[)')
+FROM customer c, branch b
+WHERE b.name = 'Pasta Mania @ Tampines' and c.name = 'Ellie Goulding'
 )
 INSERT INTO booking(customer_id, branch_id, pax, throughout)
 SELECT * FROM item;
@@ -260,3 +428,36 @@ SELECT id, 'Basil Pork Rice', 100 from restaurant WHERE restaurant_name = 'Bangk
 )
 INSERT INTO menu_item(restaurant_id, name, cents)
 SELECT * FROM r;
+
+-- INSERT RATINGS
+INSERT into rating(customer_id, branch_id, rating_value)
+VALUES((SELECT id FROM customer where customer.name = 'Kamala Harris'),
+       (SELECT id FROM branch where branch.name = 'White Rabbit @ Harding'), 4);
+
+INSERT into rating(customer_id, branch_id, rating_value)
+VALUES((SELECT id FROM customer where customer.name = 'Kacey Musgraves'),
+       (SELECT id FROM branch where branch.name = 'White Rabbit @ Harding'), 5);
+
+INSERT into rating(customer_id, branch_id, rating_value)
+VALUES((SELECT id FROM customer where customer.name = 'Bernie Sanders'),
+       (SELECT id FROM branch where branch.name = 'BKJ @ Dhoby Ghaut'), 1);
+
+INSERT into rating(customer_id, branch_id, rating_value)
+VALUES((SELECT id FROM customer where customer.name = 'Bernie Sanders'),
+       (SELECT id FROM branch where branch.name = 'BKJ @ Bugis'), 2);
+
+INSERT into rating(customer_id, branch_id, rating_value)
+       VALUES((SELECT id FROM customer where customer.name = 'Roger Federer'),
+       (SELECT id FROM branch where branch.name = 'Pasta Mania @ Tampines'), 3);
+
+INSERT into rating(customer_id, branch_id, rating_value)
+       VALUES((SELECT id FROM customer where customer.name = 'Ellie Goulding'),
+       (SELECT id FROM branch where branch.name = 'Pasta Mania @ Tampines'), 3);
+
+INSERT into rating(customer_id, branch_id, rating_value)
+       VALUES((SELECT id FROM customer where customer.name = 'Jay Chou'),
+       (SELECT id FROM branch where branch.name = 'Pasta Mania @ Jurong'), 2);
+
+INSERT into rating(customer_id, branch_id, rating_value)
+       VALUES((SELECT id FROM customer where customer.name = 'Chris Martin'),
+       (SELECT id FROM branch where branch.name = 'Pasta Mania @ Tampines'), 3);
