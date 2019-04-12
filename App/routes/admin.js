@@ -16,17 +16,19 @@ const queries = require('../public/scripts/admin_sql_queries');
   Login and Dashboard Related
  */
 const renderLogin = (req, res, next) => {
+    res.clearCookie('restaurants');
     res.render('admin-login', {});
 };
 
 const renderDashboard = (req, res, next) => {
-    const admin_id = req.cookies.admin;
+  const admin_id = req.cookies.admin;
     pool.query(queries.ADMIN_INFO_QUERY, [admin_id], (err, dbRes) => {
         if (dbRes.rows[0] !== undefined) {
             const { account_name } = dbRes.rows[0];
             res.render('admin-dashboard', {user_name: account_name});
         } else {
             res.send("error!");
+            console.log(err);
         }
     })
 };
@@ -34,8 +36,10 @@ const renderDashboard = (req, res, next) => {
 // Check for admin login
 router.get('/', (req, res, next) => {
     if (req.cookies.admin) {
+        console.log("render dashboard");
         renderDashboard(req, res, next);
     } else {
+        console.log("render login");
         renderLogin(req, res, next);
     }
 });
@@ -52,10 +56,12 @@ router.get('/logout', (req, res, next) => {
 // Submit login details. Adds a cookie to store the presence of an admin
 router.post('/', (req, res, next) => {
     const { account_name } = req.body;
-    // console.log(account_name);
     pool.query(queries.EXISTING_ADMIN_QUERY, [account_name], (err, dbRes) => {
+        console.log("logging_in");
         if (err || dbRes.rows.length !== 1) {
-            res.send("error!");
+          console.log(dbRes);
+          console.log(err);
+          res.send("error!");
         } else {
             res.cookie('admin', dbRes.rows[0].id) ;
             res.redirect('/admin')
@@ -70,6 +76,8 @@ const renderEditUser = (req, res, next) => {
     pool.query(queries.CUSTOMER_INFO_QUERY, (err, dbRes) => {
         if (err) {
             res.send("error!");
+            console.log(err);
+
         } else {
             res.render('admin-edit-user', {users: dbRes.rows,
                                             message: req.flash('info')})
@@ -83,6 +91,7 @@ const renderEditUser = (req, res, next) => {
 const renderEditRestaurants = (req, res, next) => {
     pool.query(queries.RESTAURANT_INFO_QUERY, (err, restaurantRes) => {
         if (err) {
+            console.log(err);
             res.send("error!");
         } else {
             pool.query(queries.CUISINES_INFO_QUERY, (err, cuisineRes) => {
@@ -133,6 +142,7 @@ const renderEditReservations = (req, res, next) => {
     pool.query(queries.RESERVATION_INFO_QUERY, (err, dbRes) => {
         if (err) {
             res.send("error!");
+            console.log(err);
         } else {
             res.render('admin-edit-reservations', {reservations: dbRes.rows,
                                                    message: req.flash('info')});
@@ -298,7 +308,7 @@ router.post('/add_restaurant', (req, res, next) => {
             res.redirect('/admin/edit-restaurants')
         }
     });
-})
+});
 
 // Edit Restaurant details
 router.post('/edit_restaurant', (req, res, next) => {
@@ -410,6 +420,8 @@ router.post('/add_branch', (req, res, next) => {
 
     pool.query(queries.ADD_BRANCH_QUERY, [add_branch_restaurant_id, add_branch_name, add_branch_address, add_branch_pluscode, add_branch_capacity], (err, dbRes) => {
         if (err) {
+            console.log(err);
+
             req.flash('info', 'Update failed! Please ensure you are keying in valid values for input.');
             res.redirect('/admin/edit-restaurants')
             // res.send("error!");
@@ -450,7 +462,7 @@ router.post('/new_menu_item', (req, res, next) => {
     const { restaurant_id, menu_item_name, menu_item_cents } = req.body;
     // console.log(req.body);
     pool.query(queries.NEW_MENU_ITEM,
-        [restaurant_id, menu_item_name, menu_item_cents], (err, _) => {
+        [restaurant_id, menu_item_name, parseInt(menu_item_cents)], (err, _) => {
         if (err) {
             console.log(err);
             res.send("error!");
@@ -467,6 +479,7 @@ router.post('/delete_menu_item/:itemId', (req, res, next) => {
     console.log(itemId);
     pool.query(queries.DELETE_MENU_ITEM_QUERY, [itemId], (err, dbRes) => {
         if (err) {
+            console.log(err);
             res.send("error!");
         } else {
             req.flash('info', 'Successfully deleted menu item!');
@@ -497,6 +510,7 @@ router.post('/delete_menu_item_override/:itemId', (req, res, next) => {
     pool.query(queries.DELETE_MENU_ITEM_OVERRIDE, [itemId], (err, dbRes) => {
         if (err) {
             res.send("error!");
+            console.log(err);
         } else {
             req.flash('info', 'Successfully deleted menu item override!');
             res.redirect('/admin/edit-restaurants')
@@ -515,14 +529,17 @@ const renderStatistics = (req, res, next) => {
     pool.query(queries.STATS_RESTAURANT_CUISINE_COUNT, (err, cuisineCountRes) => {
         if (err) {
             res.send("error!");
+            console.log(err);
         } else {
             pool.query(queries.STATS_MOST_BOOKED_RESTAURANT, (err, bookingCountRes) => {
                 if (err) {
                     res.send("error!");
+                    console.log(err);
                 } else {
                     pool.query(queries.STATS_POPULAR_BOOKING_TIME, (err, popularTimingRes) => {
                         if (err) {
                             res.send("error!");
+                            console.log(err);
                         } else {
                             res.render('admin-statistics', {
                                 cuisineCount: cuisineCountRes.rows,

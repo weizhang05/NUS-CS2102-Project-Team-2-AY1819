@@ -151,8 +151,8 @@ router.get('/:branchId/edit', (req, res, next) => {
   const { branchId } = req.params;
   pool.query(BRANCH_QUERY, [branchId], (err, dbRes) => {
     if (err) {
-      res.send("error!");
       console.log(err);
+      res.send("error!");
     } else {
       const { id, name, address, plus_code, capacity } = dbRes.rows[0];
 
@@ -170,7 +170,7 @@ router.get('/:branchId/edit', (req, res, next) => {
               const hours_override = dbHoursOverrideRes.rows;
               pool.query(MENU_ITEM_OVERRIDE_QUERY, [branchId], (err, dbMenuItemOverrideRes) => {
                 if (err) {
-                  res.send("error!")
+                  res.send("error!");
                   console.log(err);
                 } else {
                   const menu_override = dbMenuItemOverrideRes.rows;
@@ -206,7 +206,7 @@ router.post('/:branchId/edit', (req, res, next) => {
       if (err) {
         res.send("error!");
       } else {
-        res.redirect("/restaurants");
+        redirect_branch_edit(req, res, branch_id);
       }
     });
   } else {
@@ -214,7 +214,7 @@ router.post('/:branchId/edit', (req, res, next) => {
       if (err) {
         res.send("error!");
       } else {
-        res.redirect("/restaurants");
+        redirect_branch_edit(req, res, branch_id);
       }
     });
   }
