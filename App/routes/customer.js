@@ -303,7 +303,7 @@ router.post('/customer/rate-branch', function(req, res, next) {
 		} else {
 			res.redirect('/customer/rating');
 		}
-  });
+	});
 });
 
 // Delete reservation
@@ -328,7 +328,21 @@ router.post('/customer/deleteReservation', function(req, res, next) {
 	var getCuisineQuery = "SELECT bk.id AS id, br.name AS name, br.address AS address, bk.pax AS num, bk.throughout AS time FROM booking bk, branch br WHERE bk.branch_id = br.id AND bk.customer_id = '"+customerCookie["id"]+"'";
 	pool.query(getCuisineQuery, (err, data) => {
 		res.render('reservation', { title: 'Reservation', data: data });
+	});
+});
 
+// List menu item
+router.get('/customer/listMenuItem', function(req, res, next) {
+	if(!req.cookies.customer){
+		res.render('customerIndexBeforeLogin', { title: 'CS2102 Restaurant' });
+	}
+	let branchId = req.query.branchId;
+	pool.query(GET_MENU_QUERY, [branchId], (err, data) => {
+		if (err) {
+			res.redirect('/customer/reservation');
+		} else {
+			res.render('reservation', { title: 'Reservation', data: data });
+		}
 	});
 });
 
