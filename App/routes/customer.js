@@ -148,7 +148,7 @@ router.get('/customer/reservation', function(req, res, next) {
 	let customerCookie = req.cookies.customer[0];
 	var getCuisineQuery = "SELECT bk.id AS id, br.name AS name, br.address AS address, bk.pax AS num, bk.throughout AS time FROM booking bk, branch br WHERE bk.branch_id = br.id AND bk.customer_id = '"+customerCookie["id"]+"'";
 	pool.query(getCuisineQuery, (err, data) => {
-		res.render('reservation', { title: 'Reservation', data: data });
+		res.render('reservation', { title: 'Reservation', data: data, message: req.flash('info') });
 	});
 });
 
@@ -186,17 +186,24 @@ router.get('/customer/chooseLocation', (req, res) => {
 			filter_booking ? `[${filter_start},${filter_end}]` : null
 		],
 		(err, dbLocationRes) => {
-			const branches = dbLocationRes.rows;
-			res.render('chooseLocation', {
-				selectedCuisines,
-				filter_name,
-				filter_booking,
-				filter_pax,
-				filter_start,
-				filter_end,
-				cuisines,
-				branches
-			});
+			if (err) {
+				req.flash('info', 'Sorry we ran into an error! :(');
+				res.redirect('reservation');
+			} else {
+
+				const branches = dbLocationRes.rows;
+				res.render('chooseLocation', {
+					selectedCuisines,
+					filter_name,
+					filter_booking,
+					filter_pax,
+					filter_start,
+					filter_end,
+					cuisines,
+					branches,
+					message: req.flash('info')
+				});
+			}
 		})
 	})
 });
@@ -227,7 +234,7 @@ router.post('/customer/selectRestaurant', function(req, res, next) {
 
 // Select branch
 router.get('/customer/selectBranch', function(req, res, next) {
-	res.redirect('reservation');
+	res.redirect('reservation', {message: req.flash('info') });
 });
 router.post('/customer/selectBranch', function(req, res, next) {
 	const restaurant_id = req.body.restaurant;
@@ -256,10 +263,11 @@ router.post('/customer/makeReservation', function(req, res, next) {
 		console.log(make_booking_data);
 
 		pool.query(MAKE_BOOKING_QUERY, make_booking_data, (err, data) => {
-			if (err) {
+			if (err || data.rowCount == 0) {
 				console.log("error with making booking");
 				console.log(err);
-				res.redirect('chooseLocation', { flash: 'Could not make reservation' });
+				req.flash('info', 'Sorry we ran into an error! :(');
+				res.redirect('chooseLocation');
 			} else {
 		console.log("SUCCESS");
 				res.render('makeReservation', { title: 'Booking is done!', data: data.rows });
@@ -308,13 +316,13 @@ router.post('/customer/rate-branch', function(req, res, next) {
 
 // Delete reservation
 router.get('/customer/deleteReservation', function(req, res, next) {
-	res.redirect('reservation');
+	res.redirect('reservation', {message: req.flash('info')});
 });
 router.post('/customer/deleteReservation', function(req, res, next) {
 	console.log(req.body);
 	const bookingId = req.body.id;
 	const num = req.body.num;
-	const branchName = req.body.branchName
+	const branchName = req.body.branchName;
 	
 	var updateBranchCapacityQuery = "UPDATE branch SET capacity = (capacity + "+num+") where name = '"+branchName+"'";
 	pool.query(updateBranchCapacityQuery, (err, data) => {
@@ -327,7 +335,9 @@ router.post('/customer/deleteReservation', function(req, res, next) {
 	let customerCookie = req.cookies.customer[0];
 	var getCuisineQuery = "SELECT bk.id AS id, br.name AS name, br.address AS address, bk.pax AS num, bk.throughout AS time FROM booking bk, branch br WHERE bk.branch_id = br.id AND bk.customer_id = '"+customerCookie["id"]+"'";
 	pool.query(getCuisineQuery, (err, data) => {
-		res.render('reservation', { title: 'Reservation', data: data });
+		// res.render('reservation', { title: 'Reservation', data: data, message: req.flash('info') });
+		req.flash('info', 'Successfully deleted!');
+		res.redirect('reservation');
 	});
 });
 
