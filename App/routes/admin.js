@@ -3,8 +3,10 @@ let pool = require('../pool');
 let router = express.Router();
 
 const cuisineRouter = require('./cuisine');
+const branchRouter = require('./branch');
 
 router.use('/cuisine', cuisineRouter);
+router.use('/edit-restaurants/branch', branchRouter);
 const queries = require('../public/scripts/admin_sql_queries');
 
 // TODO: some preprocessing to make input more user-friendly
@@ -424,22 +426,7 @@ router.post('/add_branch', (req, res, next) => {
 // Edit Branch
 router.post('/edit_branch', (req, res, next) => {
     const edit_branch_id = emptyToNull(req.body.edit_branch_id);
-    const edit_branch_name = emptyToNull(req.body.edit_branch_name);
-    const edit_branch_address = emptyToNull(req.body.edit_branch_address);
-    const edit_branch_capacity = emptyToNull(req.body.edit_branch_capacity);
-
-    pool.query(queries.UPDATE_BRANCH_QUERY, [edit_branch_id, edit_branch_name, edit_branch_address, edit_branch_capacity], (err, dbRes) => {
-        if (err) {
-            req.flash('info', 'Update failed! Please ensure you are keying in valid values for input.');
-            res.redirect('/admin/edit-restaurants')
-            // res.send("error!");
-        } else {
-            req.flash('info', 'Successfully deleted!');
-            res.redirect('/admin/edit-restaurants')
-        }
-    });
-
-
+    res.redirect(`/admin/edit-restaurants/branch/${edit_branch_id}/edit`);
 });
 
 // Delete Branch

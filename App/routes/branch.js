@@ -5,7 +5,7 @@ const router = express.Router();
 const BRANCH_QUERY = `
 SELECT id, name, address, plus_code, capacity
 FROM branch
-WHERE id = $1 AND restaurant_id = $2;
+WHERE id = $1;
 `;
 
 const NEW_BRANCH_WITHOUT_PLUS_CODE = `
@@ -20,14 +20,14 @@ VALUES ($1, $2, $3, $4, $5);
 
 const EDIT_BRANCH_WITH_PLUS_CODE = `
 UPDATE branch
-SET name = $3, address = $4, plus_code = $5, capacity = $6
-WHERE id = $1 AND restaurant_id = $2;
+SET name = $2, address = $3, plus_code = $4, capacity = $5
+WHERE id = $1;
 `;
 
 const EDIT_BRANCH_WITHOUT_PLUS_CODE = `
 UPDATE branch
-SET name = $3, address = $4, plus_code = NULL, capacity = $5
-WHERE id = $1 AND restaurant_id = $2;
+SET name = $2, address = $3, plus_code = NULL, capacity = $4
+WHERE id = $1;
 `;
 
 const DELETE_BRANCH = `
@@ -106,6 +106,19 @@ const intToDayStr = (i) => {
   }
 };
 
+function getRestaurantId(req) {
+  // WARNING: admins don't actually have restaurant id in the body yet
+  return (req.cookies.restaurants) ? req.cookies.restaurants : req.body.restaurant_id;
+}
+
+// for requests reusable by admin
+function redirect_branch_edit(req, res, branch_id) {
+  const dest = (req.cookies.restaurants)
+    ? `/restaurants/branch/${branch_id}/edit`
+    : `/admin/edit-restaurants/branch/${branch_id}/edit`;
+  res.redirect(dest);
+}
+
 // note: branchId is ignored.
 router.get('/:branchId/new', (req, res, next) => {
   res.render('restaurants-branch-new');
@@ -113,7 +126,7 @@ router.get('/:branchId/new', (req, res, next) => {
 
 // note: branchId is ignored.
 router.post('/:branchId/new', (req, res, next) => {
-  const restaurant_id = req.cookies.restaurants;
+  const restaurant_id = getRestaurantId(req);
   const { name, address, plus_code, capacity } = req.body;
   if (plus_code) {
     pool.query(NEW_BRANCH_WITH_PLUS_CODE, [restaurant_id, name, address, plus_code, capacity], (err, dbRes) => {
@@ -136,30 +149,37 @@ router.post('/:branchId/new', (req, res, next) => {
 
 router.get('/:branchId/edit', (req, res, next) => {
   const { branchId } = req.params;
-  const restaurant_id = req.cookies.restaurants;
-  pool.query(BRANCH_QUERY, [req.params.branchId, restaurant_id], (err, dbRes) => {
+  pool.query(BRANCH_QUERY, [branchId], (err, dbRes) => {
     if (err) {
       res.send("error!");
+      console.log(err);
     } else {
       const { id, name, address, plus_code, capacity } = dbRes.rows[0];
+
       pool.query(OPEN_HOURS_QUERY, [branchId], (err, dbHoursRes) => {
         if (err) {
           res.send("error!");
+          console.log(err);
         } else {
           const hours = dbHoursRes.rows;
           pool.query(OPERATING_HOURS_OVERRIDE_QUERY, [branchId], (err, dbHoursOverrideRes) => {
             if (err) {
               res.send("error!");
+              console.log(err);
             } else {
               const hours_override = dbHoursOverrideRes.rows;
               pool.query(MENU_ITEM_OVERRIDE_QUERY, [branchId], (err, dbMenuItemOverrideRes) => {
                 if (err) {
                   res.send("error!")
+                  console.log(err);
                 } else {
                   const menu_override = dbMenuItemOverrideRes.rows;
-                  res.render('restaurants-branch-edit', {
+                  const branch_ejs = (req.cookies.restaurants)
+                    ? 'restaurants-branch-edit'
+                    : 'admin-branch-edit';
+
+                  res.render(branch_ejs, {
                     branchId,
-                    restaurant_id,
                     name,
                     address,
                     plus_code,
@@ -180,10 +200,9 @@ router.get('/:branchId/edit', (req, res, next) => {
 });
 
 router.post('/:branchId/edit', (req, res, next) => {
-  const restaurant_id = req.cookies.restaurants;
   const { branch_id, name, address, plus_code, capacity } = req.body;
   if (plus_code) {
-    pool.query(EDIT_BRANCH_WITH_PLUS_CODE, [branch_id, restaurant_id, name, address, plus_code, capacity], (err, dbRes) => {
+    pool.query(EDIT_BRANCH_WITH_PLUS_CODE, [branch_id, name, address, plus_code, capacity], (err, dbRes) => {
       if (err) {
         res.send("error!");
       } else {
@@ -191,7 +210,7 @@ router.post('/:branchId/edit', (req, res, next) => {
       }
     });
   } else {
-    pool.query(EDIT_BRANCH_WITHOUT_PLUS_CODE, [branch_id, restaurant_id, name, address, capacity], (err, dbRes) => {
+    pool.query(EDIT_BRANCH_WITHOUT_PLUS_CODE, [branch_id, name, address, capacity], (err, dbRes) => {
       if (err) {
         res.send("error!");
       } else {
@@ -202,7 +221,7 @@ router.post('/:branchId/edit', (req, res, next) => {
 });
 
 router.post('/:branchId/delete', (req, res, next) => {
-  const restaurant_id = req.cookies.restaurants;
+  const restaurant_id = getRestaurantId(req);
   const { branchId } = req.params;
   pool.query(DELETE_BRANCH, [branchId, restaurant_id], (err, dbRes) => {
     if (err) {
@@ -221,7 +240,7 @@ router.post('/:branchId/hours/:hoursId/new', (req, res, next) => {
     if (err) {
       res.send("error!");
     } else {
-      res.redirect(`/restaurants/branch/${branchId}/edit`);
+      redirect_branch_edit(req, res, branchId);
     }
   });
 });
@@ -232,21 +251,22 @@ router.post('/:branchId/hours/:hoursId/delete', (req, res, next) => {
     if (err) {
       res.send("error!");
     } else {
-      res.redirect(`/restaurants/branch/${branchId}/edit`);
+      redirect_branch_edit(req, res, branchId);
     }
   });
 });
 
 // note: hoursId is ignored
 router.post('/:branchId/hours-override/:hoursId/new', (req, res, next) => {
-  const { branchId: branch_id } = req.params;
+  const branchId = req.params.branchId;
   const { override_date, start_time, end_time } = req.body;
   console.log(override_date);
-  pool.query(NEW_OPERATING_HOURS_OVERRIDE, [branch_id, override_date, start_time, end_time], (err, dbRes) => {
+  pool.query(NEW_OPERATING_HOURS_OVERRIDE, [branchId, override_date, start_time, end_time], (err, dbRes) => {
     if (err) {
       res.send("error!");
+      console.log(err);
     } else {
-      res.redirect(`/restaurants/branch/${branch_id}/edit`);
+      redirect_branch_edit(req, res, branchId);
     }
   });
 });
@@ -257,7 +277,7 @@ router.post('/:branchId/hours-override/:hoursId/delete', (req, res, next) => {
     if (err) {
       res.send("error!");
     } else {
-      res.redirect(`/restaurants/branch/${branchId}/edit`);
+      redirect_branch_edit(req, res, branchId);
     }
   });
 });
@@ -278,7 +298,7 @@ router.post('/:branchId/menu-override/:itemId/new', (req, res, next) => {
     if (err) {
       res.send("error!");
     } else {
-      res.redirect(`/restaurants/branch/${branchId}/edit`);
+      redirect_branch_edit(req, res, branchId);
     }
   });
 });
@@ -291,7 +311,7 @@ router.post('/:branchId/menu-override/:itemId/delete', (req, res, next) => {
     if (err) {
       res.send("error!");
     } else {
-      res.redirect(`/restaurants/branch/${branchId}/edit`);
+      redirect_branch_edit(req, res, branchId);
     }
   });
 });
