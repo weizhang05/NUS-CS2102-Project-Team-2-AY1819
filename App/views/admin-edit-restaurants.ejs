@@ -107,12 +107,13 @@
         </p>
         <p>
             <label for = "restaurant-name">Restaurant Name: </label>
-            <input type="text" id="restaurant-name" placeholder="My Restaurant" class="form-control" readonly
+            <input type="text" id="restaurant-name-cuisine" placeholder="My Restaurant" class="form-control" readonly
                    class="form-control">
         </p>
         <p>
             <label for="cuisine-name">Cuisine Name:</label>
-            <input type="text" id="cuisine-name" name="cuisine_name" placeholder="Western" class="form-control">
+            <input type="text" id="cuisine-name" name="cuisine_name" placeholder="Western" class="form-control"
+                   required>
         </p>
         <button type="submit" class="btn btn-primary">Add</button>
     </form>
@@ -190,6 +191,138 @@
         </p>
         <button type="submit" class="btn btn-danger">Delete</button>
     </form>
+    <br>
+    <br>
+    <h2 id="menu-item-add">Add Menu Item</h2>
+    <form action="/admin/new_menu_item" method="POST">
+        <p>
+            <label for="restaurant-id">Restaurant Id:</label>
+            <select class="restaurant-id-menu" id="restaurant-id" name="restaurant_id" class="form-control">
+                <% for (const { id } of restaurants) { %>
+                <option><%= id%></option>
+                <%} %>
+            </select>
+        </p>
+        <p>
+            <label for= "restaurant-name">Restaurant Name: </label>
+            <input type="text" id="restaurant-name-menu" placeholder="My Restaurant" class="form-control" readonly
+                   class="form-control">
+        </p>
+        <p>
+            <label for="menu-item-name">Item Name:</label>
+            <input type="text" id="menu-item-name" name="menu_item_name" placeholder="Fishcake"
+                   class="form-control" required>
+        </p>
+        <p>
+            <label for="menu-item-price">Price (cents):</label>
+            <input type="number" id="menu-item-cents" name="menu_item_cents" placeholder="100"
+                   class="form-control" required>
+        </p>
+        <button type="submit" class="btn btn-primary">Add</button>
+    </form>
+    <br>
+    <br>
+    <h2 id="menu-item-delete">Delete Menu Item</h2>
+    <p>
+        <label for="search-menu-items-input">Search Menu Items:</label>
+        <input type="text" id="search-menu-items-input" name="search_menu_items" class="form-control"/>
+    </p>
+    <table id ="menu-items-display" class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Item Name</th>
+            <th>Price ($)</th>
+            <th>Restaurant Name</th>
+            <th>Restaurant Id</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% for (const {item_id, restaurant_name, item_name, cents, restaurant_id } of menu_items) { %>
+        <tr>
+            <td><%= item_name%></td>
+            <td><%= (cents/100.0).toFixed(2)%></td>
+            <td><%= restaurant_name%></td>
+            <td><%= restaurant_id%></td>
+            <td>
+                <form action="/admin/delete_menu_item/<%= item_id.replace(/-/g,'') %>" method="POST">
+                    <button type="submit" class="btn btn-danger">Delete!</button>
+                </form>
+            </td>
+        </tr>
+        <%} %>
+        </tbody>
+    </table>
+    <br>
+    <br>
+    <h2 id="menu-item-add">Add Menu Item Override</h2>
+    <form action="/admin/new_menu_item_override" method="POST">
+        <p>
+            <label for="restaurant-id">Branch Id:</label>
+            <select class="branch-id-menu" id="branch-id" name="branch_id" class="form-control">
+                <% for (const { id } of branches) { %>
+                <option><%= id%></option>
+                <%} %>
+            </select>
+        </p>
+        <p>
+            <label for="restaurant-name">Restaurant Name: </label>
+            <input type="text" id="restaurant-name-menu-override" placeholder="My Restaurant" class="form-control" readonly
+                   class="form-control">
+        </p>
+        <p>
+            <label for="branch-name">Branch Name: </label>
+            <input type="text" id="branch-name-menu-override" placeholder="My Branch" class="form-control" readonly
+                   class="form-control">
+        </p>
+        <p>
+            <label for="menu-item-name">Item Name:</label>
+            <input type="text" id="menu-item-name" name="menu_item_name" placeholder="Fishcake"
+                   class="form-control" required>
+        </p>
+        <p>
+            <label for="menu-item-price">Price (cents):</label>
+            <input type="number" id="menu-item-cents" name="menu_item_cents" placeholder="100"
+                   class="form-control" required>
+        </p>
+        <button type="submit" class="btn btn-primary">Add</button>
+    </form>
+    <br>
+    <br>
+    <h2 id="menu-item-override-delete">Delete Menu Item Overrides</h2>
+    <p>
+        <label for="search-menu-item-overrides-input">Search Menu Item Overrides:</label>
+        <input type="text" id="search-menu-item-overrides-input" name="search_menu_item_overrides" class="form-control"/>
+    </p>
+    <table id ="menu-item-overrides-display" class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Item Name</th>
+            <th>Price ($)</th>
+            <th>Branch Name</th>
+            <th>Restaurant Name</th>
+            <th>Branch Id</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% for (const {item_id, restaurant_name, item_name, cents, branch_name, branch_id }
+                of menu_item_override) { %>
+        <tr>
+            <td><%= item_name%></td>
+            <td><%= (cents/100.0).toFixed(2)%></td>
+            <td><%= branch_name%></td>
+            <td><%= restaurant_name%></td>
+            <td><%= branch_id %></td>
+            <td>
+                <form action="/admin/delete_menu_item_override/<%= item_id.replace(/-/g,'') %>" method="POST">
+                    <button type="submit" class="btn btn-danger">Delete!</button>
+                </form>
+            </td>
+        </tr>
+        <%} %>
+        </tbody>
+    </table>
+    <br>
+    <br>
 </body>
 
 

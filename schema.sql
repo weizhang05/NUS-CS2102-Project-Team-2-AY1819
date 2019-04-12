@@ -43,16 +43,6 @@ CREATE TABLE menu_item (
   UNIQUE (restaurant_id, name)
 );
 
-CREATE TABLE menu_item_override (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  branch_id uuid REFERENCES branch NOT NULL,
-  name varchar(100) NOT NULL,
-  -- when cents is negative, this means that the override removes a
-  -- menu item that would otherwise be displayed
-  cents integer NOT NULL CHECK (cents >= -1),
-  UNIQUE (branch_id, name)
-);
-
 CREATE TABLE branch (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   restaurant_id uuid NOT NULL REFERENCES restaurant ON DELETE CASCADE,
@@ -75,6 +65,17 @@ CREATE TABLE branch (
   -- location not strictly necessary for now
   UNIQUE (restaurant_id, address)
 );
+
+CREATE TABLE menu_item_override (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  branch_id uuid REFERENCES branch NOT NULL,
+  name varchar(100) NOT NULL,
+  -- when cents is negative, this means that the override removes a
+  -- menu item that would otherwise be displayed
+  cents integer NOT NULL CHECK (cents >= -1),
+  UNIQUE (branch_id, name)
+);
+
 
 CREATE TABLE opening_hours_template (
   -- semantics: start_day = 0 is Sunday, 6 is Saturday
