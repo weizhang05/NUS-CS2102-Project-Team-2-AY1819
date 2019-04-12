@@ -417,7 +417,7 @@ DECLARE
   low_ts timestamp := lower(during);
   up_ts timestamp := upper(during);
   low_ts_time time := low_ts::time;
-  up_ts_time time := low_ts::time;
+  up_ts_time time := up_ts::time;
   low_ts_day integer := EXTRACT(DOW FROM low_ts);
   up_ts_day integer := EXTRACT(DOW FROM up_ts);
 BEGIN
@@ -441,6 +441,8 @@ BEGIN
               (O.start_day < low_ts_day OR (O.start_day = low_ts_day AND O.start_time <= low_ts_time))
               AND
               (up_ts_day < O.end_day OR (up_ts_day = O.end_day AND up_ts_time <= O.end_time))
+              AND
+              (low_ts_day < up_ts_day OR (low_ts_day = up_ts_day AND low_ts_time <= up_ts_time))
             )
             OR
             (

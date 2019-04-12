@@ -43,6 +43,9 @@ SELECT id, 'BKJ @ Doby Ghout', 'Plaza Singapura', 100 FROM restaurant r WHERE re
 INSERT INTO branch(restaurant_id, name, address, capacity)
 SELECT * FROM rows;
 
+INSERT INTO restaurant(account_name, restaurant_name)
+VALUES('abacada', 'Abacada');
+
 -- INSERT RESTAURANT_CUISINE
 WITH rows AS (
 SELECT r.id as rid, c.id as cid
@@ -85,6 +88,33 @@ VALUES('clyde','clyde@email.com','clyde',false),
 -- INSERT ADMIN
 INSERT INTO admins (account_name)
 VALUES ('admin1'), ('admin2');
+
+-- INSERT OPEN HRS TEMPLATE
+INSERT INTO opening_hours_template (restaurant_id, start_day, start_time, end_day, end_time)
+SELECT * FROM (
+  SELECT R.id, 6, '22:00'::time, 0, '02:00'::time
+  FROM restaurant R
+  WHERE R.restaurant_name = 'Abacada'
+) I;
+INSERT INTO branch(restaurant_id, name, address, capacity)
+SELECT * FROM (
+  SELECT id, 'abacada @ Bishan', 'Bishan Some Street', 5
+  FROM restaurant R
+  WHERE restaurant_name = 'Abacada'
+) I;
+
+-- USE TRIGGER FOR OPEN HRS
+INSERT INTO customer(name, email, password, non_user)
+VALUES('abacada_enthusiaist','abacada_enthusiaist@email.com','abacada_enthusiaist',false);
+
+-- BOOKING ACROSS DEAD HOURS
+WITH item AS (
+SELECT c.id, b.id, 1, tsrange('2019-04-13T22:20:00', '2019-04-14T01:30:00','[)')
+FROM customer c, branch b
+WHERE b.name = 'abacada @ Bishan' and c.name = 'abacada_enthusiaist'
+)
+INSERT INTO booking(customer_id, branch_id, pax, throughout)
+SELECT * FROM item;
 
 -- INSERT OPENING HRS
 WITH rest AS (
