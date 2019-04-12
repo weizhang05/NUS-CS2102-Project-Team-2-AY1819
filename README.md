@@ -13,7 +13,7 @@ psql -U <postgres_role>
 ```
 Note: File location are relative, so ensure you are at the right location.
 
-# Run web server:
+# Run web server
 Next, run the following set of commands relative from the home directory
 ```
 cd App
